@@ -1,4 +1,8 @@
 
+local add_pos = function(pos1, pos2)
+	return {x=pos1.x+pos2.x, y=pos1.y+pos2.y, z=pos1.z+pos2.z}
+end
+
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
 	tiles = {"bluebeacon.png"},
@@ -16,30 +20,40 @@ minetest.register_node("jumpdrive:engine", {
 			"list[current_player;main;0,5;8,4;]")
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
+
 		local x = tonumber(fields.x);
 		local y = tonumber(fields.y);
 		local z = tonumber(fields.z);
 		local radius = tonumber(fields.radius);
 
+		if x == nil or y == nil or z == nil or radius == nil then
+			return
+		end
+
+		local offsetPos = {x=x, y=y, z=z}
+		local meta = minetest.get_meta(pos)
+
+
+		if minetest.get_modpath("protector") and not protector.can_dig(radius, pos, sender, true, 0) then
+			meta:set_string("infotext", "Jump aborted: proteced area!")
+			return
+		end
+
+
+		local minjumpdistance = radius * 2
+
+		if math.abs(x) <= minjumpdistance and math.abs(y) <= minjumpdistance and math.abs(z) <= minjumpdistance then
+			meta:set_string("infotext", "Jump too short!")
+			return
+		end
+
 		local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
 		local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
 
+		meta:set_string("infotext", "Jump in progress...")
 
-		--[[
-		-- works without meta..
 
-		local path = minetest.get_worldpath() .. "/schems"
-		-- Create directory if it does not already exist
-		minetest.mkdir(path)
-
-		local filename = path .. "/jumpdrive_" .. sender:get_player_name() .. ".mts"
-
-		minetest.create_schematic(pos1, pos2, nil, filename, nil);
-
-		local newpos = {x=pos.x-radius+x, y=pos.y-radius+y, z=pos.z-radius+z}
-
-		minetest.place_schematic(newpos, filename, nil, nil, true);
-		]]--
+		minetest.get_voxel_manip():read_from_map(pos1, pos2)
 
 		local ix = pos.x+radius
 		while ix >= pos.x-radius do
@@ -54,6 +68,12 @@ minetest.register_node("jumpdrive:engine", {
 					local meta = minetest.get_meta(oldPos):to_table() -- Get metadata of current node
 					minetest.remove_node(oldPos) -- Remove current node
 
+					local newNode = minetest.get_node(newPos)
+					if newNode.name == "ignore" then
+						minetest.get_voxel_manip():read_from_map(newPos, newPos)
+						newNode = minetest.get_node(newPos)
+					end
+
 					minetest.set_node(newPos, node) -- Move node to new position
 					minetest.get_meta(newPos):from_table(meta) -- Set metadata of new node
 
@@ -64,10 +84,16 @@ minetest.register_node("jumpdrive:engine", {
 			ix = ix - 1
 		end
 
+		local newjumpnodepos = add_pos(pos, offsetPos)
+		local newjumpnodemeta = minetest.get_meta(newjumpnodepos)
+		newjumpnodemeta:set_string("infotext", "Jump complete!")
+
 		local playerpos = sender:getpos();
-		local newplayerpos = {x=playerpos.x+x, y=playerpos.y+y, z=playerpos.z+z}
+		local newplayerpos = add_pos(playerpos, offsetPos)
 
 		sender:moveto(newplayerpos);
+
+
 		
 	end
 })
