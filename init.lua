@@ -66,7 +66,9 @@ minetest.register_node("jumpdrive:engine", {
 
 					local node = minetest.get_node(oldPos) -- Obtain current node
 
-					if node.name == "default:air" then
+					print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
+
+					if node.name == "air" or node.name == "ignore" then
 						break
 					end
 
