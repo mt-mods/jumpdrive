@@ -65,6 +65,11 @@ minetest.register_node("jumpdrive:engine", {
 					local newPos = {x=ix+x, y=iy+y, z=iz+z}
 
 					local node = minetest.get_node(oldPos) -- Obtain current node
+
+					if node.name == "default:air" then
+						break
+					end
+
 					local meta = minetest.get_meta(oldPos):to_table() -- Get metadata of current node
 					minetest.remove_node(oldPos) -- Remove current node
 
