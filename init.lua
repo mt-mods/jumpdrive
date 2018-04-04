@@ -3,6 +3,28 @@ local add_pos = function(pos1, pos2)
 	return {x=pos1.x+pos2.x, y=pos1.y+pos2.y, z=pos1.z+pos2.z}
 end
 
+local move_block = function(from, to)
+	local node = minetest.get_node(from) -- Obtain current node
+
+	-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
+
+	if node.name == "air" or node.name == "ignore" then
+		return
+	end
+
+	local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
+	minetest.remove_node(from) -- Remove current node
+
+	local newNode = minetest.get_node(to)
+	if newNode.name == "ignore" then
+		minetest.get_voxel_manip():read_from_map(to, to)
+		newNode = minetest.get_node(to)
+	end
+
+	minetest.set_node(to, node) -- Move node to new position
+	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
+end
+
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
 	tiles = {"jumpdrive.png"},
@@ -64,25 +86,7 @@ minetest.register_node("jumpdrive:engine", {
 					local oldPos = {x=ix, y=iy, z=iz}
 					local newPos = {x=ix+x, y=iy+y, z=iz+z}
 
-					local node = minetest.get_node(oldPos) -- Obtain current node
-
-					print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
-
-					if node.name == "air" or node.name == "ignore" then
-						break
-					end
-
-					local meta = minetest.get_meta(oldPos):to_table() -- Get metadata of current node
-					minetest.remove_node(oldPos) -- Remove current node
-
-					local newNode = minetest.get_node(newPos)
-					if newNode.name == "ignore" then
-						minetest.get_voxel_manip():read_from_map(newPos, newPos)
-						newNode = minetest.get_node(newPos)
-					end
-
-					minetest.set_node(newPos, node) -- Move node to new position
-					minetest.get_meta(newPos):from_table(meta) -- Set metadata of new node
+					move_block(oldPos, newPos)
 
 					iz = iz - 1
 				end
@@ -94,6 +98,7 @@ minetest.register_node("jumpdrive:engine", {
 		local newjumpnodepos = add_pos(pos, offsetPos)
 		local newjumpnodemeta = minetest.get_meta(newjumpnodepos)
 		newjumpnodemeta:set_string("infotext", "Jump complete!")
+		print("Jump complete!")
 
 		local playerpos = sender:getpos();
 		local newplayerpos = add_pos(playerpos, offsetPos)
