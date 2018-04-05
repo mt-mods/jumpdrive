@@ -193,4 +193,13 @@ minetest.register_node("jumpdrive:engine", {
 	end
 })
 
+minetest.register_craft({
+	output = 'jumpdrive:engine',
+	recipe = {
+		{'', 'default:mese_crystal_fragment', ''},
+		{'default:diamond', 'default:mese_block', 'default:diamond'},
+		{'', 'default:mese_crystal', ''}
+	}
+})
+
 print("[OK] Jumpdrive")
