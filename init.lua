@@ -65,32 +65,18 @@ local cube_iterate = function(pos, radius, callback)
 
 end
 
--- execute whole jump
-local execute_jump = function(pos, offsetPos, radius)
-
-	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
-	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
-
-	minetest.get_voxel_manip():read_from_map(pos1, pos2)
-
-	cube_iterate(pos, radius, function(oldPos)
-		local newPos = add_pos(oldPos, offsetPos)
-		move_block(oldPos, newPos)
-	end)
-
-	local all_objects = minetest.get_objects_inside_radius(pos, radius);
-	for _,obj in ipairs(all_objects) do
-		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
-	end	
-
+-- get offset pos object from pos
+local get_offset_pos = function(pos)
+	local meta = minetest.get_meta(pos);
+	return {x=meta:get_int("x"), y=meta:get_int("y"), z=meta:get_int("z")}
 end
 
-local can_jump = function(pos, offsetPos, radius, meta)
-
-	-- check inventory
-	local inv = meta:get_inventory()
-	return inv:contains_item("main", {name="default:mese_crystal", count=1})
+-- get offset from meta
+local get_radius = function(pos)
+	local meta = minetest.get_meta(pos);
+	return meta:get_int("radius")
 end
+
 
 local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 	local obstructed = false
@@ -109,10 +95,51 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 	return obstructed
 end
 
-local deduct_jump_cost = function(pos, meta)
+-- execute whole jump
+local execute_jump = function(pos, player)
+
+	local offsetPos = get_offset_pos(pos)
+	local radius = get_radius(pos)
+	local targetPos = add_pos(pos, offsetPos)
+	local meta = minetest.get_meta(pos)
+	local playername = meta:get_string("owner")	
+
+	if player ~= nil then
+		playername = player:get_player_name()
+	end
+
+	if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
+		minetest.chat_send_player(playername, "Jump-target is obstructed!")
+		return
+	end
+
+	-- check inventory
 	local inv = meta:get_inventory()
+	if not inv:contains_item("main", {name="default:mese_crystal", count=1}) then
+		minetest.chat_send_player(playername, "Not enough fuel for jump, expected 1 mese cristal")
+		return
+	end
+
 	inv:remove_item("main", {name="default:mese_crystal", count=1})
+
+	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
+	minetest.get_voxel_manip():read_from_map(pos1, pos2)
+
+	cube_iterate(pos, radius, function(oldPos)
+		local newPos = add_pos(oldPos, offsetPos)
+		move_block(oldPos, newPos)
+	end)
+
+	local all_objects = minetest.get_objects_inside_radius(pos, radius);
+	for _,obj in ipairs(all_objects) do
+		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
+	end	
+	
+	minetest.chat_send_player(playername, "Jump executed!")
 end
+
 
 local update_formspec = function(meta)
 	meta:set_string("formspec", "size[8,9;]" ..
@@ -137,7 +164,7 @@ minetest.register_node("jumpdrive:engine", {
 
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			-- TODO
+			execute_jump(pos)
 		end
 	}},
 
@@ -181,6 +208,13 @@ minetest.register_node("jumpdrive:engine", {
 			return
 		end
 
+		local minjumpdistance = radius * 2
+
+		if math.abs(x) <= minjumpdistance and math.abs(y) <= minjumpdistance and math.abs(z) <= minjumpdistance then
+			minetest.chat_send_player(sender:get_player_name(), "Jump too short")
+			return
+		end
+
 		local offsetPos = {x=x, y=y, z=z}
 		local targetPos = add_pos(pos, offsetPos)
 		local meta = minetest.get_meta(pos)
@@ -192,28 +226,8 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("radius", radius)
 		update_formspec(meta)
 
-		if fields.jump or fields.calculate then
-			local minjumpdistance = radius * 2
-
-			if math.abs(x) <= minjumpdistance and math.abs(y) <= minjumpdistance and math.abs(z) <= minjumpdistance then
-				minetest.chat_send_player(sender:get_player_name(), "Jump too short")
-				return
-			end
-
-			if is_target_obstructed(pos, offsetPos, radius, meta, sender:get_player_name()) then
-				minetest.chat_send_player(sender:get_player_name(), "Jump-target is obstructed!")
-				return
-			end
-
-			if not can_jump(pos, offsetPos, radius, meta) then
-				minetest.chat_send_player(sender:get_player_name(), "Not enough fuel for jump, expected 1 mese cristal")
-				return
-			end
-		end
-
 		if fields.jump then
-			deduct_jump_cost(pos, meta)
-			execute_jump(pos, offsetPos, radius)
+			execute_jump(pos, sender)
 		end
 
 		if fields.calculate then
