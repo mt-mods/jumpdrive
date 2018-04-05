@@ -50,7 +50,11 @@ local cube_iterate = function(pos, radius, callback)
 			local iz = pos.z+radius
 			while iz >= pos.z-radius do
 				local ipos = {x=ix, y=iy, z=iz}
-				callback(ipos)
+				local result = callback(ipos)
+
+				if result == false then
+					return
+				end
 
 				iz = iz - 1
 			end
@@ -81,9 +85,28 @@ local execute_jump = function(pos, offsetPos, radius)
 
 end
 
-local can_jump = function(pos, meta)
+local can_jump = function(pos, offsetPos, radius, meta)
+
+	-- check inventory
 	local inv = meta:get_inventory()
 	return inv:contains_item("main", {name="default:mese_crystal", count=1})
+end
+
+local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
+	local obstructed = false
+
+	cube_iterate(pos, radius, function(ipos)
+		local newPos = add_pos(ipos, offsetPos)
+		local node = minetest.get_node(newPos)
+		local is_passable = node.name == "air" or node.name == "ignore"
+
+		if not is_passable or minetest.is_protected(pos, playername) then
+			obstructed = true
+			return false
+		end
+	end)
+	
+	return obstructed
 end
 
 local deduct_jump_cost = function(pos, meta)
@@ -162,28 +185,28 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("radius", radius)
 		update_formspec(meta)
 
-		if fields.jump then
-
-			-- TODO: http://dev.minetest.net/is_protected
-			if minetest.get_modpath("protector") and not protector.can_dig(radius, targetPos, sender, true, 0) then
-				meta:set_string("infotext", "Jump aborted: proteced area!")
-				return
-			end
-
+		if fields.jump or fields.calculate then
 			local minjumpdistance = radius * 2
 
 			if math.abs(x) <= minjumpdistance and math.abs(y) <= minjumpdistance and math.abs(z) <= minjumpdistance then
-				meta:set_string("infotext", "Jump too short!")
+				minetest.chat_send_player(sender:get_player_name(), "Jump too short")
 				return
 			end
 
-			if can_jump(pos, meta) then
-				deduct_jump_cost(pos, meta)
-				execute_jump(pos, offsetPos, radius)
-			else
-				minetest.chat_send_player(sender:get_player_name(), "Not enough fuel for jump, expected 1 mese cristal")
+			if is_target_obstructed(pos, offsetPos, radius, meta, sender:get_player_name()) then
+				minetest.chat_send_player(sender:get_player_name(), "Jump-target is obstructed!")
+				return
 			end
 
+			if not can_jump(pos, offsetPos, radius, meta) then
+				minetest.chat_send_player(sender:get_player_name(), "Not enough fuel for jump, expected 1 mese cristal")
+				return
+			end
+		end
+
+		if fields.jump then
+			deduct_jump_cost(pos, meta)
+			execute_jump(pos, offsetPos, radius)
 		end
 
 		if fields.calculate then
