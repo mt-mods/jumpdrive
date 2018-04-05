@@ -92,7 +92,7 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 		local node = minetest.get_node(newPos)
 		local is_passable = node.name == "air" or node.name == "ignore"
 
-		if not is_passable or minetest.is_protected(pos, playername) then
+		if not is_passable or minetest.is_protected(ipos, playername) or minetest.is_protected(newPos, playername) then
 			obstructed = true
 			return false
 		end
@@ -100,6 +100,7 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 	
 	return obstructed
 end
+
 
 -- execute whole jump
 local execute_jump = function(pos, player)
