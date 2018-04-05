@@ -100,10 +100,14 @@ minetest.register_node("jumpdrive:engine", {
 		newjumpnodemeta:set_string("infotext", "Jump complete!")
 		print("Jump complete!")
 
-		local playerpos = sender:getpos();
-		local newplayerpos = add_pos(playerpos, offsetPos)
+		local all_objects = minetest.get_objects_inside_radius(pos, radius);
+		for _,obj in ipairs(all_objects) do
+			obj:moveto( add_pos(obj:get_pos(), offsetPos) )
+		end
 
-		sender:moveto(newplayerpos);
+		-- local playerpos = sender:getpos();
+		-- local newplayerpos = add_pos(playerpos, offsetPos)
+		-- sender:moveto(newplayerpos);
 
 
 		
