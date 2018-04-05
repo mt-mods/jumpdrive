@@ -133,6 +133,13 @@ minetest.register_node("jumpdrive:engine", {
 	light_source = 13,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	drop = "jumpdrive:engine",
+	sounds = default.node_sound_glass_defaults(),
+
+	mesecons = {effector = {
+		action_on = function (pos, node)
+			-- TODO
+		end
+	}},
 
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
