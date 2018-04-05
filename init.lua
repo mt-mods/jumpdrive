@@ -1,8 +1,10 @@
 
+-- add a position offset
 local add_pos = function(pos1, pos2)
 	return {x=pos1.x+pos2.x, y=pos1.y+pos2.y, z=pos1.z+pos2.z}
 end
 
+-- move single block and meta
 local move_block = function(from, to)
 	local node = minetest.get_node(from) -- Obtain current node
 
@@ -25,32 +27,30 @@ local move_block = function(from, to)
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
 end
 
-local calculate_cost = function(pos, offsetPos, radius)
+local calculate_cost = function(pos, offsetPos, radius, sender)
 	local meta = minetest.get_meta(pos)
 
 	local diameter = radius * 2
 	local blocks = math.pow(diameter, 3)
 
-	print("Would move " .. blocks .. " potential blocks")
+	-- TODO: pow/sqrt
+	local distance = math.abs(offsetPos.x) + math.abs(offsetPos.y) + math.abs(offsetPos.z)
+
+	local cost = blocks * distance * 1.0
+
+	minetest.chat_send_player(sender:get_player_name(), "Jump: " .. blocks .. " blocks")
 end
 
-local execute_jump = function(pos, offsetPos, radius)
-
-	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
-	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
-
-	minetest.get_voxel_manip():read_from_map(pos1, pos2)
-
+-- iterate over a cube area with pos and radius
+local cube_iterate = function(pos, radius, callback)
 	local ix = pos.x+radius
 	while ix >= pos.x-radius do
 		local iy = pos.y+radius
 		while iy >= pos.y-radius do
 			local iz = pos.z+radius
 			while iz >= pos.z-radius do
-				local oldPos = {x=ix, y=iy, z=iz}
-				local newPos = add_pos(oldPos, offsetPos)
-
-				move_block(oldPos, newPos)
+				local ipos = {x=ix, y=iy, z=iz}
+				callback(ipos)
 
 				iz = iz - 1
 			end
@@ -59,11 +59,49 @@ local execute_jump = function(pos, offsetPos, radius)
 		ix = ix - 1
 	end
 
+end
+
+-- execute whole jump
+local execute_jump = function(pos, offsetPos, radius)
+
+	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
+	minetest.get_voxel_manip():read_from_map(pos1, pos2)
+
+	cube_iterate(pos, radius, function(oldPos)
+		local newPos = add_pos(oldPos, offsetPos)
+		move_block(oldPos, newPos)
+	end)
+
 	local all_objects = minetest.get_objects_inside_radius(pos, radius);
 	for _,obj in ipairs(all_objects) do
 		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
 	end	
 
+end
+
+local can_jump = function(pos, meta)
+	local inv = meta:get_inventory()
+	return inv:contains_item("main", {name="default:mese_crystal", count=1})
+end
+
+local deduct_jump_cost = function(pos, meta)
+	local inv = meta:get_inventory()
+	inv:remove_item("main", {name="default:mese_crystal", count=1})
+end
+
+local update_formspec = function(meta)
+	meta:set_string("formspec", "size[8,9;]" ..
+		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
+		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
+		"field[4,1;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
+		"field[6,1;2,1;radius;Radius;" .. meta:get_int("radius") .. "]" ..
+		"button_exit[1,2;2,1;jump;Jump]" ..
+		"button_exit[3,2;2,1;calculate;Calculate]" ..
+		"button_exit[5,2;2,1;save;Save]" ..
+		"list[context;main;0,3;8,1;]" ..
+		"list[current_player;main;0,5;8,4;]")
 end
 
 minetest.register_node("jumpdrive:engine", {
@@ -72,17 +110,31 @@ minetest.register_node("jumpdrive:engine", {
 	light_source = 13,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	drop = "jumpdrive:engine",
+
+	after_place_node = function(pos, placer)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("owner", placer:get_player_name() or "")
+	end,
+
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec", "size[8,9;]" ..
-			"field[1,1;1,1;x;X;0]" ..
-			"field[2,1;1,1;y;Y;50]" ..
-			"field[3,1;1,1;z;Z;0]" ..
-			"field[4,1;1,1;radius;Radius;10]" ..
-			"button_exit[1,2;2,1;jump;Jump]" ..
-			"button_exit[3,2;2,1;calculate;Calculate]" ..
-			"list[current_player;main;0,5;8,4;]")
+		meta:set_int("x", 0)
+		meta:set_int("y", 50)
+		meta:set_int("z", 0)
+		meta:set_int("radius", 5)
+
+		local inv = meta:get_inventory()
+		inv:set_size("main", 8*1)
+
+		update_formspec(meta)
 	end,
+
+	can_dig = function(pos,player)
+		local meta = minetest.get_meta(pos);
+		local inv = meta:get_inventory()
+		return inv:is_empty("main")
+	end,
+
 	on_receive_fields = function(pos, formname, fields, sender)
 
 		local x = tonumber(fields.x);
@@ -90,7 +142,12 @@ minetest.register_node("jumpdrive:engine", {
 		local z = tonumber(fields.z);
 		local radius = tonumber(fields.radius);
 
-		if x == nil or y == nil or z == nil or radius == nil then
+		if x == nil or y == nil or z == nil or radius == nil or radius < 1 then
+			return
+		end
+
+		if math.abs(x) > 100 or math.abs(y) > 100 or math.abs(z) > 100 or radius > 20 then
+			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-range=100 max-radius=20")
 			return
 		end
 
@@ -98,8 +155,16 @@ minetest.register_node("jumpdrive:engine", {
 		local targetPos = add_pos(pos, offsetPos)
 		local meta = minetest.get_meta(pos)
 
+		-- update coords
+		meta:set_int("x", x)
+		meta:set_int("y", y)
+		meta:set_int("z", z)
+		meta:set_int("radius", radius)
+		update_formspec(meta)
+
 		if fields.jump then
 
+			-- TODO: http://dev.minetest.net/is_protected
 			if minetest.get_modpath("protector") and not protector.can_dig(radius, targetPos, sender, true, 0) then
 				meta:set_string("infotext", "Jump aborted: proteced area!")
 				return
@@ -112,13 +177,17 @@ minetest.register_node("jumpdrive:engine", {
 				return
 			end
 
-			execute_jump(pos, offsetPos, radius)
+			if can_jump(pos, meta) then
+				deduct_jump_cost(pos, meta)
+				execute_jump(pos, offsetPos, radius)
+			else
+				minetest.chat_send_player(sender:get_player_name(), "Not enough fuel for jump, expected 1 mese cristal")
+			end
 
-			print("Jump complete!")
 		end
 
 		if fields.calculate then
-			calculate_cost(pos, offsetPos, radius)
+			calculate_cost(pos, offsetPos, radius, sender)
 		end
 		
 	end
