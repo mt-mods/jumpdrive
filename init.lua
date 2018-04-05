@@ -1,4 +1,10 @@
 
+local jumpdrive = {}
+jumpdrive.config = {
+	powerstorage=100000,
+	powerrequirement=2500
+}
+
 -- add a position offset
 local add_pos = function(pos1, pos2)
 	return {x=pos1.x+pos2.x, y=pos1.y+pos2.y, z=pos1.z+pos2.z}
@@ -113,14 +119,21 @@ local execute_jump = function(pos, player)
 		return
 	end
 
-	-- check inventory
-	local inv = meta:get_inventory()
-	if not inv:contains_item("main", {name="default:mese_crystal", count=1}) then
-		minetest.chat_send_player(playername, "Not enough fuel for jump, expected 1 mese cristal")
-		return
-	end
+	if meta:get_int("powerstorage") < jumpdrive.config.powerstorage then
 
-	inv:remove_item("main", {name="default:mese_crystal", count=1})
+		-- check inventory
+		local inv = meta:get_inventory()
+		if not inv:contains_item("main", {name="default:mese_crystal", count=1}) then
+			minetest.chat_send_player(playername, "Not enough fuel for jump, expected 1 mese cristal")
+			return
+		end
+
+		-- use crystals
+		inv:remove_item("main", {name="default:mese_crystal", count=1})
+	else
+		-- use power
+		meta:set_int("powerstorage", 0)
+	end
 
 	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
 	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
@@ -158,7 +171,7 @@ minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
 	tiles = {"jumpdrive.png"},
 	light_source = 13,
-	groups = {cracky=3,oddly_breakable_by_hand=3},
+	groups = {cracky=3,oddly_breakable_by_hand=3,technic_machine = 1, technic_hv = 1},
 	drop = "jumpdrive:engine",
 	sounds = default.node_sound_glass_defaults(),
 
@@ -167,6 +180,9 @@ minetest.register_node("jumpdrive:engine", {
 			execute_jump(pos)
 		end
 	}},
+
+	connects_to = {"group:technic_hv_cable"},
+	connect_sides = {"bottom", "top", "left", "right", "front", "back"},
 
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
@@ -179,11 +195,36 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("y", 50)
 		meta:set_int("z", 0)
 		meta:set_int("radius", 5)
+		meta:set_int("powerstorage", 0)
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8*1)
 
+		if minetest.get_modpath("technic") then
+			meta:set_int("HV_EU_input", 0)
+			meta:set_int("HV_EU_demand", 0)
+		end
+
 		update_formspec(meta)
+	end,
+
+	technic_run = function(pos, node)
+		local meta = minetest.get_meta(pos)
+		local eu_input = meta:get_int("HV_EU_input")
+		local demand = meta:get_int("HV_EU_demand")
+		local store = meta:get_int("powerstorage")
+
+		meta:set_string("infotext", "Power: " .. eu_input .. "/" .. demand .. " Store: " .. store)
+
+		if store < jumpdrive.config.powerstorage then
+			-- charge
+			meta:set_int("HV_EU_demand", jumpdrive.config.powerrequirement)
+			store = store + eu_input
+			meta:set_int("powerstorage", store)
+		else
+			-- charged
+			meta:set_int("HV_EU_demand", 0)
+		end
 	end,
 
 	can_dig = function(pos,player)
@@ -236,6 +277,10 @@ minetest.register_node("jumpdrive:engine", {
 		
 	end
 })
+
+if minetest.get_modpath("technic") then
+	technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
+end
 
 minetest.register_craft({
 	output = 'jumpdrive:engine',
