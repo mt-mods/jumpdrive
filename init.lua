@@ -146,7 +146,7 @@ local execute_jump = function(pos, player)
 		move_block(oldPos, newPos)
 	end)
 
-	local all_objects = minetest.get_objects_inside_radius(pos, radius);
+	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 	for _,obj in ipairs(all_objects) do
 		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
 	end	
