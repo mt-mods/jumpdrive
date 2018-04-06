@@ -1,8 +1,22 @@
 
 local jumpdrive = {}
 jumpdrive.config = {
-	powerstorage=100000,
-	powerrequirement=2500
+	-- technic EU storage value
+	powerstorage = 100000,
+
+	-- charge value in EU
+	powerrequirement = 2500,
+
+	-- allow jumping into material
+	allow_jumping_into_material = minetest.setting_getbool("jumpdrive_allow_jumping_into_material") or false,
+
+	-- fuel item and count
+	power_item = "default:mese_crystal",
+	power_item_count = 1,
+
+	-- allowed distances
+	max_distance = 200,
+	max_radius = 10
 }
 
 -- add a position offset
@@ -12,18 +26,21 @@ end
 
 -- move single block and meta
 local move_block = function(from, to)
-	local node = minetest.get_node(from) -- Obtain current node
+	local node = minetest.get_node(from)
+	local newNode = minetest.get_node(to)
 
 	-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
 
-	if node.name == "air" or node.name == "ignore" then
+	local is_from_passable = node.name == "air" or node.name == "ignore"
+	local is_to_passable = newNode.name == "air"
+
+	if is_from_passable and is_to_passable then
 		return
 	end
 
 	local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
 	minetest.remove_node(from) -- Remove current node
 
-	local newNode = minetest.get_node(to)
 	if newNode.name == "ignore" then
 		minetest.get_voxel_manip():read_from_map(to, to)
 		newNode = minetest.get_node(to)
@@ -31,6 +48,8 @@ local move_block = function(from, to)
 
 	minetest.set_node(to, node) -- Move node to new position
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
+
+	
 end
 
 local calculate_cost = function(pos, offsetPos, radius, sender)
@@ -90,7 +109,7 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 	cube_iterate(pos, radius, function(ipos)
 		local newPos = add_pos(ipos, offsetPos)
 		local node = minetest.get_node(newPos)
-		local is_passable = node.name == "air" or node.name == "ignore"
+		local is_passable = jumpdrive.config.allow_jumping_into_material or node.name == "air" or node.name == "ignore"
 
 		if not is_passable or minetest.is_protected(ipos, playername) or minetest.is_protected(newPos, playername) then
 			obstructed = true
@@ -124,13 +143,16 @@ local execute_jump = function(pos, player)
 
 		-- check inventory
 		local inv = meta:get_inventory()
-		if not inv:contains_item("main", {name="default:mese_crystal", count=1}) then
-			minetest.chat_send_player(playername, "Not enough fuel for jump, expected 1 mese cristal")
+		local power_item = jumpdrive.config.power_item
+		local power_item_count = jumpdrive.config.power_item_count
+
+		if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
+			minetest.chat_send_player(playername, "Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item)
 			return
 		end
 
 		-- use crystals
-		inv:remove_item("main", {name="default:mese_crystal", count=1})
+		inv:remove_item("main", {name=power_item, count=power_item_count})
 	else
 		-- use power
 		meta:set_int("powerstorage", 0)
@@ -245,8 +267,11 @@ minetest.register_node("jumpdrive:engine", {
 			return
 		end
 
-		if math.abs(x) > 100 or math.abs(y) > 100 or math.abs(z) > 100 or radius > 20 then
-			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-range=100 max-radius=20")
+		local max_distance = jumpdrive.config.max_distance
+		local max_radius = jumpdrive.config.max_radius
+
+		if math.abs(x) > max_distance or math.abs(y) > max_distance or math.abs(z) > max_distance or radius > max_radius then
+			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-range=" .. max_distance .. " max-radius=" .. max_radius)
 			return
 		end
 
