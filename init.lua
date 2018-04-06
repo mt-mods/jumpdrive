@@ -20,7 +20,8 @@ jumpdrive = {
 	}
 }
 
-dofile(minetest.get_modpath("jumpdrive").."/jumpdrive.lua")
+dofile(minetest.get_modpath("jumpdrive").."/marker.lua")
+dofile(minetest.get_modpath("jumpdrive").."/engine.lua")
 dofile(minetest.get_modpath("jumpdrive").."/travelnet_compat.lua")
 
 print("[OK] Jumpdrive")

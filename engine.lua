@@ -288,6 +288,7 @@ minetest.register_node("jumpdrive:engine", {
 
 		if fields.calculate then
 			calculate_cost(pos, offsetPos, radius, sender)
+			jumpdrive.show_marker(targetPos, radius)
 		end
 		
 	end
