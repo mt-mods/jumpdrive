@@ -32,9 +32,7 @@ local move_block = function(from, to)
 	minetest.set_node(to, node) -- Move node to new position
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
 
-	newNode = minetest.get_node(to)
-
-	if has_travelnet_mod and newNode.name == "travelnet:travelnet" then
+	if has_travelnet_mod and node.name == "travelnet:travelnet" then
 		-- rewire travelnet target
 		jumpdrive.travelnet_compat(to)
 	end
@@ -103,6 +101,8 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 			obstructed = true
 			return false
 		end
+
+		return true
 	end)
 	
 	return obstructed
@@ -154,6 +154,7 @@ local execute_jump = function(pos, player)
 	cube_iterate(pos, radius, function(oldPos)
 		local newPos = add_pos(oldPos, offsetPos)
 		move_block(oldPos, newPos)
+		return true
 	end)
 
 	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
