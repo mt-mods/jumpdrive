@@ -32,6 +32,8 @@ local move_block = function(from, to)
 	minetest.set_node(to, node) -- Move node to new position
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
 
+	newNode = minetest.get_node(to)
+
 	if has_travelnet_mod and newNode.name == "travelnet:travelnet" then
 		-- rewire travelnet target
 		jumpdrive.travelnet_compat(to)
