@@ -24,11 +24,6 @@ local move_block = function(from, to)
 	local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
 	minetest.remove_node(from) -- Remove current node
 
-	if newNode.name == "ignore" then
-		minetest.get_voxel_manip():read_from_map(to, to)
-		newNode = minetest.get_node(to)
-	end
-
 	minetest.set_node(to, node) -- Move node to new position
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
 
@@ -95,7 +90,13 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 	cube_iterate(pos, radius, function(ipos)
 		local newPos = add_pos(ipos, offsetPos)
 		local node = minetest.get_node(newPos)
-		local is_passable = jumpdrive.config.allow_jumping_into_material or node.name == "air" or node.name == "ignore"
+
+		if node.name == "ignore" then
+			minetest.get_voxel_manip():read_from_map(newPos, newPos)
+			node = minetest.get_node(newPos)
+		end
+
+		local is_passable = jumpdrive.config.allow_jumping_into_material or node.name == "air"
 
 		if not is_passable or minetest.is_protected(ipos, playername) or minetest.is_protected(newPos, playername) then
 			obstructed = true
@@ -111,7 +112,8 @@ end
 
 -- execute whole jump
 local execute_jump = function(pos, player)
-
+	local start = os.clock()
+	
 	local offsetPos = get_offset_pos(pos)
 	local radius = get_radius(pos)
 	local targetPos = add_pos(pos, offsetPos)
@@ -121,6 +123,14 @@ local execute_jump = function(pos, player)
 	if player ~= nil then
 		playername = player:get_player_name()
 	end
+
+
+	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
+	minetest.get_voxel_manip():read_from_map(pos1, pos2)
+	minetest.get_voxel_manip():read_from_map(pos2, pos1)
+
 
 	if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
 		minetest.chat_send_player(playername, "Jump-target is obstructed!")
@@ -146,11 +156,6 @@ local execute_jump = function(pos, player)
 		meta:set_int("powerstorage", 0)
 	end
 
-	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
-	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
-
-	minetest.get_voxel_manip():read_from_map(pos1, pos2)
-
 	cube_iterate(pos, radius, function(oldPos)
 		local newPos = add_pos(oldPos, offsetPos)
 		move_block(oldPos, newPos)
@@ -159,10 +164,13 @@ local execute_jump = function(pos, player)
 
 	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 	for _,obj in ipairs(all_objects) do
+		-- TODO check if obj pos in cube range
 		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
-	end	
+	end
+
+	local diff = os.clock() - start
 	
-	minetest.chat_send_player(playername, "Jump executed!")
+	minetest.chat_send_player(playername, "Jump executed in " .. diff .. " s")
 end
 
 
