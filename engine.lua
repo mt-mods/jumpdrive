@@ -164,9 +164,10 @@ local update_formspec = function(meta)
 		"field[4,1;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
 		"field[6,1;2,1;radius;Radius;" .. meta:get_int("radius") .. "]" ..
 
-		"button_exit[1,2;2,1;jump;Jump]" ..
-		"button_exit[3,2;2,1;calculate;Calculate]" ..
-		"button_exit[5,2;2,1;save;Save]" ..
+		"button_exit[0,2;2,1;jump;Jump]" ..
+		"button_exit[2,2;2,1;show;Show]" ..
+		"button_exit[4,2;2,1;save;Save]" ..
+		"button[6,2;2,1;reset;Reset]" ..
 
 		"list[context;main;0,3;8,1;]" ..
 
@@ -232,6 +233,19 @@ local read_from_book = function(pos)
 		inv:add_item("books", stack)
 	end
 end
+
+local reset_coordinates = function(pos)
+	local meta = minetest.get_meta(pos)
+
+	meta:set_int("x", pos.x)
+	meta:set_int("y", pos.y)
+	meta:set_int("z", pos.z)
+
+	-- update form
+	update_formspec(meta)
+
+end
+
 
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
@@ -307,6 +321,11 @@ minetest.register_node("jumpdrive:engine", {
 			return
 		end
 
+		if fields.reset then
+			reset_coordinates(pos)
+			return
+		end
+
 		if fields.write_book then
 			write_to_book(pos, sender)
 			return
@@ -348,9 +367,10 @@ minetest.register_node("jumpdrive:engine", {
 			execute_jump(pos, sender)
 		end
 
-		if fields.calculate then
+		if fields.show then
 			local targetPos = get_meta_pos(pos)
-			jumpdrive.show_marker(targetPos, radius)
+			jumpdrive.show_marker(targetPos, radius, "red")
+			jumpdrive.show_marker(pos, radius, "green")
 		end
 		
 	end
