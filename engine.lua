@@ -192,7 +192,7 @@ local write_to_book = function(pos, sender)
 		data.owner = sender:get_player_name()
 		data.title = "Jumpdrive coordinates"
 		data.description = "Jumpdrive coordiates"
-		data.text = "1,2,3"
+		data.text = minetest.serialize(get_meta_pos(pos))
 		data.page = 1
 		data.page_max = 1
 
@@ -219,8 +219,11 @@ local read_from_book = function(pos)
 		local stackMeta = stack:get_meta()
 
 		local text = stackMeta:get_string("text")
-		-- TODO parse text
-		print(text)
+		local data = minetest.deserialize(text)
+		
+		meta:set_int("x", data.x)
+		meta:set_int("y", data.y)
+		meta:set_int("z", data.z)
 
 		-- update form
 		update_formspec(meta)
