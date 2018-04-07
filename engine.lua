@@ -163,9 +163,11 @@ local update_formspec = function(meta)
 		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
 		"field[4,1;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
 		"field[6,1;2,1;radius;Radius;" .. meta:get_int("radius") .. "]" ..
+
 		"button_exit[1,2;2,1;jump;Jump]" ..
 		"button_exit[3,2;2,1;calculate;Calculate]" ..
 		"button_exit[5,2;2,1;save;Save]" ..
+
 		"list[context;main;0,3;8,1;]" ..
 
 		"button[0,4;3,1;write_book;Write to book]" ..
@@ -175,11 +177,37 @@ local update_formspec = function(meta)
 		"list[current_player;main;0,5;8,4;]")
 end
 
-local write_to_book = function(pos)
+local write_to_book = function(pos, sender)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 
-	print(meta)
+	if inv:contains_item("books", {name="default:book", count=1}) then
+		local stack = inv:remove_item("books", {name="default:book", count=1})
+
+		local new_stack = ItemStack("default:book_written")
+		local stackMeta = new_stack:get_meta()
+
+		local data = {}
+
+		data.owner = sender:get_player_name()
+		data.title = "Jumpdrive coordinates"
+		data.description = "Jumpdrive coordiates"
+		data.text = "1,2,3"
+		data.page = 1
+		data.page_max = 1
+
+		new_stack:get_meta():from_table({ fields = data })
+
+		if inv:room_for_item("books", new_stack) then
+			-- put written book back
+			inv:add_item("books", new_stack)
+		else
+			-- put back old stack
+			inv:add_item("books", stack)
+		end
+
+	end
+
 end
 
 local read_from_book = function(pos)
@@ -189,11 +217,13 @@ local read_from_book = function(pos)
 	if inv:contains_item("books", {name="default:book_written", count=1}) then
 		local stack = inv:remove_item("books", {name="default:book_written", count=1})
 		local stackMeta = stack:get_meta()
-		print(stackMeta)
 
 		local text = stackMeta:get_string("text")
-
+		-- TODO parse text
 		print(text)
+
+		-- update form
+		update_formspec(meta)
 
 		-- put book back
 		inv:add_item("books", stack)
@@ -264,7 +294,7 @@ minetest.register_node("jumpdrive:engine", {
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
-		return inv:is_empty("main")
+		return inv:is_empty("main") and inv:is_empty("books")
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
@@ -275,7 +305,7 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		if fields.write_book then
-			write_to_book(pos)
+			write_to_book(pos, sender)
 			return
 		end
 
