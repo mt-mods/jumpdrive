@@ -158,7 +158,7 @@ end
 
 
 local update_formspec = function(meta)
-	meta:set_string("formspec", "size[8,9;]" ..
+	meta:set_string("formspec", "size[8,10;]" ..
 		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
 		"field[4,1;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
@@ -167,7 +167,37 @@ local update_formspec = function(meta)
 		"button_exit[3,2;2,1;calculate;Calculate]" ..
 		"button_exit[5,2;2,1;save;Save]" ..
 		"list[context;main;0,3;8,1;]" ..
+
+		"button[0,4;3,1;write_book;Write to book]" ..
+		"button[5,4;3,1;read_book;Read from book]" ..
+		"list[context;books;3,4;2,1;]" ..
+
 		"list[current_player;main;0,5;8,4;]")
+end
+
+local write_to_book = function(pos)
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+
+	print(meta)
+end
+
+local read_from_book = function(pos)
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+
+	if inv:contains_item("books", {name="default:book_written", count=1}) then
+		local stack = inv:remove_item("books", {name="default:book_written", count=1})
+		local stackMeta = stack:get_meta()
+		print(stackMeta)
+
+		local text = stackMeta:get_string("text")
+
+		print(text)
+
+		-- put book back
+		inv:add_item("books", stack)
+	end
 end
 
 minetest.register_node("jumpdrive:engine", {
@@ -201,7 +231,8 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("powerstorage", 0)
 
 		local inv = meta:get_inventory()
-		inv:set_size("main", 8*1)
+		inv:set_size("main", 8)
+		inv:set_size("books", 2)
 
 		if has_technic_mod then
 			meta:set_int("HV_EU_input", 0)
@@ -237,6 +268,16 @@ minetest.register_node("jumpdrive:engine", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
+
+		if fields.read_book then
+			read_from_book(pos)
+			return
+		end
+
+		if fields.write_book then
+			write_to_book(pos)
+			return
+		end
 
 		local x = tonumber(fields.x);
 		local y = tonumber(fields.y);
