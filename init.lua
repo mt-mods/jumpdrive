@@ -14,8 +14,7 @@ jumpdrive = {
 		power_item = "default:mese_crystal",
 		power_item_count = 1,
 
-		-- allowed distances
-		max_distance = 2000,
+		-- allowed radius
 		max_radius = 10
 	}
 }

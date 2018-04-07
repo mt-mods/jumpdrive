@@ -33,19 +33,6 @@ local move_block = function(from, to)
 	end
 end
 
-local calculate_cost = function(pos, offsetPos, radius, sender)
-	local meta = minetest.get_meta(pos)
-
-	local diameter = radius * 2
-	local blocks = math.pow(diameter, 3)
-
-	-- TODO: pow/sqrt
-	local distance = math.abs(offsetPos.x) + math.abs(offsetPos.y) + math.abs(offsetPos.z)
-
-	local cost = blocks * distance * 1.0
-
-	minetest.chat_send_player(sender:get_player_name(), "Jump: " .. blocks .. " blocks")
-end
 
 -- iterate over a cube area with pos and radius
 local cube_iterate = function(pos, radius, callback)
@@ -71,8 +58,8 @@ local cube_iterate = function(pos, radius, callback)
 
 end
 
--- get offset pos object from pos
-local get_offset_pos = function(pos)
+-- get pos object from pos
+local get_meta_pos = function(pos)
 	local meta = minetest.get_meta(pos);
 	return {x=meta:get_int("x"), y=meta:get_int("y"), z=meta:get_int("z")}
 end
@@ -114,23 +101,19 @@ end
 local execute_jump = function(pos, player)
 	local start = os.clock()
 	
-	local offsetPos = get_offset_pos(pos)
 	local radius = get_radius(pos)
-	local targetPos = add_pos(pos, offsetPos)
+	local targetPos = get_meta_pos(pos)
+	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
 	local meta = minetest.get_meta(pos)
-	local playername = meta:get_string("owner")	
+	local playername = meta:get_string("owner")
 
 	if player ~= nil then
 		playername = player:get_player_name()
 	end
 
 
-	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
-	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
-
-	minetest.get_voxel_manip():read_from_map(pos1, pos2)
-	minetest.get_voxel_manip():read_from_map(pos2, pos1)
-
+	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
+	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
 	if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
 		minetest.chat_send_player(playername, "Jump-target is obstructed!")
@@ -211,9 +194,9 @@ minetest.register_node("jumpdrive:engine", {
 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_int("x", 0)
-		meta:set_int("y", 50)
-		meta:set_int("z", 0)
+		meta:set_int("x", pos.x)
+		meta:set_int("y", pos.y)
+		meta:set_int("z", pos.z)
 		meta:set_int("radius", 5)
 		meta:set_int("powerstorage", 0)
 
@@ -264,24 +247,21 @@ minetest.register_node("jumpdrive:engine", {
 			return
 		end
 
-		local max_distance = jumpdrive.config.max_distance
 		local max_radius = jumpdrive.config.max_radius
 
-		if math.abs(x) > max_distance or math.abs(y) > max_distance or math.abs(z) > max_distance or radius > max_radius then
-			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-range=" .. max_distance .. " max-radius=" .. max_radius)
+		if radius > max_radius then
+			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-radius=" .. max_radius)
 			return
 		end
 
 		local minjumpdistance = radius * 2
 
-		if math.abs(x) <= minjumpdistance and math.abs(y) <= minjumpdistance and math.abs(z) <= minjumpdistance then
+		if math.abs(x - pos.x) <= minjumpdistance and math.abs(y - pos.y) <= minjumpdistance and math.abs(z - pos.z) <= minjumpdistance then
 			minetest.chat_send_player(sender:get_player_name(), "Jump too short")
 			return
 		end
 
-		local offsetPos = {x=x, y=y, z=z}
-		local targetPos = add_pos(pos, offsetPos)
-		local meta = minetest.get_meta(pos)
+		local meta = minetest.get_meta(pos);
 
 		-- update coords
 		meta:set_int("x", x)
@@ -295,7 +275,7 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		if fields.calculate then
-			calculate_cost(pos, offsetPos, radius, sender)
+			local targetPos = get_meta_pos(pos)
 			jumpdrive.show_marker(targetPos, radius)
 		end
 		
