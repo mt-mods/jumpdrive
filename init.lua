@@ -15,7 +15,7 @@ jumpdrive = {
 		power_item_count = 1,
 
 		-- allowed radius
-		max_radius = 10
+		max_radius = 20
 	}
 }
 
