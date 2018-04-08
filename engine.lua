@@ -139,16 +139,32 @@ local execute_jump = function(pos, player)
 		meta:set_int("powerstorage", 0)
 	end
 
+	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
+
+	-- set gravity to 0 for jump
+	for _,obj in ipairs(all_objects) do
+		if obj.is_player ~= nil and obj:is_player() then
+			local phys = obj:get_physics_override()
+			phys.gravity = 0
+			obj:set_physics_override(phys)
+		end
+	end
+
 	cube_iterate(pos, radius, function(oldPos)
 		local newPos = add_pos(oldPos, offsetPos)
 		move_block(oldPos, newPos)
 		return true
 	end)
 
-	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
+	-- move object and restore gravity
 	for _,obj in ipairs(all_objects) do
-		-- TODO check if obj pos in cube range
 		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
+		if obj.is_player ~= nil and obj:is_player() then
+			local phys = obj:get_physics_override()
+			phys.gravity = 1
+			obj:set_physics_override(phys)
+		end
+
 	end
 
 	local diff = os.clock() - start
