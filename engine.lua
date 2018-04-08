@@ -168,6 +168,23 @@ local execute_jump = function(pos, player)
 	end
 
 	local diff = os.clock() - start
+
+	minetest.add_particlespawner({
+		amount = 200,
+		time = 2,
+		minpos = targetPos,
+		maxpos = {x=targetPos.x, y=targetPos.y+5, z=targetPos.z},
+		minvel = {x = -2, y = -2, z = -2},
+		maxvel = {x = 2, y = 2, z = 2},
+		minacc = {x = 0, y = 0, z = 0},
+		maxacc = {x = 0, y = -5, z = 0},
+		minexptime = 0.1,
+		maxexptime = 5,
+		minsize = 1,
+		maxsize = 1,
+		texture = "marker_blue.png",
+		glow = 0,
+	})
 	
 	minetest.chat_send_player(playername, "Jump executed in " .. diff .. " s")
 end
