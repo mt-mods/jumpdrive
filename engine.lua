@@ -23,8 +23,7 @@ local move_block = function(from, to)
 	end
 
 	local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
-	minetest.remove_node(from) -- Remove current node
-	-- TODO: perf: minetest.set_node(from, {name="air"})
+	minetest.set_node(from, {name="air"}) -- perf reason (faster)
 
 	minetest.set_node(to, node) -- Move node to new position
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
