@@ -1,6 +1,7 @@
 
 local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_technic_mod = minetest.get_modpath("technic")
+local has_elevator_mod = minetest.get_modpath("elevator")
 
 -- add a position offset
 local add_pos = function(pos1, pos2)
@@ -23,6 +24,7 @@ local move_block = function(from, to)
 
 	local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
 	minetest.remove_node(from) -- Remove current node
+	-- TODO: perf: minetest.set_node(from, {name="air"})
 
 	minetest.set_node(to, node) -- Move node to new position
 	minetest.get_meta(to):from_table(meta) -- Set metadata of new node
@@ -139,35 +141,53 @@ local execute_jump = function(pos, player)
 		meta:set_int("powerstorage", 0)
 	end
 
+
+	minetest.log("action", "[jumpdrive] jumping to " .. targetPos.x .. "/" .. targetPos.y .. "/" .. targetPos.z .. " with radius " .. radius)
+
 	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 
 	-- set gravity to 0 for jump
 	for _,obj in ipairs(all_objects) do
 		if obj.is_player ~= nil and obj:is_player() then
+			local pos = obj:get_pos()
+			minetest.log("action", "[jumpdrive] setting zero-gravity for jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
 			local phys = obj:get_physics_override()
 			phys.gravity = 0
 			obj:set_physics_override(phys)
 		end
 	end
 
+	-- move blocks
 	cube_iterate(pos, radius, function(oldPos)
 		local newPos = add_pos(oldPos, offsetPos)
 		move_block(oldPos, newPos)
 		return true
 	end)
 
-	-- move object and restore gravity
+	if has_elevator_mod then
+		-- find potential elevators
+		local elevator_motors = minetest.find_nodes_in_area(pos1, pos2, "elevator:motor")
+
+		for _,pos in ipairs(elevator_motors) do
+			-- delegate to compat
+			-- TODO: compat framework/plugins?
+			jumpdrive.elevator_compat(pos)
+		end
+	end
+
+	-- move objects and restore gravity
 	for _,obj in ipairs(all_objects) do
 		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
 		if obj.is_player ~= nil and obj:is_player() then
+			local pos = obj:get_pos()
+			minetest.log("action", "[jumpdrive] resetting gravity after jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
+
 			local phys = obj:get_physics_override()
 			phys.gravity = 1
 			obj:set_physics_override(phys)
 		end
 
 	end
-
-	local diff = os.clock() - start
 
 	minetest.add_particlespawner({
 		amount = 200,
@@ -183,8 +203,10 @@ local execute_jump = function(pos, player)
 		minsize = 1,
 		maxsize = 1,
 		texture = "marker_blue.png",
-		glow = 0,
+		glow = 5,
 	})
+
+	local diff = os.clock() - start
 	
 	minetest.chat_send_player(playername, "Jump executed in " .. diff .. " s")
 end
@@ -255,9 +277,21 @@ local read_from_book = function(pos)
 		local text = stackMeta:get_string("text")
 		local data = minetest.deserialize(text)
 		
-		meta:set_int("x", data.x)
-		meta:set_int("y", data.y)
-		meta:set_int("z", data.z)
+		if data == nil then
+			return
+		end
+
+		local x = tonumber(data.x)
+		local y = tonumber(data.y)
+		local z = tonumber(data.z)
+
+		if x == nil or y == nil or z == nil then
+			return
+		end
+
+		meta:set_int("x", x)
+		meta:set_int("y", y)
+		meta:set_int("z", z)
 
 		-- update form
 		update_formspec(meta)
@@ -294,7 +328,7 @@ minetest.register_node("jumpdrive:engine", {
 		end
 	}},
 
-	connects_to = {"group:technic_hv_cable"},
+	connects_to = {"group:technic_hv_cable"}, -- TODO: MV/LV
 	connect_sides = {"bottom", "top", "left", "right", "front", "back"},
 
 	after_place_node = function(pos, placer)

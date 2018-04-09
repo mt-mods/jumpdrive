@@ -8,6 +8,7 @@ jumpdrive = {
 		powerrequirement = 2500,
 
 		-- allow jumping into material
+		-- TODO minetest.settings:
 		allow_jumping_into_material = minetest.setting_getbool("jumpdrive_allow_jumping_into_material") or false,
 
 		-- fuel item and count
@@ -19,8 +20,12 @@ jumpdrive = {
 	}
 }
 
-dofile(minetest.get_modpath("jumpdrive").."/marker.lua")
-dofile(minetest.get_modpath("jumpdrive").."/engine.lua")
-dofile(minetest.get_modpath("jumpdrive").."/travelnet_compat.lua")
+local MP = minetest.get_modpath("jumpdrive")
+
+dofile(MP.."/marker.lua")
+dofile(MP.."/common.lua")
+dofile(MP.."/engine.lua")
+dofile(MP.."/travelnet_compat.lua")
+dofile(MP.."/elevator_compat.lua")
 
 print("[OK] Jumpdrive")

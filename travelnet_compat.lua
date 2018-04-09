@@ -2,6 +2,7 @@ local has_travelnet_mod = minetest.get_modpath("travelnet")
 
 jumpdrive.travelnet_compat = function(pos)
 	local meta = minetest.get_meta(pos);
+	minetest.log("action", "[jumpdrive] Restoring travelnet @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
 
 	local owner_name = meta:get_string( "owner" );
 	local station_name = meta:get_string( "station_name" );
