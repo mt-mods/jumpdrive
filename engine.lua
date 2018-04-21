@@ -36,7 +36,6 @@ minetest.register_node("jumpdrive:engine", {
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
-		inv:set_size("books", 2)
 
 		if has_technic_mod then
 			meta:set_int("HV_EU_input", 0)
@@ -68,7 +67,7 @@ minetest.register_node("jumpdrive:engine", {
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
-		return inv:is_empty("main") and inv:is_empty("books")
+		return inv:is_empty("main")
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)

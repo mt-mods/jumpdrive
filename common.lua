@@ -227,7 +227,6 @@ jumpdrive.update_formspec = function(meta)
 
 		"button[0,4;3,1;write_book;Write to book]" ..
 		"button[5,4;3,1;read_book;Read from book]" ..
-		"list[context;books;3,4;2,1;]" ..
 
 		"list[current_player;main;0,5;8,4;]")
 end
@@ -236,8 +235,8 @@ jumpdrive.write_to_book = function(pos, sender)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 
-	if inv:contains_item("books", {name="default:book", count=1}) then
-		local stack = inv:remove_item("books", {name="default:book", count=1})
+	if inv:contains_item("main", {name="default:book", count=1}) then
+		local stack = inv:remove_item("main", {name="default:book", count=1})
 
 		local new_stack = ItemStack("default:book_written")
 		local stackMeta = new_stack:get_meta()
@@ -253,12 +252,12 @@ jumpdrive.write_to_book = function(pos, sender)
 
 		new_stack:get_meta():from_table({ fields = data })
 
-		if inv:room_for_item("books", new_stack) then
+		if inv:room_for_item("main", new_stack) then
 			-- put written book back
-			inv:add_item("books", new_stack)
+			inv:add_item("main", new_stack)
 		else
 			-- put back old stack
-			inv:add_item("books", stack)
+			inv:add_item("main", stack)
 		end
 
 	end
@@ -269,8 +268,8 @@ jumpdrive.read_from_book = function(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 
-	if inv:contains_item("books", {name="default:book_written", count=1}) then
-		local stack = inv:remove_item("books", {name="default:book_written", count=1})
+	if inv:contains_item("main", {name="default:book_written", count=1}) then
+		local stack = inv:remove_item("main", {name="default:book_written", count=1})
 		local stackMeta = stack:get_meta()
 
 		local text = stackMeta:get_string("text")
@@ -296,7 +295,7 @@ jumpdrive.read_from_book = function(pos)
 		jumpdrive.update_formspec(meta)
 
 		-- put book back
-		inv:add_item("books", stack)
+		inv:add_item("main", stack)
 	end
 end
 
