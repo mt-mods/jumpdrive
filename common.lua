@@ -164,14 +164,7 @@ jumpdrive.execute_jump = function(pos, player)
 	end)
 
 	if has_elevator_mod then
-		-- find potential elevators
-		local elevator_motors = minetest.find_nodes_in_area(pos1, pos2, "elevator:motor")
-
-		for _,pos in ipairs(elevator_motors) do
-			-- delegate to compat
-			-- TODO: compat framework/plugins?
-			jumpdrive.elevator_compat(pos)
-		end
+		jumpdrive.elevator_compat(pos1, pos2)
 	end
 
 	-- move objects and restore gravity
