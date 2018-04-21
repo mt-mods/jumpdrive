@@ -138,13 +138,16 @@ minetest.register_node("jumpdrive:engine", {
 		jumpdrive.update_formspec(meta)
 
 		if fields.jump then
+			local start = os.clock()
 			jumpdrive.execute_jump(pos, sender)
+
+			local diff = os.clock() - start	
+			minetest.chat_send_player(sender:get_player_name(), "Jump executed in " .. diff .. " s")
 		end
 
 		if fields.show then
-			local targetPos = jumpdrive.get_meta_pos(pos)
-			jumpdrive.show_marker(targetPos, radius, "red")
-			jumpdrive.show_marker(pos, radius, "green")
+			local stats = jumpdrive.simulate_jump(pos)
+			minetest.chat_send_player(sender:get_player_name(), "Jump-Stats: engine-count: " .. stats.enginecount)
 		end
 		
 	end

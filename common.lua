@@ -8,6 +8,11 @@ local add_pos = function(pos1, pos2)
 	return {x=pos1.x+pos2.x, y=pos1.y+pos2.y, z=pos1.z+pos2.z}
 end
 
+-- subtract a position offset
+local sub_pos = function(pos1, pos2)
+	return {x=pos1.x-pos2.x, y=pos1.y-pos2.y, z=pos1.z-pos2.z}
+end
+
 -- move single block and meta
 local move_block = function(from, to)
 	local node = minetest.get_node(from)
@@ -18,8 +23,21 @@ local move_block = function(from, to)
 	local is_from_passable = node.name == "air" or node.name == "ignore"
 	local is_to_passable = newNode.name == "air"
 
-	if is_from_passable and is_to_passable then
+	if is_from_passable then
 		return
+	end
+
+	-- check for other jumpdrives
+	if node.name == "jumpdrive:engine" then
+		-- check if cascade option is enabled
+		local meta = minetest.get_meta(from)
+		local cascade = meta:get_int("cascade")
+		local semaphore = meta:get_int("semaphore")
+
+		if cascade == 1 and semaphore == 0 then
+			minetest.log("action", "[jumpdrive] ignoring cascading drive @" .. from.x .. "/" .. from.y .. "/" .. from.z)
+			return
+		end
 	end
 
 	local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
@@ -65,8 +83,16 @@ jumpdrive.get_meta_pos = function(pos)
 	return {x=meta:get_int("x"), y=meta:get_int("y"), z=meta:get_int("z")}
 end
 
+-- set pos object from pos
+jumpdrive.set_meta_pos = function(pos, target)
+	local meta = minetest.get_meta(pos);
+	meta:set_int("x", target.x)
+	meta:set_int("y", target.y)
+	meta:set_int("z", target.z)
+end
+
 -- get offset from meta
-local get_radius = function(pos)
+jumpdrive.get_radius = function(pos)
 	local meta = minetest.get_meta(pos);
 	return meta:get_int("radius")
 end
@@ -98,11 +124,54 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 end
 
 
--- execute whole jump
-jumpdrive.execute_jump = function(pos, player)
-	local start = os.clock()
-	
-	local radius = get_radius(pos)
+jumpdrive.simulate_jump = function(pos, stats)
+	local targetPos = jumpdrive.get_meta_pos(pos)
+	local radius = jumpdrive.get_radius(pos)
+	local meta = minetest.get_meta(pos)
+
+	if stats == nil then
+		stats = { enginecount=0 }
+	end
+
+	stats.enginecount = stats.enginecount + 1;
+
+	jumpdrive.show_marker(targetPos, radius, "red")
+	jumpdrive.show_marker(pos, radius, "green")
+
+	-- recurse
+	meta:set_int("semaphore", 1)
+
+	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
+	local jumpdrives = minetest.find_nodes_in_area(pos1, pos2, "jumpdrive:engine")
+
+
+	for _,otherPos in ipairs(jumpdrives) do
+		local otherMeta = minetest.get_meta(otherPos)
+		if otherMeta:get_int("cascade") == 1 and otherMeta:get_int("semaphore") ~= 1 then
+			-- other drive is not self and cascade enabled
+			minetest.log("action", "[jumpdrive] Cascading to @ " .. otherPos.x .. "/" .. otherPos.y .. "/" .. otherPos.z)
+			
+			-- copy relative target-position to cascading engine
+			local deltaPos = sub_pos(otherPos, pos)
+			local relativeTarget = add_pos(targetPos, deltaPos)
+
+			jumpdrive.set_meta_pos(otherPos, relativeTarget)
+			jumpdrive.update_formspec(otherMeta)
+			jumpdrive.simulate_jump(otherPos, stats)
+		end
+
+	end
+
+	meta:set_int("semaphore", 0)
+
+	return stats
+end
+
+-- pre-flight check
+jumpdrive.preflight_check = function(pos, player)
+	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
 	local meta = minetest.get_meta(pos)
@@ -117,8 +186,7 @@ jumpdrive.execute_jump = function(pos, player)
 	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
 	if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
-		minetest.chat_send_player(playername, "Jump-target is obstructed!")
-		return
+		return {success=false, pos=pos, message="Jump-target is obstructed!"}
 	end
 
 	if meta:get_int("powerstorage") < jumpdrive.config.powerstorage then
@@ -129,8 +197,7 @@ jumpdrive.execute_jump = function(pos, player)
 		local power_item_count = jumpdrive.config.power_item_count
 
 		if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
-			minetest.chat_send_player(playername, "Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item)
-			return
+			return {success=false, pos=pos, message="Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item}
 		end
 
 		-- use crystals
@@ -140,8 +207,73 @@ jumpdrive.execute_jump = function(pos, player)
 		meta:set_int("powerstorage", 0)
 	end
 
+	-- recurse
+	meta:set_int("semaphore", 1)
+
+	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
+	local jumpdrives = minetest.find_nodes_in_area(pos1, pos2, "jumpdrive:engine")
+
+
+	for _,otherPos in ipairs(jumpdrives) do
+		local otherMeta = minetest.get_meta(otherPos)
+		if otherMeta:get_int("cascade") == 1 and otherMeta:get_int("semaphore") ~= 1 then
+			-- other drive is not self and cascade enabled
+			minetest.log("action", "[jumpdrive] [Preflight] Cascading to @ " .. otherPos.x .. "/" .. otherPos.y .. "/" .. otherPos.z)
+			
+			-- copy relative target-position to cascading engine
+			local deltaPos = sub_pos(otherPos, pos)
+			local relativeTarget = add_pos(targetPos, deltaPos)
+
+			jumpdrive.set_meta_pos(otherPos, relativeTarget)
+			jumpdrive.update_formspec(otherMeta)
+			local otherResult = jumpdrive.preflight_check(otherPos, player)
+
+			if not otherResult.success then
+				-- fail fast
+				meta:set_int("semaphore", 0)
+				return otherResult
+			end
+		end
+
+	end
+
+
+	meta:set_int("semaphore", 0)
+
+	return {success=true}
+end
+
+-- execute whole jump
+jumpdrive.execute_jump = function(pos, player, skipCheck)
+	
+	local radius = jumpdrive.get_radius(pos)
+	local targetPos = jumpdrive.get_meta_pos(pos)
+	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
+	local meta = minetest.get_meta(pos)
+	local playername = meta:get_string("owner")
+
+	if player ~= nil then
+		playername = player:get_player_name()
+	end
+
+
+	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
+	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+
+	-- preflight check
+	if skipCheck == nil or not skipCheck then
+		local preflight = jumpdrive.preflight_check(pos, player)
+		if not preflight.success then
+			minetest.chat_send_player(playername, preflight.message .. "@".. preflight.pos.x .. "," .. preflight.pos.y .. "," .. preflight.pos.z .. ")")
+			return
+		end
+	end
+
 
 	minetest.log("action", "[jumpdrive] jumping to " .. targetPos.x .. "/" .. targetPos.y .. "/" .. targetPos.z .. " with radius " .. radius)
+	meta:set_int("semaphore", 1)
 
 	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 
@@ -198,9 +330,22 @@ jumpdrive.execute_jump = function(pos, player)
 		glow = 5,
 	})
 
-	local diff = os.clock() - start
-	
-	minetest.chat_send_player(playername, "Jump executed in " .. diff .. " s")
+	-- recurse
+	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
+	local jumpdrives = minetest.find_nodes_in_area(pos1, pos2, "jumpdrive:engine")
+
+	for _,otherPos in ipairs(jumpdrives) do
+		local otherMeta = minetest.get_meta(otherPos)
+
+		minetest.log("action", "[jumpdrive] [Execute-Jump] Cascading to @ " .. otherPos.x .. "/" .. otherPos.y .. "/" .. otherPos.z)
+		jumpdrive.execute_jump(otherPos, player, true)
+	end
+
+
+	meta:set_int("semaphore", 0)
+
 end
 
 
