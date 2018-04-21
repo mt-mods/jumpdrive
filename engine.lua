@@ -33,6 +33,7 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("z", pos.z)
 		meta:set_int("radius", 5)
 		meta:set_int("powerstorage", 0)
+		meta:set_int("cascade", 0)
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
@@ -72,6 +73,23 @@ minetest.register_node("jumpdrive:engine", {
 
 	on_receive_fields = function(pos, formname, fields, sender)
 
+		local meta = minetest.get_meta(pos);
+
+		if fields.toggle_cascade then
+			local cascade = meta:get_int("cascade");
+			if cascade == 0 or cascade == nil then
+				cascade = 1
+			else
+				cascade = 0
+			end
+
+			meta:set_int("cascade", cascade)
+
+			-- update form
+			jumpdrive.update_formspec(meta)
+			return
+		end
+
 		if fields.read_book then
 			jumpdrive.read_from_book(pos)
 			return
@@ -110,7 +128,7 @@ minetest.register_node("jumpdrive:engine", {
 			return
 		end
 
-		local meta = minetest.get_meta(pos);
+
 
 		-- update coords
 		meta:set_int("x", x)

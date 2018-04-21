@@ -212,6 +212,11 @@ end
 
 
 jumpdrive.update_formspec = function(meta)
+	local cascade = "OFF"
+	if meta:get_int("cascade") == 1 then
+		cascade = "ON"
+	end
+
 	meta:set_string("formspec", "size[8,10;]" ..
 		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
@@ -225,8 +230,9 @@ jumpdrive.update_formspec = function(meta)
 
 		"list[context;main;0,3;8,1;]" ..
 
-		"button[0,4;3,1;write_book;Write to book]" ..
-		"button[5,4;3,1;read_book;Read from book]" ..
+		"button[0,4;2,1;write_book;Write to book]" ..
+		"button[2,4;2,1;read_book;Read from book]" ..
+		"button[4,4;4,1;toggle_cascade;Cascade: <" .. cascade .. ">]" ..
 
 		"list[current_player;main;0,5;8,4;]")
 end
