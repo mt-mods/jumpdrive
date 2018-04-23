@@ -7,10 +7,6 @@ jumpdrive = {
 		-- charge value in EU
 		powerrequirement = 2500,
 
-		-- allow jumping into material
-		-- TODO minetest.settings:
-		allow_jumping_into_material = minetest.setting_getbool("jumpdrive_allow_jumping_into_material") or false,
-
 		-- fuel item and count
 		power_item = "default:mese_crystal",
 		power_item_count = 1,
