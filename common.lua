@@ -346,13 +346,13 @@ jumpdrive.execute_jump = function(originPos, player)
 			maxpos = {x=targetPos.x, y=targetPos.y+5, z=targetPos.z},
 			minvel = {x = -2, y = -2, z = -2},
 			maxvel = {x = 2, y = 2, z = 2},
-			minacc = {x = 0, y = 0, z = 0},
-			maxacc = {x = 0, y = -5, z = 0},
+			minacc = {x = -3, y = -3, z = -3},
+			maxacc = {x = 3, y = 3, z = 3},
 			minexptime = 0.1,
 			maxexptime = 5,
 			minsize = 1,
 			maxsize = 1,
-			texture = "marker_blue.png",
+			texture = "spark.png",
 			glow = 5,
 		})
 	end)
