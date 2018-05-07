@@ -13,6 +13,14 @@ Convert your buildings to working spacecrafts and jump them around the map
 * Set Cascade button to "ON" (Workaround for now)
 * Click "jump"
 
+# Compatibility
+
+* Mesecon interaction (execute jump)
+* Technic rechargeable (HV)
+* Travelnet box (gets rewired after jump)
+* Elevator (on_place gets called after jump)
+
+
 # Screenshot
 
 ![](screenshots/screenshot_20180507_200309.png?raw=true)
