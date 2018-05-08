@@ -11,6 +11,7 @@ Convert your buildings to working spacecrafts and jump them around the map
 * Choose your target coordinates (should be air or ignore blocks)
 * Select your cube-radius (from 1 to 19 blocks)
 * Set Cascade button to "ON" (Workaround for now)
+* Click "show" and check the green (source) and red (target) destination markers if everything is in range
 * Click "jump"
 
 # Compatibility
