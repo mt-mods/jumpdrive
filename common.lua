@@ -195,6 +195,9 @@ jumpdrive.preflight_check = function(originPos, player)
 		local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
 		local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
+		-- preload chunk
+		minetest.get_voxel_manip():read_from_map(pos1, pos2)
+
 		if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
 			result = {success=false, pos=pos, message="Jump-target is obstructed!"}
 			return false -- exit cascade iter
@@ -290,9 +293,9 @@ jumpdrive.execute_jump = function(originPos, player)
 
 			-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
 
-			if node.name == "air" and newNode.name ~= "ignore" and newNode.name ~= "vacuum:vacuum" then
+			if false and node.name == "air" and newNode.name ~= "ignore" then
 				-- source is air and target is a block or air, only copy air into ignore or vacuum
-				return
+				return true
 			end
 
 			-- check for other jumpdrives
@@ -305,7 +308,7 @@ jumpdrive.execute_jump = function(originPos, player)
 
 				if cascade == 1 and not is_active_engine then
 					minetest.log("action", "[jumpdrive] ignoring cascading drive @" .. from.x .. "/" .. from.y .. "/" .. from.z)
-					return
+					return true
 				end
 			end
 
