@@ -122,26 +122,25 @@ end
 local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 	local obstructed = false
 
-	cube_iterate(pos, radius, function(ipos)
-		local newPos = add_pos(ipos, offsetPos)
-		local node = minetest.get_node(newPos)
+	local pos1 = {
+		x=pos.x - radius,
+		y=pos.y - radius,
+		z=pos.z - radius
+	}
 
-		if node.name == "ignore" then
-			minetest.get_voxel_manip():read_from_map(newPos, newPos)
-			node = minetest.get_node(newPos)
+	local pos2 = {
+		x=pos.x + radius,
+		y=pos.y + radius,
+		z=pos.z + radius
+	}
+
+	if minetest.is_area_protected then
+		if minetest.is_area_protected(pos1, pos2, playername) then
+			return true
 		end
+	end
 
-		local is_passable = node.name == "air" or node.name == "ignore"
-
-		if not is_passable or minetest.is_protected(ipos, playername) or minetest.is_protected(newPos, playername) then
-			obstructed = true
-			return false
-		end
-
-		return true
-	end)
-	
-	return obstructed
+	return false
 end
 
 
