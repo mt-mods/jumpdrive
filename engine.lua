@@ -33,7 +33,7 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("z", pos.z)
 		meta:set_int("radius", 5)
 		meta:set_int("powerstorage", 0)
-		meta:set_int("cascade", 0)
+		meta:set_int("cascade", 1)
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
