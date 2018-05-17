@@ -120,7 +120,6 @@ end
 
 
 local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
-	local obstructed = false
 
 	local pos1 = {
 		x=pos.x - radius,
@@ -134,13 +133,7 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 		z=pos.z + radius
 	}
 
-	if minetest.is_area_protected then
-		if minetest.is_area_protected(pos1, pos2, playername) then
-			return true
-		end
-	end
-
-	return false
+	return minetest.is_area_protected(pos1, pos2, playername)
 end
 
 
@@ -233,6 +226,7 @@ jumpdrive.preflight_check = function(originPos, player)
 	return result
 end
 
+
 -- execute whole jump
 jumpdrive.execute_jump = function(originPos, player)
 
@@ -285,8 +279,8 @@ jumpdrive.execute_jump = function(originPos, player)
 
 			-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
 
-			if node.name == "air" and newNode.name ~= "ignore" then
-				-- source is air and target is a block or air, only copy air into ignore
+			if node.name == "air" and newNode.name ~= "ignore" and newNode.name ~= "vacuum:vacuum" then
+				-- source is air and target is a block or air, only copy air into ignore or vacuum
 				return
 			end
 
