@@ -293,7 +293,7 @@ jumpdrive.execute_jump = function(originPos, player)
 
 			-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
 
-			if false and node.name == "air" and newNode.name ~= "ignore" then
+			if node.name == "air" and newNode.name ~= "ignore"  and newNode.name ~= "vacuum:vacuum" then
 				-- source is air and target is a block or air, only copy air into ignore or vacuum
 				return true
 			end
