@@ -75,7 +75,7 @@ end
 
 
 -- iterate over a cube area with pos and radius
-local cube_iterate = function(pos, radius, callback)
+local cube_iterate = function(pos, radius, step, callback)
 	local ix = pos.x+radius
 	while ix >= pos.x-radius do
 		local iy = pos.y+radius
@@ -89,11 +89,11 @@ local cube_iterate = function(pos, radius, callback)
 					return
 				end
 
-				iz = iz - 1
+				iz = iz - step
 			end
-			iy = iy - 1
+			iy = iy - step
 		end
-		ix = ix - 1
+		ix = ix - step
 	end
 
 end
@@ -133,7 +133,18 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 		z=pos.z + radius
 	}
 
-	return minetest.is_area_protected(pos1, pos2, playername)
+	if minetest.is_area_protected ~= nil then
+		return minetest.is_area_protected(pos1, pos2, playername)
+	else
+		local protected = false
+		cube_iterate(pos, radius, 4, function(ipos)
+			if minetest.is_protected(ipos, playername) then
+				protected = true
+				return false -- break loop
+			end
+		end)
+		return protected
+	end
 end
 
 
@@ -271,7 +282,7 @@ jumpdrive.execute_jump = function(originPos, player)
 		end
 
 		-- move blocks
-		cube_iterate(pos, radius, function(from)
+		cube_iterate(pos, radius, 1, function(from)
 			local to = add_pos(from, offsetPos)
 
 			local node = minetest.get_node(from)
