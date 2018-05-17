@@ -1,8 +1,11 @@
 Minetest jumpdrive
 ======
 
-A simple (Jumpdrive)[https://en.wikipedia.org/wiki/Jump_drive] for minetest
+A simple [Jumpdrive](https://en.wikipedia.org/wiki/Jump_drive) for minetest
 Convert your buildings to working spacecrafts and jump them around the map
+
+* Github: [https://github.com/thomasrudin-mt/jumpdrive](https://github.com/thomasrudin-mt/jumpdrive)
+* Forum topic: [https://forum.minetest.net/viewtopic.php?f=9&t=20073](https://forum.minetest.net/viewtopic.php?f=9&t=20073)
 
 # Operation
 
