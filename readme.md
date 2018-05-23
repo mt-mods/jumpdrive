@@ -2,6 +2,7 @@ Minetest jumpdrive
 ======
 
 A simple [Jumpdrive](https://en.wikipedia.org/wiki/Jump_drive) for minetest
+
 Take your buildings with you on your journey
 
 * Github: [https://github.com/thomasrudin-mt/jumpdrive](https://github.com/thomasrudin-mt/jumpdrive)
@@ -24,21 +25,37 @@ Optional dependencies:
 * Travelnet box (gets rewired after jump)
 * Elevator (on_place gets called after jump)
 
+# Fuel
+
+The engine accepts mese crystals (configurable in init.lua) or connects to a technic hv network, if enabled.
+A crystal equals 1000 power units / EU
+
+The fuel formula looks like this: **10 x radius x distance**
+
+For example:
+* Distance: 100 blocks
+* Radius: 5 blocks
+* Required energy: 10 x 5 x 100 = 5000 / 5 mese crystals
+
 # Crafting
 
 Without technic mod:
+
 ![](screenshots/recipe.png?raw=true)
 
 With technic mod:
+
 ![](screenshots/recipe_technic.png?raw=true)
 
 
 # Screenshot
 
 Interface:
+
 ![](screenshots/screenshot_20180507_200309.png?raw=true)
 
 Example:
+
 ![](screenshots/screenshot_20180507_200203.png?raw=true)
 
 # Advanced operation
