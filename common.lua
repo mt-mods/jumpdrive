@@ -148,7 +148,13 @@ jumpdrive.preflight_check = function(pos, player)
 		local power_item_count = math.ceil(power_requirements / jumpdrive.config.power_item_value)
 
 		if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
-			return {success=false, pos=pos, message="Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item}
+			local msg = "Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item
+
+			if has_technic_mod then
+				msg = msg .. " or " .. power_requirements .. " EU"
+			end
+
+			return {success=false, pos=pos, message=msg}
 		end
 
 		-- use crystals
