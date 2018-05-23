@@ -13,6 +13,14 @@ local sub_pos = function(pos1, pos2)
 	return {x=pos1.x-pos2.x, y=pos1.y-pos2.y, z=pos1.z-pos2.z}
 end
 
+-- calculates the power requirements for a jump
+local calculate_power = function(radius, distance)
+	-- max-radius == 20
+	-- distance example: 500
+
+	return 10 * distance * radius
+end
+
 -- iterate over a cube area with pos and radius
 local cube_iterate = function(pos, radius, step, callback)
 	local ix = pos.x+radius
@@ -113,8 +121,14 @@ jumpdrive.preflight_check = function(pos, player)
 	end
 
 
-	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
-	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius}
+	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius}
+
+	local distance = vector.distance(pos, targetPos)
+
+	local power_requirements = calculate_power(radius, distance)
+
+	minetest.log("action", "[jumpdrive] power requirements: " .. power_requirements)
 
 	-- preload chunk
 	minetest.get_voxel_manip():read_from_map(pos1, pos2)
@@ -123,13 +137,15 @@ jumpdrive.preflight_check = function(pos, player)
 		return {success=false, pos=pos, message="Jump-target is obstructed!"}
 	end
 
+	local powerstorage = meta:get_int("powerstorage")
 
-	if meta:get_int("powerstorage") < jumpdrive.config.powerstorage then
+	if powerstorage < power_requirements then
+		-- not enough power, use items
 
 		-- check inventory
 		local inv = meta:get_inventory()
 		local power_item = jumpdrive.config.power_item
-		local power_item_count = jumpdrive.config.power_item_count
+		local power_item_count = math.ceil(power_requirements / jumpdrive.config.power_item_value)
 
 		if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
 			return {success=false, pos=pos, message="Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item}
@@ -138,8 +154,8 @@ jumpdrive.preflight_check = function(pos, player)
 		-- use crystals
 		inv:remove_item("main", {name=power_item, count=power_item_count})
 	else
-		-- use power
-		meta:set_int("powerstorage", 0)
+		-- remove power
+		meta:set_int("powerstorage", powerstorage - power_requirements)
 	end
 
 

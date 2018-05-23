@@ -7,9 +7,9 @@ jumpdrive = {
 		-- charge value in EU
 		powerrequirement = 2500,
 
-		-- fuel item and count
+		-- fuel item and value
 		power_item = "default:mese_crystal",
-		power_item_count = 1,
+		power_item_value = 1000,
 
 		-- allowed radius
 		max_radius = 20
