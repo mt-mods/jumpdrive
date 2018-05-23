@@ -143,12 +143,25 @@ if has_technic_mod then
 	technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
 end
 
+local engine_craft_side = "default:diamond"
+local engine_craft_center = "default:mese_block"
+local engine_craft_bottom = "default:mese_crystal"
+local engine_craft_top = "default:mese_crystal_fragment"
+
+if has_technic_mod then
+	-- technic enabled recipe
+	engine_craft_center = "technic:blue_energy_crystal"
+	engine_craft_top = "technic:hv_transformer"
+	engine_craft_bottom = "technic:machine_casing"
+end
+
+
 minetest.register_craft({
 	output = 'jumpdrive:engine',
 	recipe = {
-		{'', 'default:mese_crystal_fragment', ''},
-		{'default:diamond', 'default:mese_block', 'default:diamond'},
-		{'', 'default:mese_crystal', ''}
+		{'', engine_craft_top, ''},
+		{engine_craft_side, engine_craft_center, engine_craft_side},
+		{'', engine_craft_bottom, ''}
 	}
 })
 
