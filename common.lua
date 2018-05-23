@@ -217,10 +217,8 @@ jumpdrive.execute_jump = function(pos, player)
 		local node = minetest.get_node(from)
 		local newNode = minetest.get_node(to)
 
-		-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
-
-		if node.name == "air" and newNode.name ~= "ignore"  and newNode.name ~= "vacuum:vacuum" then
-			-- source is air and target is a block or air, only copy air into ignore or vacuum
+		if node.name == "air" and newNode.name ~= "ignore" then
+			-- source is air and target is a block or air, only copy air into ignore
 			return true
 		end
 
