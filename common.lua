@@ -13,67 +13,6 @@ local sub_pos = function(pos1, pos2)
 	return {x=pos1.x-pos2.x, y=pos1.y-pos2.y, z=pos1.z-pos2.z}
 end
 
--- returns all cascading jumpdrives as a list/table
-jumpdrive.get_jumpdrive_list = function(pos, list)
-
-	if list == nil then
-		list = {}
-	end
-
-	local meta = minetest.get_meta(pos)
-
-	local radius = meta:get_int("radius")
-
-	local pos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
-	local pos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
-
-	local jumpdrives = minetest.find_nodes_in_area(pos1, pos2, "jumpdrive:engine")
-
-	for _,otherPos in ipairs(jumpdrives) do
-		local otherMeta = minetest.get_meta(otherPos)
-		local visited = false
-
-		for i,listPos in ipairs(list) do
-			if listPos.x == otherPos.x and listPos.y == otherPos.y and listPos.z == otherPos.z then
-				visited = true
-			end
-		end
-
-		if otherMeta:get_int("cascade") == 1 and not visited then
-			-- cascade enabled
-
-			-- append engine
-			table.insert(list, otherPos)
-			
-			-- recurse
-			jumpdrive.get_jumpdrive_list(otherPos, list)
-		end
-
-	end
-	
-	return list
-end
-
--- iterates over all cascade-enabled engines with: callback(pos, meta)
-jumpdrive.engine_iterate_cascade = function(pos, callback)
-
-	local jumpdrives = jumpdrive.get_jumpdrive_list(pos)
-
-	for _,otherPos in ipairs(jumpdrives) do
-		local otherMeta = minetest.get_meta(otherPos)
-
-		local result = callback(otherPos, otherMeta)
-
-		if result ~= nil and result == false then
-			-- callback issued abort (return false)
-			return
-		end
-
-	end
-
-end
-
-
 -- iterate over a cube area with pos and radius
 local cube_iterate = function(pos, radius, step, callback)
 	local ix = pos.x+radius
@@ -148,93 +87,60 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 end
 
 
-jumpdrive.simulate_jump = function(originPos)
+jumpdrive.simulate_jump = function(pos)
+	local meta = minetest.get_meta(pos)
+	local targetPos = jumpdrive.get_meta_pos(pos)
 
-	local stats = { enginecount=0 }
-	local targetPos = jumpdrive.get_meta_pos(originPos)
+	local radius = jumpdrive.get_radius(pos)
 
-	jumpdrive.engine_iterate_cascade(originPos, function(pos, meta)
-		stats.enginecount = stats.enginecount + 1;
-
-		local radius = jumpdrive.get_radius(pos)
-
-		minetest.log("action", "[jumpdrive] [Show] Cascading to @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
-		
-		-- copy relative target-position to cascading engine
-		local deltaPos = sub_pos(pos, originPos)
-		local relativeTarget = add_pos(targetPos, deltaPos)
-
-		jumpdrive.set_meta_pos(pos, relativeTarget)
-		jumpdrive.update_formspec(meta)
-
-		jumpdrive.show_marker(relativeTarget, radius, "red")
-		jumpdrive.show_marker(pos, radius, "green")
-	end)
-
-
-	return stats
+	jumpdrive.show_marker(targetPos, radius, "red")
+	jumpdrive.show_marker(pos, radius, "green")
 end
 
 -- pre-flight check
-jumpdrive.preflight_check = function(originPos, player)
+jumpdrive.preflight_check = function(pos, player)
 
 	local result = { success=true }
-	local targetPos = jumpdrive.get_meta_pos(originPos)
+	local meta = minetest.get_meta(pos)
+	local targetPos = jumpdrive.get_meta_pos(pos)
 
-	jumpdrive.engine_iterate_cascade(originPos, function(pos, meta)
+	local radius = jumpdrive.get_radius(pos)
+	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
+	local playername = meta:get_string("owner")
 
-		local radius = jumpdrive.get_radius(pos)
-		local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
-		local playername = meta:get_string("owner")
+	if player ~= nil then
+		playername = player:get_player_name()
+	end
 
-		if player ~= nil then
-			playername = player:get_player_name()
+
+	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
+	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+
+	-- preload chunk
+	minetest.get_voxel_manip():read_from_map(pos1, pos2)
+
+	if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
+		return {success=false, pos=pos, message="Jump-target is obstructed!"}
+	end
+
+
+	if meta:get_int("powerstorage") < jumpdrive.config.powerstorage then
+
+		-- check inventory
+		local inv = meta:get_inventory()
+		local power_item = jumpdrive.config.power_item
+		local power_item_count = jumpdrive.config.power_item_count
+
+		if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
+			return {success=false, pos=pos, message="Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item}
 		end
 
-
-		local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
-		local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
-
-		-- preload chunk
-		minetest.get_voxel_manip():read_from_map(pos1, pos2)
-
-		if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
-			result = {success=false, pos=pos, message="Jump-target is obstructed!"}
-			return false -- exit cascade iter
-		end
-
-
-		if meta:get_int("powerstorage") < jumpdrive.config.powerstorage then
-
-			-- check inventory
-			local inv = meta:get_inventory()
-			local power_item = jumpdrive.config.power_item
-			local power_item_count = jumpdrive.config.power_item_count
-
-			if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
-				result = {success=false, pos=pos, message="Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item}
-				return false -- exit cascade iter
-			end
-
-			-- use crystals
-			inv:remove_item("main", {name=power_item, count=power_item_count})
-		else
-			-- use power
-			meta:set_int("powerstorage", 0)
-		end
-
-
-		minetest.log("action", "[jumpdrive] [Preflight] Cascading to @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
-		
-		-- copy relative target-position to cascading engine
-		local deltaPos = sub_pos(pos, originPos)
-		local relativeTarget = add_pos(targetPos, deltaPos)
-
-		jumpdrive.set_meta_pos(pos, relativeTarget)
-		jumpdrive.update_formspec(meta)
-
-	end)
-
+		-- use crystals
+		inv:remove_item("main", {name=power_item, count=power_item_count})
+	else
+		-- use power
+		meta:set_int("powerstorage", 0)
+	end
 
 
 	return result
@@ -242,139 +148,116 @@ end
 
 
 -- execute whole jump
-jumpdrive.execute_jump = function(originPos, player)
+jumpdrive.execute_jump = function(pos, player)
 
-	local originMeta = minetest.get_meta(originPos)
-	local playername = originMeta:get_string("owner")
+	local meta = minetest.get_meta(pos)
+	local playername = meta:get_string("owner")
 
 	if player ~= nil then
 		playername = player:get_player_name()
 	end
 
-	local preflight = jumpdrive.preflight_check(originPos, player)
+	local preflight = jumpdrive.preflight_check(pos, player)
 	if not preflight.success then
-		minetest.chat_send_player(playername, preflight.message .. "@".. preflight.pos.x .. "," .. preflight.pos.y .. "," .. preflight.pos.z .. ")")
-		return
+		minetest.chat_send_player(playername, preflight.message)
+		return false
 	end
 
 	
-	jumpdrive.engine_iterate_cascade(originPos, function(pos, meta)
-
-		local radius = jumpdrive.get_radius(pos)
-		local targetPos = jumpdrive.get_meta_pos(pos)
-		local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
+	local radius = jumpdrive.get_radius(pos)
+	local targetPos = jumpdrive.get_meta_pos(pos)
+	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
 
 
-		local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
-		local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
+	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
 
-		minetest.log("action", "[jumpdrive] jumping to " .. targetPos.x .. "/" .. targetPos.y .. "/" .. targetPos.z .. " with radius " .. radius)
+	minetest.log("action", "[jumpdrive] jumping to " .. targetPos.x .. "/" .. targetPos.y .. "/" .. targetPos.z .. " with radius " .. radius)
 
-		local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
+	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 
-		-- set gravity to 0 for jump
-		for _,obj in ipairs(all_objects) do
-			if obj.is_player ~= nil and obj:is_player() then
-				local pos = obj:get_pos()
-				minetest.log("action", "[jumpdrive] setting zero-gravity for jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
-				local phys = obj:get_physics_override()
-				phys.gravity = 0
-				obj:set_physics_override(phys)
-			end
+	-- set gravity to 0 for jump
+	for _,obj in ipairs(all_objects) do
+		if obj.is_player ~= nil and obj:is_player() then
+			local pos = obj:get_pos()
+			minetest.log("action", "[jumpdrive] setting zero-gravity for jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
+			local phys = obj:get_physics_override()
+			phys.gravity = 0
+			obj:set_physics_override(phys)
 		end
+	end
 
-		-- move blocks
-		cube_iterate(pos, radius, 1, function(from)
-			local to = add_pos(from, offsetPos)
+	-- move blocks
+	cube_iterate(pos, radius, 1, function(from)
+		local to = add_pos(from, offsetPos)
 
-			local node = minetest.get_node(from)
-			local newNode = minetest.get_node(to)
+		local node = minetest.get_node(from)
+		local newNode = minetest.get_node(to)
 
-			-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
+		-- print("x=" .. ix .. " y=" .. iy .. " z=" .. iz .. " name=" .. node.name)
 
-			if node.name == "air" and newNode.name ~= "ignore"  and newNode.name ~= "vacuum:vacuum" then
-				-- source is air and target is a block or air, only copy air into ignore or vacuum
-				return true
-			end
-
-			-- check for other jumpdrives
-			if node.name == "jumpdrive:engine" then
-				local is_active_engine = (from.x == pos.x and from.y == pos.y and from.z == pos.z)
-
-				-- check if cascade option is enabled
-				local meta = minetest.get_meta(from)
-				local cascade = meta:get_int("cascade")
-
-				if cascade == 1 and not is_active_engine then
-					minetest.log("action", "[jumpdrive] ignoring cascading drive @" .. from.x .. "/" .. from.y .. "/" .. from.z)
-					return true
-				end
-			end
-
-			local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
-			minetest.set_node(from, {name="air"}) -- perf reason (faster)
-
-			minetest.set_node(to, node) -- Move node to new position
-			minetest.get_meta(to):from_table(meta) -- Set metadata of new node
-
-
-			if has_travelnet_mod and node.name == "travelnet:travelnet" then
-				-- rewire travelnet target
-				jumpdrive.travelnet_compat(to)
-			end
-
+		if node.name == "air" and newNode.name ~= "ignore"  and newNode.name ~= "vacuum:vacuum" then
+			-- source is air and target is a block or air, only copy air into ignore or vacuum
 			return true
-		end)
-
-		if has_elevator_mod then
-			jumpdrive.elevator_compat(pos1, pos2)
 		end
 
-		-- move objects and restore gravity
-		for _,obj in ipairs(all_objects) do
-			obj:moveto( add_pos(obj:get_pos(), offsetPos) )
-			if obj.is_player ~= nil and obj:is_player() then
-				local pos = obj:get_pos()
-				minetest.log("action", "[jumpdrive] resetting gravity after jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
+		local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
+		minetest.set_node(from, {name="air"}) -- perf reason (faster)
 
-				local phys = obj:get_physics_override()
-				phys.gravity = 1
-				obj:set_physics_override(phys)
-			end
+		minetest.set_node(to, node) -- Move node to new position
+		minetest.get_meta(to):from_table(meta) -- Set metadata of new node
 
+
+		if has_travelnet_mod and node.name == "travelnet:travelnet" then
+			-- rewire travelnet target
+			jumpdrive.travelnet_compat(to)
 		end
 
-		-- show animation in target
-		minetest.add_particlespawner({
-			amount = 200,
-			time = 2,
-			minpos = targetPos,
-			maxpos = {x=targetPos.x, y=targetPos.y+5, z=targetPos.z},
-			minvel = {x = -2, y = -2, z = -2},
-			maxvel = {x = 2, y = 2, z = 2},
-			minacc = {x = -3, y = -3, z = -3},
-			maxacc = {x = 3, y = 3, z = 3},
-			minexptime = 0.1,
-			maxexptime = 5,
-			minsize = 1,
-			maxsize = 1,
-			texture = "spark.png",
-			glow = 5,
-		})
+		return true
 	end)
 
+	if has_elevator_mod then
+		jumpdrive.elevator_compat(pos1, pos2)
+	end
 
+	-- move objects and restore gravity
+	for _,obj in ipairs(all_objects) do
+		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
+		if obj.is_player ~= nil and obj:is_player() then
+			local pos = obj:get_pos()
+			minetest.log("action", "[jumpdrive] resetting gravity after jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
 
+			local phys = obj:get_physics_override()
+			phys.gravity = 1
+			obj:set_physics_override(phys)
+		end
+
+	end
+
+	-- show animation in target
+	minetest.add_particlespawner({
+		amount = 200,
+		time = 2,
+		minpos = targetPos,
+		maxpos = {x=targetPos.x, y=targetPos.y+5, z=targetPos.z},
+		minvel = {x = -2, y = -2, z = -2},
+		maxvel = {x = 2, y = 2, z = 2},
+		minacc = {x = -3, y = -3, z = -3},
+		maxacc = {x = 3, y = 3, z = 3},
+		minexptime = 0.1,
+		maxexptime = 5,
+		minsize = 1,
+		maxsize = 1,
+		texture = "spark.png",
+		glow = 5,
+	})
+
+	return true
 end
 
 
 jumpdrive.update_formspec = function(meta)
-	local cascade = "OFF"
-	if meta:get_int("cascade") == 1 then
-		cascade = "ON"
-	end
-
 	meta:set_string("formspec", "size[8,10;]" ..
 		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
@@ -388,9 +271,8 @@ jumpdrive.update_formspec = function(meta)
 
 		"list[context;main;0,3;8,1;]" ..
 
-		"button[0,4;2,1;write_book;Write to book]" ..
-		"button[2,4;2,1;read_book;Read from book]" ..
-		"button[4,4;4,1;toggle_cascade;Cascade: <" .. cascade .. ">]" ..
+		"button[0,4;4,1;write_book;Write to book]" ..
+		"button[4,4;4,1;read_book;Read from book]" ..
 
 		"list[current_player;main;0,5;8,4;]")
 end
