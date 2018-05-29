@@ -2,17 +2,17 @@
 jumpdrive = {
 	config = {
 		-- technic EU storage value
-		powerstorage = 100000,
+		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 100000,
 
 		-- charge value in EU
-		powerrequirement = 2500,
+		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
 
 		-- fuel item and value
-		power_item = "default:mese_crystal",
-		power_item_value = 1000,
+		power_item = minetest.settings:get("jumpdrive.power_item_name") or "default:mese_crystal",
+		power_item_value = tonumber(minetest.settings:get("jumpdrive.power_item_value")) or 1000,
 
 		-- allowed radius
-		max_radius = 20
+		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 20
 	}
 }
 

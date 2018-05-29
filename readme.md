@@ -65,6 +65,19 @@ Example:
 You can place empty books into the drive inventory and write the coordinates to it with the "Write to book" button
 The "Read from book" reads the coordinates from the next book in the inventory
 
+# Settings
+
+Settings in minetest.conf:
+
+* **jumpdrive.maxradius** max radius of the jumpdrive (default: *20*)
+* **jumpdrive.power_item_name** item that powers the drive (default: *default:mese_crystal*)
+* **jumpdrive.power_item_value** power value of the item (default: *1000*)
+
+Technic-relevant settings:
+
+* **jumpdrive.powerstorage** power storage of the drive (default: *100000*)
+* **jumpdrive.power_requirement** power requirement for chargin (default: *2500*)
+
 # Lua api
 
 ## Preflight check
