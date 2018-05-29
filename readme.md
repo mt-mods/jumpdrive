@@ -104,6 +104,7 @@ end
 ## Next
 
 * preflight check with custom override
+* Settings in mintest.conf
 
 ## 1.1
 
