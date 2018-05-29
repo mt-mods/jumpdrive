@@ -1,4 +1,5 @@
 
+local has_vacuum_mod = minetest.get_modpath("vacuum")
 local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_technic_mod = minetest.get_modpath("technic")
 local has_elevator_mod = minetest.get_modpath("elevator")
@@ -232,6 +233,15 @@ jumpdrive.execute_jump = function(pos, player)
 
 		if node.name == "air" and newNode.name == "air" then
 			-- source is air and target is air, skip block
+			return true
+		end
+
+		if node.name == "air" and newNode.name == "ignore" and has_vacuum_mod then
+			-- fill air with buffer air
+			minetest.set_node(to, {name="jumpdrive:air"})
+			local timer = minetest.get_node_timer(to)
+			-- buffer air expires after 10 seconds
+			timer:start(10)
 			return true
 		end
 
