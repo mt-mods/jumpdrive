@@ -65,7 +65,32 @@ Example:
 You can place empty books into the drive inventory and write the coordinates to it with the "Write to book" button
 The "Read from book" reads the coordinates from the next book in the inventory
 
+# Lua api
+
+## Preflight check
+
+The preflight check can be overriden to execute additional checks:
+
+```lua
+local originalCheck = jumpdrive.preflight_check
+
+jumpdrive.preflight_check = function(pos, player)
+	-- check for height limit, only space travel allowed
+	if pos.y < 1000 then
+		return {success=false, message="Atmospheric travel not allowed!"}
+	end
+	
+	-- execute original preflight checks, protection, etc
+	return originalCheck(pos, player)
+end
+
+```
+
 # History
+
+## Next
+
+* preflight check with custom override
 
 ## 1.1
 
