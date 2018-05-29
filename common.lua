@@ -105,14 +105,27 @@ jumpdrive.simulate_jump = function(pos)
 	jumpdrive.show_marker(pos, radius, "green")
 end
 
--- pre-flight check
-jumpdrive.preflight_check = function(pos, player)
+-- preflight check, for overriding
+jumpdrive.preflight_check = function(source, destination, radius, player)
+	return { success=true }
+end
+
+-- flight check
+jumpdrive.flight_check = function(pos, player)
 
 	local result = { success=true }
 	local meta = minetest.get_meta(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
-
 	local radius = jumpdrive.get_radius(pos)
+
+
+	local preflight_result = jumpdrive.preflight_check(pos, targetPos, radius, player)
+
+	if not preflight_result.success then
+		-- check failed in customization
+		return preflight_result.success
+	end
+
 	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
 	local playername = meta:get_string("owner")
 
@@ -179,7 +192,7 @@ jumpdrive.execute_jump = function(pos, player)
 		playername = player:get_player_name()
 	end
 
-	local preflight = jumpdrive.preflight_check(pos, player)
+	local preflight = jumpdrive.flight_check(pos, player)
 	if not preflight.success then
 		minetest.chat_send_player(playername, preflight.message)
 		return false

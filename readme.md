@@ -85,18 +85,15 @@ Technic-relevant settings:
 The preflight check can be overriden to execute additional checks:
 
 ```lua
-local originalCheck = jumpdrive.preflight_check
-
-jumpdrive.preflight_check = function(pos, player)
+jumpdrive.preflight_check = function(source, destination, radius, player)
 	-- check for height limit, only space travel allowed
-	if pos.y < 1000 then
-		return {success=false, message="Atmospheric travel not allowed!"}
+	if destination.y < 1000 then
+		return { success=false, message="Atmospheric travel not allowed!" }
 	end
-	
-	-- execute original preflight checks, protection, etc
-	return originalCheck(pos, player)
-end
 
+	-- everything ok
+	return { success=true }
+end
 ```
 
 # History
