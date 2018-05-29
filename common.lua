@@ -232,7 +232,7 @@ jumpdrive.execute_jump = function(pos, player)
 
 		if node.name == "air" and newNode.name == "air" then
 			-- source is air and target is air, skip block
-			return true
+			return
 		end
 
 		if node.name == "air" and newNode.name == "ignore" and has_vacuum_mod then
@@ -241,7 +241,7 @@ jumpdrive.execute_jump = function(pos, player)
 			local timer = minetest.get_node_timer(to)
 			-- buffer air expires after 10 seconds
 			timer:start(10)
-			return true
+			return
 		end
 
 		local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
