@@ -102,6 +102,7 @@ end
 
 * preflight check with custom override
 * Settings in mintest.conf
+* vacuum compatibility (jump into vacuum with air filled vessel)
 
 ## 1.1
 
