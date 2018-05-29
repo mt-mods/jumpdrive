@@ -225,9 +225,8 @@ jumpdrive.execute_jump = function(pos, player)
 	end
 
 	-- move blocks
-	cube_iterate(pos, radius, 1, function(from)
-		local to = add_pos(from, offsetPos)
 
+	local move_block = function(from, to)
 		local node = minetest.get_node(from)
 		local newNode = minetest.get_node(to)
 
@@ -256,9 +255,24 @@ jumpdrive.execute_jump = function(pos, player)
 			-- rewire travelnet target
 			jumpdrive.travelnet_compat(to)
 		end
+	end
 
-		return true
-	end)
+	local ix = pos.x+radius
+	while ix >= pos.x-radius do
+		local iy = pos.y+radius
+		while iy >= pos.y-radius do
+			local iz = pos.z+radius
+			while iz >= pos.z-radius do
+				local from = {x=ix, y=iy, z=iz}
+				local to = add_pos(from, offsetPos)
+				move_block(from, to)
+
+				iz = iz - step
+			end
+			iy = iy - step
+		end
+		ix = ix - step
+	end
 
 	if has_elevator_mod then
 		jumpdrive.elevator_compat(pos1, pos2)
