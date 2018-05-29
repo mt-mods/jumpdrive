@@ -230,11 +230,10 @@ jumpdrive.execute_jump = function(pos, player)
 		local node = minetest.get_node(from)
 		local newNode = minetest.get_node(to)
 
-		-- Air skipping code: TODO: air/ignore/vacuum jump policy?
-		-- if node.name == "air" and newNode.name ~= "ignore" then
-			-- source is air and target is a block or air, only copy air into ignore
-		--	return true
-		-- end
+		if node.name == "air" and newNode.name == "air" then
+			-- source is air and target is air, skip block
+			return true
+		end
 
 		local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
 		minetest.set_node(from, {name="air"}) -- perf reason (faster)
