@@ -105,15 +105,6 @@ minetest.register_node("jumpdrive:engine", {
 			return
 		end
 
-		local minjumpdistance = radius * 2
-
-		if math.abs(x - pos.x) <= minjumpdistance and math.abs(y - pos.y) <= minjumpdistance and math.abs(z - pos.z) <= minjumpdistance then
-			minetest.chat_send_player(sender:get_player_name(), "Jump too short")
-			return
-		end
-
-
-
 		-- update coords
 		meta:set_int("x", x)
 		meta:set_int("y", y)
