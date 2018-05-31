@@ -22,29 +22,7 @@ local calculate_power = function(radius, distance)
 	return 10 * distance * radius
 end
 
--- iterate over a cube area with pos and radius
-local cube_iterate = function(pos, radius, step, callback)
-	local ix = pos.x+radius
-	while ix >= pos.x-radius do
-		local iy = pos.y+radius
-		while iy >= pos.y-radius do
-			local iz = pos.z+radius
-			while iz >= pos.z-radius do
-				local ipos = {x=ix, y=iy, z=iz}
-				local result = callback(ipos)
 
-				if result == false then
-					return
-				end
-
-				iz = iz - step
-			end
-			iy = iy - step
-		end
-		ix = ix - step
-	end
-
-end
 
 -- get pos object from pos
 jumpdrive.get_meta_pos = function(pos)
@@ -85,14 +63,19 @@ local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
 		return minetest.is_area_protected(pos1, pos2, playername)
 	else
 		local protected = false
-		cube_iterate(pos, radius, 4, function(ipos)
-			if minetest.is_protected(ipos, playername) then
-				protected = true
-				return false -- break loop
+		for x=pos1.x,pos2.x do
+			for y=pos1.y,pos2.y do
+				for z=pos1.z,pos2.z do
+					local ipos = {x=x, y=y, z=z}
+					if minetest.is_protected(ipos, playername) then
+						return true
+					end
+				end
 			end
-		end)
-		return protected
+		end
 	end
+
+	return false --no protection found
 end
 
 
@@ -261,13 +244,34 @@ jumpdrive.execute_jump = function(pos, player)
 	local x_end = pos.x-radius
 	local x_step = -1
 
+	if offsetPos.x < 0 then
+		-- backwards, invert step
+		x_start = pos.x-radius
+		x_end = pos.x+radius
+		x_step = 1
+	end
+
 	local y_start = pos.y+radius
 	local y_end = pos.y-radius
 	local y_step = -1
 
+	if offsetPos.y < 0 then
+		-- backwards, invert step
+		y_start = pos.y-radius
+		y_end = pos.y+radius
+		y_step = 1
+	end
+
 	local z_start = pos.z+radius
 	local z_end = pos.z-radius
 	local z_step = -1
+
+	if offsetPos.z < 0 then
+		-- backwards, invert step
+		z_start = pos.z-radius
+		z_end = pos.z+radius
+		z_step = 1
+	end
 
 	for ix=x_start,x_end,x_step do
 		for iy=y_start,y_end,y_step do
