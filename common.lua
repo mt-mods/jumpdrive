@@ -107,7 +107,7 @@ jumpdrive.flight_check = function(pos, player)
 
 	if not preflight_result.success then
 		-- check failed in customization
-		return preflight_result.success
+		return preflight_result
 	end
 
 	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
