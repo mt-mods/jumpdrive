@@ -257,21 +257,26 @@ jumpdrive.execute_jump = function(pos, player)
 		end
 	end
 
-	local ix = pos.x+radius
-	while ix >= pos.x-radius do
-		local iy = pos.y+radius
-		while iy >= pos.y-radius do
-			local iz = pos.z+radius
-			while iz >= pos.z-radius do
+	local x_start = pos.x+radius
+	local x_end = pos.x-radius
+	local x_step = -1
+
+	local y_start = pos.y+radius
+	local y_end = pos.y-radius
+	local y_step = -1
+
+	local z_start = pos.z+radius
+	local z_end = pos.z-radius
+	local z_step = -1
+
+	for ix=x_start,x_end,x_step do
+		for iy=y_start,y_end,y_step do
+			for iz=z_start,z_end,z_step do
 				local from = {x=ix, y=iy, z=iz}
 				local to = add_pos(from, offsetPos)
 				move_block(from, to)
-
-				iz = iz - 1
 			end
-			iy = iy - 1
 		end
-		ix = ix - 1
 	end
 
 	if has_elevator_mod then
