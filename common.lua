@@ -235,9 +235,9 @@ jumpdrive.execute_jump = function(pos, player)
 			return
 		end
 
-		if node.name == "air" and newNode.name == "ignore" and has_vacuum_mod then
+		if has_vacuum_mod and node.name == "air" and newNode.name == "ignore" then
 			-- fill air with buffer air
-			minetest.set_node(to, {name="jumpdrive:air"})
+			minetest.set_node(to, {name="vacuum:air"})
 			local timer = minetest.get_node_timer(to)
 			-- buffer air expires after 10 seconds
 			timer:start(10)
@@ -267,11 +267,11 @@ jumpdrive.execute_jump = function(pos, player)
 				local to = add_pos(from, offsetPos)
 				move_block(from, to)
 
-				iz = iz - step
+				iz = iz - 1
 			end
-			iy = iy - step
+			iy = iy - 1
 		end
-		ix = ix - step
+		ix = ix - 1
 	end
 
 	if has_elevator_mod then
