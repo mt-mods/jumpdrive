@@ -1,4 +1,3 @@
-local has_vacuum_mod = minetest.get_modpath("vacuum")
 
 jumpdrive = {
 	config = {
@@ -18,10 +17,6 @@ jumpdrive = {
 }
 
 local MP = minetest.get_modpath("jumpdrive")
-
-if has_vacuum_mod then
-	dofile(MP.."/air.lua")
-end
 
 dofile(MP.."/marker.lua")
 dofile(MP.."/common.lua")
