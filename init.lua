@@ -23,5 +23,6 @@ dofile(MP.."/common.lua")
 dofile(MP.."/engine.lua")
 dofile(MP.."/travelnet_compat.lua")
 dofile(MP.."/elevator_compat.lua")
+dofile(MP.."/locator_compat.lua")
 
 print("[OK] Jumpdrive")
