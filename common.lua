@@ -45,8 +45,8 @@ jumpdrive.get_radius = function(pos)
 	return meta:get_int("radius")
 end
 
-
-local is_target_obstructed = function(pos, offsetPos, radius, meta, playername)
+-- checks if an area is protected
+local is_area_protected = function(pos, radius, playername)
 
 	local pos1 = {
 		x=pos.x - radius,
@@ -131,8 +131,14 @@ jumpdrive.flight_check = function(pos, player)
 	-- preload chunk
 	minetest.get_voxel_manip():read_from_map(pos1, pos2)
 
-	if is_target_obstructed(pos, offsetPos, radius, meta, playername) then
-		return {success=false, pos=pos, message="Jump-target is obstructed!"}
+	-- check source for protection
+	if is_area_protected(pos, radius, playername) then
+		return {success=false, pos=pos, message="Jump-source is protected"}
+	end
+
+	-- check destination for protection
+	if is_area_protected(targetPos, radius, playername) then
+		return {success=false, pos=pos, message="Jump-target is protected"}
 	end
 
 	-- skip fuel calc, if creative
