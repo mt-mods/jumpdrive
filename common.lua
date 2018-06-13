@@ -3,6 +3,7 @@ local has_vacuum_mod = minetest.get_modpath("vacuum")
 local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_technic_mod = minetest.get_modpath("technic")
 local has_elevator_mod = minetest.get_modpath("elevator")
+local has_locator_mod = minetest.get_modpath("locator")
 
 -- add a position offset
 local add_pos = function(pos1, pos2)
@@ -238,6 +239,14 @@ jumpdrive.execute_jump = function(pos, player)
 			-- rewire travelnet target
 			jumpdrive.travelnet_compat(to)
 		end
+
+		if has_locator_mod then
+			if node.name == "locator:beacon_1" or node.name == "locator:beacon_2" or node.name == "locator:beacon_3" then
+				-- rewire beacon
+				jumpdrive.locator_compat(from, to)
+			end
+		end
+
 	end
 
 	local x_start = pos.x+radius
