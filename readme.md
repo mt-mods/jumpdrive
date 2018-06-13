@@ -24,6 +24,7 @@ Optional dependencies:
 * Technic rechargeable (HV)
 * Travelnet box (gets rewired after jump)
 * Elevator (on_place gets called after jump)
+* Locator (gets removed and added after each jump)
 
 # Fuel
 
