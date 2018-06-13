@@ -109,8 +109,11 @@ end
 
 ## Next
 
+* No fuel consumption if creative
+* Protection checks for source and destination
+* Ability to jump with smaller increments (1-block range) instead of radius min-range
 * preflight check with custom override
-* Settings in mintest.conf
+* Settings in minetest.conf
 * vacuum compatibility (jump into vacuum with air filled vessel)
 
 ## 1.1
