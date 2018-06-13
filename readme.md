@@ -29,6 +29,8 @@ Optional dependencies:
 # Fuel
 
 The engine accepts mese crystals (configurable in init.lua) or connects to a technic hv network, if enabled.
+There are no fuel checks if the player has creative privs.
+
 A crystal equals 1000 power units / EU
 
 The fuel formula looks like this: **10 x radius x distance**
