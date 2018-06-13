@@ -135,6 +135,11 @@ jumpdrive.flight_check = function(pos, player)
 		return {success=false, pos=pos, message="Jump-target is obstructed!"}
 	end
 
+	-- skip fuel calc, if creative
+	if minetest.check_player_privs(playername, {creative = true}) then
+		return result
+	end
+
 	local powerstorage = meta:get_int("powerstorage")
 
 	if powerstorage < power_requirements then
