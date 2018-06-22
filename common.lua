@@ -194,6 +194,14 @@ jumpdrive.execute_jump = function(pos, player)
 		return false
 	end
 
+	-- defer jumping until mapblock loaded
+	minetest.after(1, function()
+		jumpdrive.execute_jump_stage2(pos, player)
+	end);
+end
+
+-- jump stage 2, after target emerge
+jumpdrive.execute_jump_stage2 = function(pos, player)
 	
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
