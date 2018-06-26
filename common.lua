@@ -194,9 +194,16 @@ jumpdrive.execute_jump = function(pos, player)
 		return false
 	end
 
+	local radius = jumpdrive.get_radius(pos)
+	local targetPos = jumpdrive.get_meta_pos(pos)
+	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
+	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+
 	-- defer jumping until mapblock loaded
-	minetest.after(1, function()
-		jumpdrive.execute_jump_stage2(pos, player)
+	minetest.emerge_area(pos1, pos2, function(blockpos, action, calls_remaining, param)
+		if calls_remaining == 0 then
+			jumpdrive.execute_jump_stage2(pos, player)
+		end
 	end);
 end
 
