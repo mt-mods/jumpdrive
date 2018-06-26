@@ -31,7 +31,12 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("x", pos.x)
 		meta:set_int("y", pos.y)
 		meta:set_int("z", pos.z)
-		meta:set_int("radius", 5)
+		meta:set_int("xplus", 5)
+		meta:set_int("yplus", 5)
+		meta:set_int("zplus", 5)
+		meta:set_int("xminus", 5)
+		meta:set_int("yminus", 5)
+		meta:set_int("zminus", 5)
 		meta:set_int("powerstorage", 0)
 
 		local inv = meta:get_inventory()
@@ -71,6 +76,7 @@ minetest.register_node("jumpdrive:engine", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
+		-- TODO: check owner
 
 		local meta = minetest.get_meta(pos);
 
@@ -92,16 +98,33 @@ minetest.register_node("jumpdrive:engine", {
 		local x = tonumber(fields.x);
 		local y = tonumber(fields.y);
 		local z = tonumber(fields.z);
-		local radius = tonumber(fields.radius);
 
-		if x == nil or y == nil or z == nil or radius == nil or radius < 1 then
+		local xplus = tonumber(fields.xplus);
+		local yplus = tonumber(fields.yplus);
+		local zplus = tonumber(fields.zplus);
+		local xminus = tonumber(fields.xminus);
+		local yminus = tonumber(fields.yminus);
+		local zminus = tonumber(fields.zminus);
+
+		if x == nil or y == nil or z == nil then
 			return
 		end
 
-		local max_radius = jumpdrive.config.max_radius
+		if xplus == nil or yplus == nil or zplus == nil or xminus == nil or yminus == nil or zminus == nil then
+			return
+		end
 
-		if radius > max_radius then
-			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-radius=" .. max_radius)
+		if xplus < 0 or xminus < 0 or yplus < 0 or yminus < 0 or zplus < 0 or zminus < 0 then
+			minetest.chat_send_player(sender:get_player_name(), "negative offsets not allowed!")
+			return
+		end
+
+		local max_blocks = jumpdrive.config.max_blocks
+
+		local blocks = (xplus + xminus + 1) * (yplus + yminus + 1) * (zplus + zminus + 1)
+
+		if blocks > max_blocks then
+			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-blocks=" .. max_blocks .. ", you got: " .. blocks)
 			return
 		end
 
@@ -109,7 +132,12 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("x", x)
 		meta:set_int("y", y)
 		meta:set_int("z", z)
-		meta:set_int("radius", radius)
+		meta:set_int("xplus", xplus)
+		meta:set_int("yplus", yplus)
+		meta:set_int("zplus", zplus)
+		meta:set_int("xminus", xminus)
+		meta:set_int("yminus", yminus)
+		meta:set_int("zminus", zminus)
 		jumpdrive.update_formspec(meta)
 
 		if fields.jump then

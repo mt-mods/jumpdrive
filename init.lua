@@ -11,8 +11,8 @@ jumpdrive = {
 		power_item = minetest.settings:get("jumpdrive.power_item_name") or "default:mese_crystal",
 		power_item_value = tonumber(minetest.settings:get("jumpdrive.power_item_value")) or 1000,
 
-		-- allowed radius
-		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 20
+		-- allowed blocks (15*15*15 = 3375)
+		max_blocks = tonumber(minetest.settings:get("jumpdrive.maxblocks")) or 3375
 	}
 }
 

@@ -39,26 +39,44 @@ jumpdrive.set_meta_pos = function(pos, target)
 	meta:set_int("z", target.z)
 end
 
--- get offset from meta
-jumpdrive.get_radius = function(pos)
+local get_target_pos = function(meta)
+	return {x=meta:get_int("x"), y=meta:get_int("y"), z=meta:get_int("z")}
+end
+
+local get_minus_pos = function(meta)
+	return {x=meta:get_int("xminus"), y=meta:get_int("yminus"), z=meta:get_int("zminus")}
+end
+
+local get_plus_pos = function(meta)
+	return {x=meta:get_int("xplus"), y=meta:get_int("yplus"), z=meta:get_int("zplus")}
+end
+
+-- get pos1
+local get_pos1 = function(pos)
 	local meta = minetest.get_meta(pos);
-	return meta:get_int("radius")
+	return vector.subtract(pos, get_minus_pos(meta))
+end
+
+-- get pos2
+local get_pos2 = function(pos)
+	local meta = minetest.get_meta(pos);
+	return vector.add(pos, get_plus_pos(meta))
+end
+
+-- get target pos1
+local get_target_pos1 = function(pos)
+	local meta = minetest.get_meta(pos);
+	return vector.subtract(get_target_pos(meta), get_minus_pos(meta))
+end
+
+-- get target pos2
+local get_target_pos2 = function(pos)
+	local meta = minetest.get_meta(pos);
+	return vector.add(get_target_pos(meta), get_minus_pos(meta))
 end
 
 -- checks if an area is protected
-local is_area_protected = function(pos, radius, playername)
-
-	local pos1 = {
-		x=pos.x - radius,
-		y=pos.y - radius,
-		z=pos.z - radius
-	}
-
-	local pos2 = {
-		x=pos.x + radius,
-		y=pos.y + radius,
-		z=pos.z + radius
-	}
+local is_area_protected = function(pos1, pos2, playername)
 
 	if minetest.is_area_protected ~= nil then
 		return minetest.is_area_protected(pos1, pos2, playername)
@@ -84,14 +102,14 @@ jumpdrive.simulate_jump = function(pos)
 	local meta = minetest.get_meta(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 
-	local radius = jumpdrive.get_radius(pos)
-
-	jumpdrive.show_marker(targetPos, radius, "red")
-	jumpdrive.show_marker(pos, radius, "green")
+	-- TODO: marker
+	-- jumpdrive.show_marker(targetPos, radius, "red")
+	-- jumpdrive.show_marker(pos, radius, "green")
 end
 
 -- preflight check, for overriding
-jumpdrive.preflight_check = function(source, destination, radius, player)
+jumpdrive.preflight_check = function(source, destination, player)
+	-- TODO: params pos1/pos2
 	return { success=true }
 end
 
@@ -100,44 +118,47 @@ jumpdrive.flight_check = function(pos, player)
 
 	local result = { success=true }
 	local meta = minetest.get_meta(pos)
-	local targetPos = jumpdrive.get_meta_pos(pos)
-	local radius = jumpdrive.get_radius(pos)
+	local targetPos = get_target_pos(meta)
 
-
-	local preflight_result = jumpdrive.preflight_check(pos, targetPos, radius, player)
+	local preflight_result = jumpdrive.preflight_check(pos, targetPos, player)
 
 	if not preflight_result.success then
 		-- check failed in customization
 		return preflight_result
 	end
 
-	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
 	local playername = meta:get_string("owner")
 
 	if player ~= nil then
 		playername = player:get_player_name()
 	end
 
+	local source_pos1 = get_pos1(pos)
+	local source_pos2 = get_pos2(pos)
 
-	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius}
-	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius}
+	local target_pos1 = get_target_pos1(pos)
+	local target_pos2 = get_target_pos2(pos)
 
 	local distance = vector.distance(pos, targetPos)
 
+	local diameter = vector.distance(source_pos1, source_pos2)
+	local radius = diameter / 2
+	-- TODO: proper calc
 	local power_requirements = calculate_power(radius, distance)
 
 	minetest.log("action", "[jumpdrive] power requirements: " .. power_requirements)
 
 	-- preload chunk
-	minetest.get_voxel_manip():read_from_map(pos1, pos2)
+	-- TODO: falls away with emerge code
+	-- minetest.get_voxel_manip():read_from_map(pos1, pos2)
 
 	-- check source for protection
-	if is_area_protected(pos, radius, playername) then
+	if is_area_protected(source_pos1, source_pos2, playername) then
 		return {success=false, pos=pos, message="Jump-source is protected"}
 	end
 
 	-- check destination for protection
-	if is_area_protected(targetPos, radius, playername) then
+	if is_area_protected(target_pos1, target_pos2, playername) then
 		return {success=false, pos=pos, message="Jump-target is protected"}
 	end
 
@@ -194,13 +215,11 @@ jumpdrive.execute_jump = function(pos, player)
 		return false
 	end
 
-	local radius = jumpdrive.get_radius(pos)
-	local targetPos = jumpdrive.get_meta_pos(pos)
-	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
-	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+	local target_pos1 = get_target_pos1(pos)
+	local target_pos2 = get_target_pos2(pos)
 
 	-- defer jumping until mapblock loaded
-	minetest.emerge_area(pos1, pos2, function(blockpos, action, calls_remaining, param)
+	minetest.emerge_area(target_pos1, target_pos2, function(blockpos, action, calls_remaining, param)
 		if calls_remaining == 0 then
 			jumpdrive.execute_jump_stage2(pos, player)
 		end
@@ -210,16 +229,25 @@ end
 -- jump stage 2, after target emerge
 jumpdrive.execute_jump_stage2 = function(pos, player)
 	
-	local radius = jumpdrive.get_radius(pos)
-	local targetPos = jumpdrive.get_meta_pos(pos)
-	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
+	local meta = minetest.get_meta(pos)
+	local targetPos = get_target_pos(meta)
+	local offsetPos = vector.subtract(targetPos, pos)
+
+	local source_pos1 = get_pos1(pos)
+	local source_pos2 = get_pos2(pos)
+
+	local target_pos1 = get_target_pos1(pos)
+	local target_pos2 = get_target_pos2(pos)
 
 
-	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
-	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
+	local diameter = vector.distance(target_pos1, target_pos2)
+	local radius = diameter / 2
 
-
-	minetest.log("action", "[jumpdrive] jumping to " .. targetPos.x .. "/" .. targetPos.y .. "/" .. targetPos.z .. " with radius " .. radius)
+	minetest.log("action", "[jumpdrive] jumping: " ..
+		" Source-pos1=" .. minetest.pos_to_string(source_pos1) ..
+		" Source-pos2=" .. minetest.pos_to_string(source_pos2) ..
+		" Target-pos1=" .. minetest.pos_to_string(target_pos1) ..
+		" Target-pos2=" .. minetest.pos_to_string(target_pos2))
 
 	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 
@@ -264,36 +292,36 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 
 	end
 
-	local x_start = pos.x+radius
-	local x_end = pos.x-radius
+	local x_start = target_pos2.x
+	local x_end = target_pos1.x
 	local x_step = -1
 
 	if offsetPos.x < 0 then
 		-- backwards, invert step
-		x_start = pos.x-radius
-		x_end = pos.x+radius
+		x_start = target_pos1.x
+		x_end = target_pos2.x
 		x_step = 1
 	end
 
-	local y_start = pos.y+radius
-	local y_end = pos.y-radius
+	local y_start = target_pos2.y
+	local y_end = target_pos1.y
 	local y_step = -1
 
 	if offsetPos.y < 0 then
 		-- backwards, invert step
-		y_start = pos.y-radius
-		y_end = pos.y+radius
+		y_start = target_pos1.y
+		y_end = target_pos2.y
 		y_step = 1
 	end
 
-	local z_start = pos.z+radius
-	local z_end = pos.z-radius
+	local z_start = target_pos2.z
+	local z_end = target_pos1.z
 	local z_step = -1
 
 	if offsetPos.z < 0 then
 		-- backwards, invert step
-		z_start = pos.z-radius
-		z_end = pos.z+radius
+		z_start = target_pos1.z
+		z_end = target_pos2.z
 		z_step = 1
 	end
 
@@ -301,14 +329,14 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		for iy=y_start,y_end,y_step do
 			for iz=z_start,z_end,z_step do
 				local from = {x=ix, y=iy, z=iz}
-				local to = add_pos(from, offsetPos)
+				local to = vector.add(from, offsetPos)
 				move_block(from, to)
 			end
 		end
 	end
 
 	if has_elevator_mod then
-		jumpdrive.elevator_compat(pos1, pos2)
+		jumpdrive.elevator_compat(target_pos1, target_pos1)
 	end
 
 	-- move objects
@@ -316,7 +344,7 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		-- TODO: check if between pos1 and pos2
 		if obj:get_attach() == nil then
 			-- object not attached
-			obj:moveto( add_pos(obj:get_pos(), offsetPos) )
+			obj:moveto( vector.add(obj:get_pos(), offsetPos) )
 		end
 	end
 
@@ -345,21 +373,28 @@ end
 jumpdrive.update_formspec = function(meta)
 	meta:set_string("formspec", "size[8,10;]" ..
 		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
-		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
-		"field[4,1;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
-		"field[6,1;2,1;radius;Radius;" .. meta:get_int("radius") .. "]" ..
+		"field[3,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
+		"field[6,1;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
 
-		"button_exit[0,2;2,1;jump;Jump]" ..
-		"button_exit[2,2;2,1;show;Show]" ..
-		"button_exit[4,2;2,1;save;Save]" ..
-		"button[6,2;2,1;reset;Reset]" ..
+		"field[0,2;2,1;xplus;X+;" .. meta:get_int("xplus") .. "]" ..
+		"field[3,2;2,1;yplus;Y+;" .. meta:get_int("yplus") .. "]" ..
+		"field[6,2;2,1;zplus;Z+;" .. meta:get_int("zplus") .. "]" ..
 
-		"list[context;main;0,3;8,1;]" ..
+		"field[0,3;2,1;xminus;X-;" .. meta:get_int("xminus") .. "]" ..
+		"field[3,3;2,1;yminus;Y-;" .. meta:get_int("yminus") .. "]" ..
+		"field[6,3;2,1;zminus;Z-;" .. meta:get_int("zminus") .. "]" ..
 
-		"button[0,4;4,1;write_book;Write to book]" ..
-		"button[4,4;4,1;read_book;Read from book]" ..
+		"button_exit[0,4;2,1;jump;Jump]" ..
+		"button_exit[2,4;2,1;show;Show]" ..
+		"button_exit[4,4;2,1;save;Save]" ..
+		"button[6,4;2,1;reset;Reset]" ..
 
-		"list[current_player;main;0,5;8,4;]")
+		"list[context;main;0,5;8,1;]" ..
+
+		"button[0,6;4,1;write_book;Write to book]" ..
+		"button[4,6;4,1;read_book;Read from book]" ..
+
+		"list[current_player;main;0,7;8,1;]")
 end
 
 jumpdrive.write_to_book = function(pos, sender)
