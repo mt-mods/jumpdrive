@@ -223,17 +223,6 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 
 	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
 
-	-- set gravity to 0 for jump
-	for _,obj in ipairs(all_objects) do
-		if obj.is_player ~= nil and obj:is_player() then
-			local pos = obj:get_pos()
-			minetest.log("action", "[jumpdrive] setting zero-gravity for jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
-			local phys = obj:get_physics_override()
-			phys.gravity = 0
-			obj:set_physics_override(phys)
-		end
-	end
-
 	-- move blocks
 
 	local move_block = function(from, to)
@@ -322,18 +311,13 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		jumpdrive.elevator_compat(pos1, pos2)
 	end
 
-	-- move objects and restore gravity
+	-- move objects
 	for _,obj in ipairs(all_objects) do
-		obj:moveto( add_pos(obj:get_pos(), offsetPos) )
-		if obj.is_player ~= nil and obj:is_player() then
-			local pos = obj:get_pos()
-			minetest.log("action", "[jumpdrive] resetting gravity after jump @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
-
-			local phys = obj:get_physics_override()
-			phys.gravity = 1
-			obj:set_physics_override(phys)
+		-- TODO: check if between pos1 and pos2
+		if obj:get_attach() == nil then
+			-- object not attached
+			obj:moveto( add_pos(obj:get_pos(), offsetPos) )
 		end
-
 	end
 
 	-- show animation in target
