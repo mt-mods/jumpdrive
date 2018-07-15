@@ -117,7 +117,7 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		if fields.show then
-			jumpdrive.simulate_jump(pos)
+			jumpdrive.simulate_jump(pos, sender)
 		end
 		
 	end
