@@ -113,14 +113,7 @@ minetest.register_node("jumpdrive:engine", {
 		jumpdrive.update_formspec(meta)
 
 		if fields.jump then
-			local start = os.clock()
-			local success = jumpdrive.execute_jump(pos, sender)
-
-			local diff = os.clock() - start
-
-			if success then
-				minetest.chat_send_player(sender:get_player_name(), "Jump executed in " .. diff .. " s")
-			end
+			jumpdrive.execute_jump(pos, sender)
 		end
 
 		if fields.show then
