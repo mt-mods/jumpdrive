@@ -202,7 +202,11 @@ jumpdrive.execute_jump = function(pos, player)
 	-- defer jumping until mapblock loaded
 	minetest.emerge_area(pos1, pos2, function(blockpos, action, calls_remaining, param)
 		if calls_remaining == 0 then
+			local start = os.clock()
 			jumpdrive.execute_jump_stage2(pos, player)
+
+			local diff = os.clock() - start
+			minetest.chat_send_player(player:get_player_name(), "Jump executed in " .. diff .. " s")
 		end
 	end);
 end
