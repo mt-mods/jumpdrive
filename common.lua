@@ -316,7 +316,7 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		-- TODO: check if between pos1 and pos2
 		if obj:get_attach() == nil then
 			-- object not attached
-			obj:moveto( add_pos(obj:get_pos(), offsetPos) )
+			obj:moveto( add_pos(obj:get_pos(), offsetPos), false )
 		end
 	end
 
