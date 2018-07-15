@@ -80,14 +80,69 @@ local is_area_protected = function(pos, radius, playername)
 end
 
 
-jumpdrive.simulate_jump = function(pos)
+-- checks if an area is empty
+local is_area_empty = function(pos, radius)
+
+	local pos1 = {
+		x=pos.x - radius,
+		y=pos.y - radius,
+		z=pos.z - radius
+	}
+
+	local pos2 = {
+		x=pos.x + radius,
+		y=pos.y + radius,
+		z=pos.z + radius
+	}
+
+	for x=pos1.x,pos2.x do
+		for y=pos1.y,pos2.y do
+			for z=pos1.z,pos2.z do
+				local ipos = {x=x, y=y, z=z}
+				local node = minetest.get_node(ipos)
+				if node.name ~= "air" and node.name ~= "vacuum:vacuum" and node.name ~= "ignore" then
+					print("found: " .. node.name .. "!")
+					return false
+				end
+			end
+		end
+	end
+
+	return true -- no blocks found
+end
+
+
+jumpdrive.simulate_jump = function(pos, player)
 	local meta = minetest.get_meta(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
-
 	local radius = jumpdrive.get_radius(pos)
+	local distance = vector.distance(pos, targetPos)
 
 	jumpdrive.show_marker(targetPos, radius, "red")
 	jumpdrive.show_marker(pos, radius, "green")
+
+
+	local power_requirements = calculate_power(radius, distance)
+
+	local power_item = jumpdrive.config.power_item
+	local power_item_count = math.ceil(power_requirements / jumpdrive.config.power_item_value)
+
+	local msg = "Fuel requirements: " .. power_item_count .. " " .. power_item
+
+	if has_technic_mod then
+		msg = msg .. " or " .. power_requirements .. " EU"
+	end
+
+	minetest.chat_send_player(player:get_player_name(), msg)
+
+	if minetest.find_node_near(targetPos, radius, "ignore", true) then
+		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is uncharted!")
+	end
+
+	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
+		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is in vacuum!")
+	end
+
 end
 
 -- preflight check, for overriding
@@ -139,6 +194,11 @@ jumpdrive.flight_check = function(pos, player)
 	-- check destination for protection
 	if is_area_protected(targetPos, radius, playername) then
 		return {success=false, pos=pos, message="Jump-target is protected"}
+	end
+
+	-- check destination for emptiness
+	if not is_area_empty(targetPos, radius) then
+		return {success=false, pos=targetPos, message="Jump-target not empty!"}
 	end
 
 	-- skip fuel calc, if creative
@@ -320,7 +380,7 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		-- TODO: check if between pos1 and pos2
 		if obj:get_attach() == nil then
 			-- object not attached
-			obj:moveto( add_pos(obj:get_pos(), offsetPos), false )
+			obj:set_pos( add_pos(obj:get_pos(), offsetPos) )
 		end
 	end
 
