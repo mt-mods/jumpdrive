@@ -302,10 +302,12 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
 	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
+	local sourcePos1 = {x=pos.x-radius, y=pos.y-radius, z=pos.z-radius};
+	local sourcePos2 = {x=pos.x+radius, y=pos.y+radius, z=pos.z+radius};
+
 
 	minetest.log("action", "[jumpdrive] jumping to " .. targetPos.x .. "/" .. targetPos.y .. "/" .. targetPos.z .. " with radius " .. radius)
-
-	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
+	local start = os.clock()
 
 	-- move blocks
 
@@ -395,15 +397,48 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		jumpdrive.elevator_compat(pos1, pos2)
 	end
 
+	local all_objects = minetest.get_objects_inside_radius(pos, radius * 1.5);
+
 	-- move objects
 	for _,obj in ipairs(all_objects) do
-		-- TODO: check if between pos1 and pos2
-		if obj:get_attach() == nil then
-			-- object not attached
-			obj:set_pos( add_pos(obj:get_pos(), offsetPos) )
+
+		local objPos = obj:get_pos()
+
+		local xMatch = objPos.x >= sourcePos1.x or objPos.x <= sourcePos2.x
+		local yMatch = objPos.y >= sourcePos1.y or objPos.y <= sourcePos2.y
+		local zMatch = objPos.z >= sourcePos1.z or objPos.z <= sourcePos2.z
+
+		local isPlayer = obj:is_player()
+
+		if xMatch and yMatch and zMatch not isPlayer then
+			-- coords in range
+
+			if obj:get_attach() == nil then
+				-- object not attached
+
+				minetest.log("action", "[Jumpdrive] moving object @ " .. objPos.x .. "/" .. objPos.y .. "/" .. objPos.z)
+				obj:set_pos( add_pos(objPos, offsetPos) )
+			end
 		end
 	end
 
+	-- move players
+	for _,player in ipairs(minetest.get_connected_players()) do
+		local playerPos = player:get_pos()
+
+		local xMatch = playerPos.x >= sourcePos1.x or playerPos.x <= sourcePos2.x
+		local yMatch = playerPos.y >= sourcePos1.y or playerPos.y <= sourcePos2.y
+		local zMatch = playerPos.z >= sourcePos1.z or playerPos.z <= sourcePos2.z
+
+		if xMatch and yMatch and zMatch and player:is_player() then
+			minetest.log("action", "[Jumpdrive] moving player: " .. player:get_player_name())
+			player:moveto( add_pos(playerPos, offsetPos), false);
+		end
+	end
+
+	local diff = os.clock() - start
+	minetest.chat_send_player(player:get_player_name(), "Jump executed in " .. diff .. " s")
+	minetest.log("action", "[Jumpdrive] Jump executed in " .. diff .. " s")
 	-- show animation in target
 	minetest.add_particlespawner({
 		amount = 200,
