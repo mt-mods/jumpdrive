@@ -101,7 +101,6 @@ local is_area_empty = function(pos, radius)
 				local ipos = {x=x, y=y, z=z}
 				local node = minetest.get_node(ipos)
 				if node.name ~= "air" and node.name ~= "vacuum:vacuum" and node.name ~= "ignore" then
-					print("found: " .. node.name .. "!")
 					return false
 				end
 			end
