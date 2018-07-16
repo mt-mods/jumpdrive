@@ -81,27 +81,48 @@ end
 
 
 -- checks if an area is empty
-local is_area_empty = function(pos, radius)
+local is_area_empty = function(sourcePos, targetPos, radius)
 
-	local pos1 = {
-		x=pos.x - radius,
-		y=pos.y - radius,
-		z=pos.z - radius
+	local sourcePos1 = {
+		x=sourcePos.x - radius,
+		y=sourcePos.y - radius,
+		z=sourcePos.z - radius
 	}
 
-	local pos2 = {
-		x=pos.x + radius,
-		y=pos.y + radius,
-		z=pos.z + radius
+	local sourcePos2 = {
+		x=sourcePos.x + radius,
+		y=sourcePos.y + radius,
+		z=sourcePos.z + radius
+	}
+
+	local targetPos1 = {
+		x=targetPos.x - radius,
+		y=targetPos.y - radius,
+		z=targetPos.z - radius
+	}
+
+	local targetPos2 = {
+		x=targetPos.x + radius,
+		y=targetPos.y + radius,
+		z=targetPos.z + radius
 	}
 
 	for x=pos1.x,pos2.x do
 		for y=pos1.y,pos2.y do
 			for z=pos1.z,pos2.z do
-				local ipos = {x=x, y=y, z=z}
-				local node = minetest.get_node(ipos)
-				if node.name ~= "air" and node.name ~= "vacuum:vacuum" and node.name ~= "ignore" then
-					return false
+				local xOverlaps = x >= sourcePos1.x and x <= sourcePos2.x
+				local yOverlaps = x >= sourcePos1.y and x <= sourcePos2.y
+				local zOverlaps = x >= sourcePos1.z and x <= sourcePos2.z
+
+				if xOverlaps and yOverlaps and zOverlaps then
+					-- overlapping source/target, ignore
+				else
+					-- non-overlapping area, check contents
+					local ipos = {x=x, y=y, z=z}
+					local node = minetest.get_node(ipos)
+					if node.name ~= "air" and node.name ~= "vacuum:vacuum" and node.name ~= "ignore" then
+						return false
+					end
 				end
 			end
 		end
@@ -196,7 +217,7 @@ jumpdrive.flight_check = function(pos, player)
 	end
 
 	-- check destination for emptiness
-	if not is_area_empty(targetPos, radius) then
+	if not is_area_empty(pos, targetPos, radius) then
 		return {success=false, pos=targetPos, message="Jump-target not empty!"}
 	end
 
