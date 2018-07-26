@@ -410,7 +410,7 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 
 		local isPlayer = obj:is_player()
 
-		if xMatch and yMatch and zMatch not isPlayer then
+		if xMatch and yMatch and zMatch and not isPlayer then
 			-- coords in range
 
 			if obj:get_attach() == nil then
