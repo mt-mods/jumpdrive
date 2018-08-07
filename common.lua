@@ -107,9 +107,9 @@ local is_area_empty = function(sourcePos, targetPos, radius)
 		z=targetPos.z + radius
 	}
 
-	for x=pos1.x,pos2.x do
-		for y=pos1.y,pos2.y do
-			for z=pos1.z,pos2.z do
+	for x=targetPos1.x,targetPos2.x do
+		for y=targetPos1.y,targetPos2.y do
+			for z=targetPos1.z,targetPos2.z do
 				local xOverlaps = x >= sourcePos1.x and x <= sourcePos2.x
 				local yOverlaps = x >= sourcePos1.y and x <= sourcePos2.y
 				local zOverlaps = x >= sourcePos1.z and x <= sourcePos2.z
