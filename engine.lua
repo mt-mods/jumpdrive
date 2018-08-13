@@ -6,7 +6,26 @@ local has_elevator_mod = minetest.get_modpath("elevator")
 
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
-	tiles = {"jumpdrive.png"},
+
+	tiles = {
+		"jumpdrive.png",
+		"jumpdrive.png",
+		"jumpdrive.png",
+		"jumpdrive.png",
+		"jumpdrive.png",
+		"jumpdrive.png"
+	},
+	drawtype = "nodebox",
+	paramtype = "light",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5, -0.5, -0.5, 0.5, -0.25, 0.5}, -- NodeBox1
+			{-0.5, 0.25, -0.5, 0.5, 0.5, 0.5}, -- NodeBox2
+			{-0.1875, -0.1875, -0.1875, 0.1875, 0.1875, 0.1875}, -- NodeBox3
+		}
+	},
+
 	light_source = 13,
 	groups = {cracky=3,oddly_breakable_by_hand=3,technic_machine = 1, technic_hv = 1},
 	drop = "jumpdrive:engine",
