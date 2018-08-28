@@ -15,8 +15,25 @@ minetest.register_node("jumpdrive:engine", {
 		"jumpdrive.png"
 	},
 
+	tube = {
+		insert_object = function(pos, node, stack, direction)
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:add_item("main", stack)
+		end,
+		can_insert = function(pos, node, stack, direction)
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			stack = stack:peek_item(1)
+
+			return inv:room_for_item("main", stack)
+		end,
+		input_inventory = "main",
+		connect_sides = {bottom = 1}
+	},
+
 	light_source = 13,
-	groups = {cracky=3,oddly_breakable_by_hand=3},
+	groups = {cracky=3,oddly_breakable_by_hand=3,tubedevice=1, tubedevice_receiver=1},
 	drop = "jumpdrive:engine",
 	sounds = default.node_sound_glass_defaults(),
 

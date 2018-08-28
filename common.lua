@@ -80,6 +80,7 @@ end
 
 
 -- checks if an area is empty
+-- TODO: only check not-intersecting volumes (incremental jumps)
 local is_area_empty = function(sourcePos, targetPos, radius)
 
 	local sourcePos1 = {
@@ -274,7 +275,6 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 	local offsetPos = {x=targetPos.x-pos.x, y=targetPos.y-pos.y, z=targetPos.z-pos.z}
 
-
 	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
 	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
@@ -306,6 +306,7 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 		end
 
 		local meta = minetest.get_meta(from):to_table() -- Get metadata of current node
+
 		minetest.set_node(from, {name="air"}) -- perf reason (faster)
 
 		minetest.set_node(to, node) -- Move node to new position
