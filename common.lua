@@ -1,7 +1,6 @@
 
 local has_vacuum_mod = minetest.get_modpath("vacuum")
 local has_travelnet_mod = minetest.get_modpath("travelnet")
-local has_technic_mod = minetest.get_modpath("technic")
 local has_elevator_mod = minetest.get_modpath("elevator")
 local has_locator_mod = minetest.get_modpath("locator")
 
@@ -149,10 +148,6 @@ jumpdrive.simulate_jump = function(pos, player)
 
 	local msg = "Fuel requirements: " .. power_item_count .. " " .. power_item
 
-	if has_technic_mod then
-		msg = msg .. " or " .. power_requirements .. " EU"
-	end
-
 	minetest.chat_send_player(player:get_player_name(), msg)
 
 	if minetest.find_node_near(targetPos, radius, "ignore", true) then
@@ -225,34 +220,19 @@ jumpdrive.flight_check = function(pos, player)
 	if minetest.check_player_privs(playername, {creative = true}) then
 		return result
 	end
+	-- check inventory
+	local inv = meta:get_inventory()
+	local power_item = jumpdrive.config.power_item
+	local power_item_count = math.ceil(power_requirements / jumpdrive.config.power_item_value)
 
-	local powerstorage = meta:get_int("powerstorage")
+	if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
+		local msg = "Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item
 
-	if powerstorage < power_requirements then
-		-- not enough power, use items
-
-		-- check inventory
-		local inv = meta:get_inventory()
-		local power_item = jumpdrive.config.power_item
-		local power_item_count = math.ceil(power_requirements / jumpdrive.config.power_item_value)
-
-		if not inv:contains_item("main", {name=power_item, count=power_item_count}) then
-			local msg = "Not enough fuel for jump, expected " .. power_item_count .. " " .. power_item
-
-			if has_technic_mod then
-				msg = msg .. " or " .. power_requirements .. " EU"
-			end
-
-			return {success=false, pos=pos, message=msg}
-		end
-
-		-- use crystals
-		inv:remove_item("main", {name=power_item, count=power_item_count})
-	else
-		-- remove power
-		meta:set_int("powerstorage", powerstorage - power_requirements)
+		return {success=false, pos=pos, message=msg}
 	end
 
+	-- use power items
+	inv:remove_item("main", {name=power_item, count=power_item_count})
 
 	return result
 end

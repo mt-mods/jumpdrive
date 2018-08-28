@@ -1,6 +1,5 @@
 
 local has_travelnet_mod = minetest.get_modpath("travelnet")
-local has_technic_mod = minetest.get_modpath("technic")
 local has_elevator_mod = minetest.get_modpath("elevator")
 
 
@@ -17,7 +16,7 @@ minetest.register_node("jumpdrive:engine", {
 	},
 
 	light_source = 13,
-	groups = {cracky=3,oddly_breakable_by_hand=3,technic_machine = 1, technic_hv = 1},
+	groups = {cracky=3,oddly_breakable_by_hand=3},
 	drop = "jumpdrive:engine",
 	sounds = default.node_sound_glass_defaults(),
 
@@ -26,9 +25,6 @@ minetest.register_node("jumpdrive:engine", {
 			jumpdrive.execute_jump(pos)
 		end
 	}},
-
-	connects_to = {"group:technic_hv_cable"},
-	connect_sides = {"bottom", "top", "left", "right", "front", "back"},
 
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
@@ -41,36 +37,11 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("y", pos.y)
 		meta:set_int("z", pos.z)
 		meta:set_int("radius", 5)
-		meta:set_int("powerstorage", 0)
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
 
-		if has_technic_mod then
-			meta:set_int("HV_EU_input", 0)
-			meta:set_int("HV_EU_demand", 0)
-		end
-
 		jumpdrive.update_formspec(meta)
-	end,
-
-	technic_run = function(pos, node)
-		local meta = minetest.get_meta(pos)
-		local eu_input = meta:get_int("HV_EU_input")
-		local demand = meta:get_int("HV_EU_demand")
-		local store = meta:get_int("powerstorage")
-
-		meta:set_string("infotext", "Power: " .. eu_input .. "/" .. demand .. " Store: " .. store)
-
-		if store < jumpdrive.config.powerstorage then
-			-- charge
-			meta:set_int("HV_EU_demand", jumpdrive.config.powerrequirement)
-			store = store + eu_input
-			meta:set_int("powerstorage", store)
-		else
-			-- charged
-			meta:set_int("HV_EU_demand", 0)
-		end
 	end,
 
 	can_dig = function(pos,player)
@@ -132,22 +103,10 @@ minetest.register_node("jumpdrive:engine", {
 	end
 })
 
-if has_technic_mod then
-	technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
-end
-
 local engine_craft_side = "default:diamond"
 local engine_craft_center = "default:mese_block"
 local engine_craft_bottom = "default:mese_crystal"
 local engine_craft_top = "default:mese_crystal_fragment"
-
-if has_technic_mod then
-	-- technic enabled recipe
-	engine_craft_center = "technic:blue_energy_crystal"
-	engine_craft_top = "technic:hv_transformer"
-	engine_craft_bottom = "technic:machine_casing"
-end
-
 
 minetest.register_craft({
 	output = 'jumpdrive:engine',
