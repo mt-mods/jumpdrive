@@ -262,11 +262,7 @@ jumpdrive.execute_jump = function(pos, player)
 	-- defer jumping until mapblock loaded
 	minetest.emerge_area(pos1, pos2, function(blockpos, action, calls_remaining, param)
 		if calls_remaining == 0 then
-			local start = os.clock()
 			jumpdrive.execute_jump_stage2(pos, player)
-
-			local diff = os.clock() - start
-			minetest.chat_send_player(player:get_player_name(), "Jump executed in " .. diff .. " s")
 		end
 	end);
 end
@@ -441,7 +437,10 @@ jumpdrive.execute_jump_stage2 = function(pos, player)
 end
 
 
-jumpdrive.update_formspec = function(meta)
+jumpdrive.update_formspec = function(meta, pos)
+
+	local spos = pos.x..','..pos.y..','..pos.z
+
 	meta:set_string("formspec", "size[8,10;]" ..
 		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
@@ -458,7 +457,11 @@ jumpdrive.update_formspec = function(meta)
 		"button[0,4;4,1;write_book;Write to book]" ..
 		"button[4,4;4,1;read_book;Read from book]" ..
 
-		"list[current_player;main;0,5;8,4;]")
+		"list[current_player;main;0,5;8,4;]" ..
+
+		-- liststring stuff
+		"listring[nodemeta:"..spos ..";main]"..
+		"listring[current_player;main]")
 end
 
 jumpdrive.write_to_book = function(pos, sender)
@@ -522,7 +525,7 @@ jumpdrive.read_from_book = function(pos)
 		meta:set_int("z", z)
 
 		-- update form
-		jumpdrive.update_formspec(meta)
+		jumpdrive.update_formspec(meta, pos)
 
 		-- put book back
 		inv:add_item("main", stack)
@@ -537,6 +540,6 @@ jumpdrive.reset_coordinates = function(pos)
 	meta:set_int("z", pos.z)
 
 	-- update form
-	jumpdrive.update_formspec(meta)
+	jumpdrive.update_formspec(meta, pos)
 
 end

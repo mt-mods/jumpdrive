@@ -41,7 +41,7 @@ minetest.register_node("jumpdrive:engine", {
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
 
-		jumpdrive.update_formspec(meta)
+		jumpdrive.update_formspec(meta, pos)
 	end,
 
 	can_dig = function(pos,player)
@@ -90,7 +90,7 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("y", y)
 		meta:set_int("z", z)
 		meta:set_int("radius", radius)
-		jumpdrive.update_formspec(meta)
+		jumpdrive.update_formspec(meta, pos)
 
 		if fields.jump then
 			jumpdrive.execute_jump(pos, sender)
