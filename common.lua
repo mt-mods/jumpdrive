@@ -21,7 +21,7 @@ end
 
 -- cost in EU
 jumpdrive.get_cost = function(radius, distance)
-	return (radius * 10) * distance * 100
+	return (radius * 10) * distance * 1
 	-- r=5, distance=100, cost=500kEU
 	-- r=10, distance=100, cost=1MEU
 	-- r=10, distance=1000, cost=10MEU
