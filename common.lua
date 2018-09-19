@@ -19,7 +19,13 @@ jumpdrive.get_radius = function(pos)
 	return meta:get_int("radius")
 end
 
-
+-- cost in EU
+jumpdrive.get_cost = function(radius, distance)
+	return (radius * 10) * distance * 100
+	-- r=5, distance=100, cost=500kEU
+	-- r=10, distance=100, cost=1MEU
+	-- r=10, distance=1000, cost=10MEU
+end
 
 jumpdrive.simulate_jump = function(pos, player)
 	local meta = minetest.get_meta(pos)
@@ -30,10 +36,23 @@ jumpdrive.simulate_jump = function(pos, player)
 	jumpdrive.show_marker(targetPos, radius, "red")
 	jumpdrive.show_marker(pos, radius, "green")
 
+	local cost = jumpdrive.get_cost(radius, distance)
+	minetest.chat_send_player(player:get_player_name(), "Power-requirements: " .. cost .. " EU")
+
 	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
 		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is in vacuum!")
 	end
 
+end
+
+jumpdrive.prepare_jump = function(pos, player)
+	local meta = minetest.get_meta(pos)
+	local radius = jumpdrive.get_radius(pos)
+	local targetPos = jumpdrive.get_meta_pos(pos)
+
+	local distance = vector.distance(pos, targetPos)
+
+	meta:set_int("HV_EU_demand", jumpdrive.get_cost(radius, distance))
 end
 
 -- preflight check, for overriding
@@ -57,8 +76,6 @@ jumpdrive.execute_jump = function(pos, player)
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 
-	--TODO: fuel calc/check
-
 	-- check preflight conditions
 	local preflight_result = jumpdrive.preflight_check(pos, targetPos, radius, player)
 
@@ -69,7 +86,7 @@ jumpdrive.execute_jump = function(pos, player)
 			message = preflight_result.message
 		end
 		minetest.chat_send_player(playername, message);
-		return
+		return false
 	end
 
 	local radius_vector = {x=radius, y=radius, z=radius}
@@ -78,21 +95,19 @@ jumpdrive.execute_jump = function(pos, player)
 	local target_pos1 = vector.subtract(targetPos, radius_vector)
 	local target_pos2 = vector.add(targetPos, radius_vector)
 
-	-- TODO: check intersection
-
 	if jumpdrive.is_area_protected(source_pos1, source_pos2, playername) then
 		minetest.chat_send_player(playername, "Jump-source is protected!");
-		return
+		return false
 	end
 
 	if jumpdrive.is_area_protected(target_pos1, target_pos2, playername) then
 		minetest.chat_send_player(playername, "Jump-target is protected!");
-		return
+		return false
 	end
 
 	if not jumpdrive.is_area_empty(target_pos1, target_pos2) then
 		minetest.chat_send_player(playername, "Jump-target is occupied!");
-		return
+		return false
 	end
 
 	local t0 = minetest.get_us_time()
@@ -123,7 +138,7 @@ jumpdrive.execute_jump = function(pos, player)
 		glow = 5,
 	})
 
-
+	return true
 end
 
 
