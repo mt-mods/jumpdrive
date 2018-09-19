@@ -249,26 +249,31 @@ jumpdrive.execute_jump = function(pos, player)
 		playername = player:get_player_name()
 	end
 
+	--[[ TODO
 	local preflight = jumpdrive.flight_check(pos, player)
 	if not preflight.success then
 		minetest.chat_send_player(playername, preflight.message)
 		return false
 	end
+	--]]
 
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
-	local pos1 = {x=targetPos.x-radius, y=targetPos.y-radius, z=targetPos.z-radius};
-	local pos2 = {x=targetPos.x+radius, y=targetPos.y+radius, z=targetPos.z+radius};
 
-	-- defer jumping until mapblock loaded
-	minetest.emerge_area(pos1, pos2, function(blockpos, action, calls_remaining, param)
-		if calls_remaining == 0 then
-			jumpdrive.execute_jump_stage2(pos, player)
-		end
-	end);
+	local radius_vector = {x=radius, y=radius, z=radius}
+	local source_pos1 = vector.subtract(pos, radius_vector)
+	local source_pos2 = vector.add(pos, radius_vector)
+	local target_pos1 = vector.subtract(targetPos, radius_vector)
+	local target_pos2 = vector.add(targetPos, radius_vector)
+
+	-- TODO: testing-code
+	jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
+	
+
 end
 
 -- jump stage 2, after target emerge
+-- TODO
 jumpdrive.execute_jump_stage2 = function(pos, player)
 	
 	local radius = jumpdrive.get_radius(pos)
