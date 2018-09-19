@@ -28,14 +28,17 @@ minetest.register_node("jumpdrive:engine", {
 		connect_sides = {bottom = 1}
 	},
 
+	connects_to = {"group:technic_hv_cable"},
+	connect_sides = {"bottom", "top", "left", "right", "front", "back"},
+
 	light_source = 13,
-	groups = {cracky=3,oddly_breakable_by_hand=3,tubedevice=1, tubedevice_receiver=1},
-	drop = "jumpdrive:engine",
+	groups = {cracky=3,oddly_breakable_by_hand=3,tubedevice=1, tubedevice_receiver=1,technic_machine = 1, technic_hv = 1},
+
 	sounds = default.node_sound_glass_defaults(),
 
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			jumpdrive.execute_jump(pos)
+			jumpdrive.prepare_jump(pos)
 		end
 	}},
 
@@ -54,6 +57,10 @@ minetest.register_node("jumpdrive:engine", {
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
 
+		meta:set_int("HV_EU_input", 0)
+		meta:set_int("HV_EU_demand", 0)
+		meta:set_int("HV_EU_supply", 0)
+
 		jumpdrive.update_formspec(meta, pos)
 	end,
 
@@ -63,9 +70,51 @@ minetest.register_node("jumpdrive:engine", {
 		return inv:is_empty("main")
 	end,
 
+	technic_run = function(pos, node)
+		local meta = minetest.get_meta(pos)
+		local eu_input = meta:get_int("HV_EU_input")
+		local demand = meta:get_int("HV_EU_demand")
+
+		local infotext = "Jumpdrive: idle"
+
+		-- no supply by default
+		meta:set_int("HV_EU_supply", 0)
+
+		if demand > 0 then
+			-- jump queued
+
+			if eu_input >= demand then
+				-- reset power demand
+				meta:set_int("HV_EU_demand", 0)
+
+				-- JUMP!
+				local jumped = jumpdrive.execute_jump(pos)
+			
+				if jumped then
+					infotext = "Jumpdrive: jump executed!"
+				else
+					-- power back and demand reset
+					infotext = "Jumpdrive: jump failed!"
+					meta:set_int("HV_EU_supply", eu_input)
+				end
+			else
+				-- power back to the net
+				meta:set_int("HV_EU_supply", eu_input)
+				infotext = "Jumpdrive: power needed: " .. demand .. " / actual: " .. eu_input
+			end
+		end
+
+		meta:set_string("infotext", infotext)
+	end,
+
 	on_receive_fields = function(pos, formname, fields, sender)
 
 		local meta = minetest.get_meta(pos);
+		local owner = meta:get_string("owner")
+
+		if not sender or owner ~= sender:get_player_name() then
+			return
+		end
 
 		if fields.read_book then
 			jumpdrive.read_from_book(pos)
@@ -106,7 +155,7 @@ minetest.register_node("jumpdrive:engine", {
 		jumpdrive.update_formspec(meta, pos)
 
 		if fields.jump then
-			jumpdrive.execute_jump(pos, sender)
+			jumpdrive.prepare_jump(pos, sender)
 		end
 
 		if fields.show then
@@ -129,5 +178,7 @@ minetest.register_craft({
 		{'', engine_craft_bottom, ''}
 	}
 })
+
+technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
 
 
