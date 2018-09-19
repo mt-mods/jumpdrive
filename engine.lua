@@ -42,6 +42,19 @@ minetest.register_node("jumpdrive:engine", {
 		end
 	}},
 
+	digiline =
+	{
+		receptor = {},
+		effector = {
+			action = function(pos, _, channel, msg)
+				if channel == "jumpdrive" then
+					-- TODO
+					--https://github.com/minetest-mods/technic/blob/master/technic/machines/HV/forcefield.lua
+				end
+			end
+		},
+	},
+
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name() or "")
