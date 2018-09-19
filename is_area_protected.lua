@@ -1,4 +1,32 @@
+local has_areas_mod = minetest.get_modpath("areas")
+local has_protector_mod = minetest.get_modpath("protector")
 
-jumpdrive.is_area_protected = function(pos1, pos1, playername)
-	--TODO
+jumpdrive.is_area_protected = function(pos1, pos2, playername)
+
+	if has_protector_mod then
+		local radius_vector = {x=protector.radius, y=protector.radius, z=protector.radius}
+		local protectors = minetest.find_nodes_in_area(
+			vector.subtract(pos1, radius_vector),
+			vector.add(pos2, radius_vector),
+			{"protector:protect", "protector:protect2"}
+		)
+
+		if protectors then
+			for _,pos in protectors do
+				if minetest.is_protected(pos, playername) then
+					return true
+				end
+			end
+		end
+	end
+
+	if has_areas_mod then
+		if not areas:canInteractInArea(pos1, pos2, playername, true) then
+			-- player can't interact
+			return true
+		end
+	end
+
+	-- no protection
+	return false
 end
