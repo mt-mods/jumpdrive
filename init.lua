@@ -20,6 +20,7 @@ local MP = minetest.get_modpath("jumpdrive")
 
 dofile(MP.."/marker.lua")
 dofile(MP.."/blue_crystal.lua")
+dofile(MP.."/move.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/engine.lua")
 --dofile(MP.."/remote.lua")
