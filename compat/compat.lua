@@ -30,7 +30,7 @@ jumpdrive.target_region_compat = function(pos1, pos2)
 	if has_travelnet_mod then
 		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"travelnet:travelnet"})
 		if pos_list then
-			for _,pos in pos_list do
+			for _,pos in pairs(pos_list) do
 				jumpdrive.travelnet_compat(pos)
 			end
 		end

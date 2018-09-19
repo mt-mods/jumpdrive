@@ -12,7 +12,7 @@ jumpdrive.is_area_protected = function(pos1, pos2, playername)
 		)
 
 		if protectors then
-			for _,pos in protectors do
+			for _,pos in pairs(protectors) do
 				if minetest.is_protected(pos, playername) then
 					return true
 				end
