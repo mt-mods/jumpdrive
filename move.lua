@@ -7,7 +7,6 @@ local c_air = minetest.get_content_id("air")
 jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	minetest.log("action", "[jumpdrive] initiating jump")
-	local t0 = minetest.get_us_time()
 
 	-- step 1: copy via voxel manip
 	-- https://dev.minetest.net/VoxelManip#Examples
@@ -65,8 +64,9 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	for x=source_pos1.x, source_pos2.x do
 
 		local source_index = source_area:index(x, y, z)
+		local source_id = source_data[source_index]
 
-		if source_data[source_index] == c_air then
+		if source_id == c_air then
 			-- no meta copying for air
 			-- TODO: optimize to check somehow for existing meta
 		else
@@ -77,13 +77,16 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 			local source_meta = minetest.get_meta(source_pos):to_table()
 			-- TODO: check if meta populated
 			minetest.get_meta(target_pos):from_table(source_meta)
+
+			jumpdrive.node_compat(source_id, source_pos, target_pos)
 		end
 	end
 	end
 	end
 
-	-- step 3: execute compat code
-	-- TODO
+	-- step 3: execute target region compat code
+	jumpdrive.target_region_compat(target_pos1, target_pos2)
+
 
 	-- step 4: move objects
 	local all_objects = minetest.get_objects_inside_radius(source_center, delta_vector.x * 1.5);
@@ -134,6 +137,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 		local source_index = source_area:index(x, y, z)
 		source_data[source_index] = c_air
+		--TODO: check if meta still exists in source and will be a problem
 	end
 	end
 	end
@@ -143,8 +147,6 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	manip:update_map()
 
 
-	local t1 = minetest.get_us_time()
-	local time_micros = t1 - t0
-	minetest.log("action", "[jumpdrive] jump took " .. time_micros .. " us")
+
 
 end

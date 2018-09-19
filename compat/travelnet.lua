@@ -1,15 +1,13 @@
 local has_travelnet_mod = minetest.get_modpath("travelnet")
 
 jumpdrive.travelnet_compat = function(pos)
+
 	local meta = minetest.get_meta(pos);
 	minetest.log("action", "[jumpdrive] Restoring travelnet @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
 
 	local owner_name = meta:get_string( "owner" );
 	local station_name = meta:get_string( "station_name" );
 	local station_network = meta:get_string( "station_network" );
-
-	-- print("Travelnet jump-compat: " .. owner_name .. "/" .. station_network .. "/" .. station_name)
-	-- print(minetest.serialize( travelnet.targets ))
 
 	if (travelnet.targets[owner_name]
 	 and travelnet.targets[owner_name][station_network]

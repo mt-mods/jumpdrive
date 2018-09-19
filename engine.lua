@@ -1,8 +1,4 @@
 
-local has_travelnet_mod = minetest.get_modpath("travelnet")
-local has_elevator_mod = minetest.get_modpath("elevator")
-
-
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
 

@@ -4,3 +4,5 @@ travelnet?
 elevator?
 vacuum?
 locator?
+areas?
+protector?
