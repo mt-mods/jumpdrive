@@ -19,12 +19,9 @@ jumpdrive.get_radius = function(pos)
 	return meta:get_int("radius")
 end
 
--- cost in EU
-jumpdrive.get_cost = function(radius, distance)
-	return (radius * 10) * distance * 1
-	-- r=5, distance=100, cost=500kEU
-	-- r=10, distance=100, cost=1MEU
-	-- r=10, distance=1000, cost=10MEU
+-- calculates the power requirements for a jump
+local calculate_power = function(radius, distance)
+	return 10 * distance * radius
 end
 
 jumpdrive.simulate_jump = function(pos, player)
@@ -36,23 +33,17 @@ jumpdrive.simulate_jump = function(pos, player)
 	jumpdrive.show_marker(targetPos, radius, "red")
 	jumpdrive.show_marker(pos, radius, "green")
 
-	local cost = jumpdrive.get_cost(radius, distance)
-	minetest.chat_send_player(player:get_player_name(), "Power-requirements: " .. cost .. " EU")
+	local power_req = calculate_power(radius, distance)
+	minetest.chat_send_player(player:get_player_name(), "Power-requirements: " .. power_req .. " EU")
 
 	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
 		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is in vacuum!")
 	end
 
-end
+	if minetest.find_node_near(targetPos, radius, "ignore", true) then
+		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is in uncharted area")
+	end
 
-jumpdrive.prepare_jump = function(pos, player)
-	local meta = minetest.get_meta(pos)
-	local radius = jumpdrive.get_radius(pos)
-	local targetPos = jumpdrive.get_meta_pos(pos)
-
-	local distance = vector.distance(pos, targetPos)
-
-	meta:set_int("HV_EU_demand", jumpdrive.get_cost(radius, distance))
 end
 
 -- preflight check, for overriding
@@ -75,6 +66,17 @@ jumpdrive.execute_jump = function(pos, player)
 
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
+
+	local distance = vector.distance(pos, targetPos)
+	local power_req = calculate_power(radius, distance)
+
+	local powerstorage = meta:get_int("powerstorage")
+
+	if powerstorage < power_req then
+		-- not enough power
+		minetest.chat_send_player(player:get_player_name(), "Not enough power: required=" .. power_req .. 
+			", actual: " .. powerstorage .. " EU")
+	end
 
 	-- check preflight conditions
 	local preflight_result = jumpdrive.preflight_check(pos, targetPos, radius, player)
@@ -105,13 +107,19 @@ jumpdrive.execute_jump = function(pos, player)
 		return false
 	end
 
-	if not jumpdrive.is_area_empty(target_pos1, target_pos2) then
-		minetest.chat_send_player(playername, "Jump-target is occupied!");
+	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)
+
+	if not is_empty then
+		minetest.chat_send_player(playername, "Jump-target is occupied (" .. empty_msg .. ")");
 		return false
 	end
 
+	-- consume power from storage
+	meta:set_int("powerstorage", powerstorage - power_req)
+
 	local t0 = minetest.get_us_time()
 
+	-- actual move
 	jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	local t1 = minetest.get_us_time()
