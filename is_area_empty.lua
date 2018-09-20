@@ -1,4 +1,5 @@
 local c_air = minetest.get_content_id("air")
+local c_ignore = minetest.get_content_id("ignore")
 
 local has_vacuum_mod = minetest.get_modpath("vacuum")
 -- TODO: what about ignore?
@@ -25,12 +26,17 @@ jumpdrive.is_area_empty = function(pos1, pos2)
 
 		if id ~= c_air and id ~= c_vacuum then
 			-- not air or vacuum
-			return false
+			if id == c_ignore then
+				return false, "Uncharted"
+			else
+				return false, "Neither air or vacuum"
+			end
 		end
 	end
 	end
 	end
 
 	-- only air and vacuum nodes found
-	return true
+	return true, ""
 end
+

@@ -1,6 +1,12 @@
 
 jumpdrive = {
 	config = {
+		-- technic EU storage value
+		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 100000,
+
+		-- charge value in EU
+		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
+
 		-- allowed radius
 		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 10
 	}

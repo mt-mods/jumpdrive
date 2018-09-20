@@ -42,8 +42,7 @@ minetest.register_node("jumpdrive:engine", {
 		end
 	}},
 
-	digiline =
-	{
+	digiline = {
 		receptor = {},
 		effector = {
 			action = function(pos, _, channel, msg)
@@ -66,13 +65,13 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("y", pos.y)
 		meta:set_int("z", pos.z)
 		meta:set_int("radius", 5)
+		meta:set_int("powerstorage", 0)
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
 
 		meta:set_int("HV_EU_input", 0)
 		meta:set_int("HV_EU_demand", 0)
-		meta:set_int("HV_EU_supply", 0)
 
 		jumpdrive.update_formspec(meta, pos)
 	end,
@@ -87,37 +86,19 @@ minetest.register_node("jumpdrive:engine", {
 		local meta = minetest.get_meta(pos)
 		local eu_input = meta:get_int("HV_EU_input")
 		local demand = meta:get_int("HV_EU_demand")
+		local store = meta:get_int("powerstorage")
 
-		local infotext = "Jumpdrive: idle"
+		meta:set_string("infotext", "Power: " .. eu_input .. "/" .. demand .. " Store: " .. store)
 
-		-- no supply by default
-		meta:set_int("HV_EU_supply", 0)
-
-		if demand > 0 then
-			-- jump queued
-
-			if eu_input >= demand then
-				-- reset power demand
-				meta:set_int("HV_EU_demand", 0)
-
-				-- JUMP!
-				local jumped = jumpdrive.execute_jump(pos)
-			
-				if jumped then
-					infotext = "Jumpdrive: jump executed!"
-				else
-					-- power back and demand reset
-					infotext = "Jumpdrive: jump failed!"
-					meta:set_int("HV_EU_supply", eu_input)
-				end
-			else
-				-- power back to the net
-				meta:set_int("HV_EU_supply", eu_input)
-				infotext = "Jumpdrive: power needed: " .. demand .. " / actual: " .. eu_input
-			end
+		if store < jumpdrive.config.powerstorage then
+			-- charge
+			meta:set_int("HV_EU_demand", jumpdrive.config.powerrequirement)
+			store = store + eu_input
+			meta:set_int("powerstorage", store)
+		else
+			-- charged
+			meta:set_int("HV_EU_demand", 0)
 		end
-
-		meta:set_string("infotext", infotext)
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
@@ -168,7 +149,7 @@ minetest.register_node("jumpdrive:engine", {
 		jumpdrive.update_formspec(meta, pos)
 
 		if fields.jump then
-			jumpdrive.prepare_jump(pos, sender)
+			jumpdrive.execute_jump(pos, sender)
 		end
 
 		if fields.show then
