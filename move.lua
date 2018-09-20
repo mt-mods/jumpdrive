@@ -15,7 +15,8 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local delta_vector = vector.subtract(target_pos1, source_pos1)
 
 	-- center of source
-	local  source_center = vector.add(source_pos1, vector.divide(vector.subtract(source_pos2, source_pos1), 2))
+	local source_center = vector.add(source_pos1, vector.divide(vector.subtract(source_pos2, source_pos1), 2))
+	minetest.log("action", "[jumpdrive] source-center: " .. minetest.pos_to_string(source_center))
 
 	-- read source
 	local manip = minetest.get_voxel_manip()
@@ -95,14 +96,14 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 
 	-- step 4: move objects
-	local all_objects = minetest.get_objects_inside_radius(source_center, delta_vector.x * 1.5);
+	local all_objects = minetest.get_objects_inside_radius(source_center, 20);
 	for _,obj in ipairs(all_objects) do
 
 		local objPos = obj:get_pos()
 
-		local xMatch = objPos.x >= source_pos1.x or objPos.x <= source_pos2.x
-		local yMatch = objPos.y >= source_pos1.y or objPos.y <= source_pos2.y
-		local zMatch = objPos.z >= source_pos1.z or objPos.z <= source_pos2.z
+		local xMatch = objPos.x >= source_pos1.x and objPos.x <= source_pos2.x
+		local yMatch = objPos.y >= source_pos1.y and objPos.y <= source_pos2.y
+		local zMatch = objPos.z >= source_pos1.z and objPos.z <= source_pos2.z
 
 		local isPlayer = obj:is_player()
 
@@ -121,9 +122,9 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local playerPos = player:get_pos()
 
-		local xMatch = playerPos.x >= source_pos1.x or playerPos.x <= source_pos2.x
-		local yMatch = playerPos.y >= source_pos1.y or playerPos.y <= source_pos2.y
-		local zMatch = playerPos.z >= source_pos1.z or playerPos.z <= source_pos2.z
+		local xMatch = playerPos.x >= source_pos1.x and playerPos.x <= source_pos2.x
+		local yMatch = playerPos.y >= source_pos1.y and playerPos.y <= source_pos2.y
+		local zMatch = playerPos.z >= source_pos1.z and playerPos.z <= source_pos2.z
 
 		if xMatch and yMatch and zMatch and player:is_player() then
 			minetest.log("action", "[Jumpdrive] moving player: " .. player:get_player_name())
