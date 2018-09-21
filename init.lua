@@ -20,7 +20,7 @@ dofile(MP.."/is_area_empty.lua")
 dofile(MP.."/is_area_protected.lua")
 dofile(MP.."/move.lua")
 dofile(MP.."/common.lua")
+dofile(MP.."/digiline.lua")
 dofile(MP.."/engine.lua")
---dofile(MP.."/remote.lua")
 
 print("[OK] Jumpdrive")
