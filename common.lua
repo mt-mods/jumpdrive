@@ -76,6 +76,7 @@ jumpdrive.execute_jump = function(pos, player)
 		-- not enough power
 		minetest.chat_send_player(player:get_player_name(), "Not enough power: required=" .. power_req .. 
 			", actual: " .. powerstorage .. " EU")
+		return false
 	end
 
 	-- check preflight conditions
