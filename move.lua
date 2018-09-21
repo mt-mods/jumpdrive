@@ -25,6 +25,8 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local source_data = manip:get_data()
 	local source_param2 = manip:get_param2_data()
 
+	local t0 = minetest.get_us_time()
+
 	-- write target
 	e1, e2 = manip:read_from_map(target_pos1, target_pos2)
 	local target_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
@@ -52,6 +54,10 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	manip:set_param2_data(target_param2)
 	manip:write_to_map()
 	manip:update_map()
+
+	local t1 = minetest.get_us_time()
+	minetest.log("action", "[jumpdrive] step I took " .. (t1 - t0) .. " us")
+
 	--[[
 	perf stats
 		just copying blocks without meta:
@@ -66,6 +72,8 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 
 	-- step 2: check meta and copy if needed
+	t0 = minetest.get_us_time()
+
 	for z=source_pos1.z, source_pos2.z do
 	for y=source_pos1.y, source_pos2.y do
 	for x=source_pos1.x, source_pos2.x do
@@ -75,14 +83,12 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 		if source_id == c_air then
 			-- no meta copying for air
-			-- TODO: optimize to check somehow for existing meta
 		else
 			-- copy meta
 			local source_pos = {x=x, y=y, z=z}
 			local target_pos = vector.add(source_pos, delta_vector)
 
 			local source_meta = minetest.get_meta(source_pos):to_table()
-			-- TODO: check if meta populated
 			minetest.get_meta(target_pos):from_table(source_meta)
 
 			jumpdrive.node_compat(source_id, source_pos, target_pos)
@@ -91,11 +97,21 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	end
 	end
 
+	t1 = minetest.get_us_time()
+	minetest.log("action", "[jumpdrive] step II took " .. (t1 - t0) .. " us")
+
+
+	t0 = minetest.get_us_time()
+
 	-- step 3: execute target region compat code
 	jumpdrive.target_region_compat(target_pos1, target_pos2)
 
+	t1 = minetest.get_us_time()
+	minetest.log("action", "[jumpdrive] step III took " .. (t1 - t0) .. " us")
+
 
 	-- step 4: move objects
+	t0 = minetest.get_us_time()
 	local all_objects = minetest.get_objects_inside_radius(source_center, 20);
 	for _,obj in ipairs(all_objects) do
 
@@ -132,7 +148,12 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		end
 	end
 
+	t1 = minetest.get_us_time()
+	minetest.log("action", "[jumpdrive] step IV took " .. (t1 - t0) .. " us")
+
+
 	-- step 5: clear source area with voxel manip
+	t0 = minetest.get_us_time()
 	e1, e2 = manip:read_from_map(source_pos1, source_pos2)
 	source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	source_data = manip:get_data()
@@ -153,6 +174,8 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	manip:write_to_map()
 	manip:update_map()
 
+	t1 = minetest.get_us_time()
+	minetest.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")
 
 
 
