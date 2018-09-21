@@ -43,7 +43,7 @@ minetest.register_node("jumpdrive:engine", {
 	}},
 
 	digiline = {
-		receptor = {},
+		receptor = {action = function() end},
 		effector = {
 			action = function(pos, _, channel, msg)
 				if channel == "jumpdrive" then
