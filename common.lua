@@ -20,7 +20,7 @@ jumpdrive.get_radius = function(pos)
 end
 
 -- calculates the power requirements for a jump
-local calculate_power = function(radius, distance)
+jumpdrive.calculate_power = function(radius, distance)
 	return 10 * distance * radius
 end
 
@@ -33,16 +33,30 @@ jumpdrive.simulate_jump = function(pos, player)
 	jumpdrive.show_marker(targetPos, radius, "red")
 	jumpdrive.show_marker(pos, radius, "green")
 
-	local power_req = calculate_power(radius, distance)
-	minetest.chat_send_player(player:get_player_name(), "Power-requirements: " .. power_req .. " EU")
+	local power_req = jumpdrive.calculate_power(radius, distance)
+
+	local msg = nil
+	local success = true
 
 	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
-		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is in vacuum!")
+		msg = "Warning: Jump-target is in vacuum!"
 	end
 
 	if minetest.find_node_near(targetPos, radius, "ignore", true) then
-		minetest.chat_send_player(player:get_player_name(), "Warning: Jump-target is in uncharted area")
+		msg = "Warning: Jump-target is in uncharted area"
+		success = false
 	end
+
+	if player and player:is_player() then
+		minetest.chat_send_player(player:get_player_name(), "Power-requirements: " .. power_req .. " EU")
+		if msg then
+			-- additional message
+			minetest.chat_send_player(player:get_player_name(), msg)
+		end
+	else
+		return success, msg
+	end
+
 
 end
 
@@ -68,7 +82,7 @@ jumpdrive.execute_jump = function(pos, player)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 
 	local distance = vector.distance(pos, targetPos)
-	local power_req = calculate_power(radius, distance)
+	local power_req = jumpdrive.calculate_power(radius, distance)
 
 	local powerstorage = meta:get_int("powerstorage")
 
@@ -111,7 +125,7 @@ jumpdrive.execute_jump = function(pos, player)
 	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)
 
 	if not is_empty then
-		minetest.chat_send_player(playername, "Jump-target is occupied (" .. empty_msg .. ")");
+		minetest.chat_send_player(playername, "Jump-target is occupied (" .. empty_msg .. ")")
 		return false
 	end
 
@@ -127,7 +141,7 @@ jumpdrive.execute_jump = function(pos, player)
 	local time_micros = t1 - t0
 
 	minetest.log("action", "[jumpdrive] jump took " .. time_micros .. " us")
-	minetest.chat_send_player(playername, "Jump executed in " .. time_micros .. " us");
+	minetest.chat_send_player(playername, "Jump executed in " .. time_micros .. " us")
 
 	-- show animation in target
 	minetest.add_particlespawner({
@@ -147,7 +161,7 @@ jumpdrive.execute_jump = function(pos, player)
 		glow = 5,
 	})
 
-	return true
+	return true, time_micros
 end
 
 
