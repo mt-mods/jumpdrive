@@ -2,7 +2,7 @@
 jumpdrive = {
 	config = {
 		-- technic EU storage value
-		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 100000,
+		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 1000000,
 
 		-- charge value in EU
 		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
