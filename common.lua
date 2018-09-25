@@ -134,6 +134,12 @@ jumpdrive.execute_jump = function(pos, player)
 
 	local t0 = minetest.get_us_time()
 
+	minetest.sound_play("jumpdrive_engine", {
+		pos = pos,
+		max_hear_distance = 50,
+		gain = 0.7,
+	})
+
 	-- actual move
 	jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
