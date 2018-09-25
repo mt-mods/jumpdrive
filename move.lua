@@ -24,6 +24,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local e1, e2 = manip:read_from_map(source_pos1, source_pos2)
 	local source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	local source_data = manip:get_data()
+	local source_param1 = manip:get_light_data()
 	local source_param2 = manip:get_param2_data()
 
 	minetest.log("action", "[jumpdrive] read source-data")
@@ -35,6 +36,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	e1, e2 = manip:read_from_map(target_pos1, target_pos2)
 	local target_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	local target_data = manip:get_data()
+	local target_param1 = manip:get_light_data()
 	local target_param2 = manip:get_param2_data()
 
 	minetest.log("action", "[jumpdrive] read target-data");
@@ -49,7 +51,8 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		-- copy block id
 		target_data[target_index] = source_data[source_index]
 
-		-- copy param2
+		-- copy params
+		target_param1[target_index] = source_param1[source_index]
 		target_param2[target_index] = source_param2[source_index]
 	end
 	end
@@ -57,6 +60,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 
 	manip:set_data(target_data)
+	manip:set_light_data(target_param1)
 	manip:set_param2_data(target_param2)
 	manip:write_to_map()
 	manip:update_map()
