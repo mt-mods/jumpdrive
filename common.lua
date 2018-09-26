@@ -193,9 +193,8 @@ jumpdrive.update_formspec = function(meta, pos)
 
 		"list[current_player;main;0,5;8,4;]" ..
 
-		-- liststring stuff
-		"listring[nodemeta:"..spos ..";main]"..
-		"listring[current_player;main]")
+		-- listring stuff
+		"listring[]")
 end
 
 jumpdrive.write_to_book = function(pos, sender)
