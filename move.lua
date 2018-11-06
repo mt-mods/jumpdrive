@@ -14,7 +14,6 @@ local simple_block_ids = {}
 
 for _,name in pairs(simple_block_list) do
 	local id = minetest.get_content_id(name)
-	print(name .. " = " .. id) -- XXX
 	table.insert(simple_block_ids, id)
 end
 
