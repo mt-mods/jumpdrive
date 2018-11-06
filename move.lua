@@ -2,6 +2,24 @@
 
 local c_air = minetest.get_content_id("air")
 
+-- simple blocks without metadata
+local simple_block_list = {
+	"air", "default:dirt",
+	"default:stone", "default:cobble",
+	"vacuum:vacuum"
+}
+
+-- simple block id's
+local simple_block_ids = {}
+
+for _,name in pairs(simple_block_list) do
+	local id = minetest.get_content_id(name)
+	print(name .. " = " .. id) -- XXX
+	table.insert(simple_block_ids, id)
+end
+
+minetest.log("action", "[jumpdrive] simple block list count: " .. #simple_block_ids)
+
 -- moves the source to the target area
 -- no protection- or overlap checking is done here
 jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
@@ -91,10 +109,17 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		local source_index = source_area:index(x, y, z)
 		local source_id = source_data[source_index]
 
-		if source_id == c_air then
-			-- no meta copying for air
-		else
-			-- copy meta
+		local skip_meta = false
+
+		for _,id in pairs(simple_block_ids) do
+			if source_id == id then
+				skip_meta = true
+				break
+			end
+		end
+
+		if not skip_meta then
+			-- copy metadata
 			local source_pos = {x=x, y=y, z=z}
 			local target_pos = vector.add(source_pos, delta_vector)
 
@@ -135,11 +160,16 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 		if xMatch and yMatch and zMatch and not isPlayer then
 			-- coords in range
-			if obj:get_attach() == nil then
-				-- object not attached
+			local entity = obj:get_luaentity()
+			-- if obj:get_attach() == nil then
+			-- https://github.com/minetest-mods/technic/blob/488f80d95095efeae38e08884b5ba34724e1bf71/technic/machines/other/frames.lua#L150
+			if not entity then
 
-				minetest.log("action", "[jumpdrive] moving object @ " .. objPos.x .. "/" .. objPos.y .. "/" .. objPos.z)
+				minetest.log("action", "[jumpdrive] moving object @ " .. minetest.pos_to_string(objPos))
 				obj:set_pos( vector.add(objPos, delta_vector) )
+			else
+				minetest.log("action", "[jumpdrive] removing entity '" .. entity.name .. "' @ " .. minetest.pos_to_string(objPos))
+				obj:remove()
 			end
 		end
 	end
