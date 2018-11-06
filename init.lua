@@ -8,7 +8,7 @@ jumpdrive = {
 		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
 
 		-- allowed radius
-		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 10
+		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15
 	}
 }
 
