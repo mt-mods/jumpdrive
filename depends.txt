@@ -8,3 +8,4 @@ locator?
 areas?
 protector?
 digilines?
+display_api?

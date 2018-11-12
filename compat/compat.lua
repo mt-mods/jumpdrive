@@ -3,10 +3,12 @@ local MP = minetest.get_modpath("jumpdrive")
 local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_locator_mod = minetest.get_modpath("locator")
 local has_elevator_mod = minetest.get_modpath("elevator")
+local has_display_mod = minetest.get_modpath("display_api")
 
 dofile(MP.."/compat/travelnet.lua")
 dofile(MP.."/compat/locator.lua")
 dofile(MP.."/compat/elevator.lua")
+dofile(MP.."/compat/signs.lua")
 
 local c_beacon1
 local c_beacon2
@@ -38,6 +40,10 @@ jumpdrive.target_region_compat = function(pos1, pos2)
 
 	if has_elevator_mod then
 		jumpdrive.elevator_compat(pos1, pos2)
+	end
+
+	if has_display_mod then
+		jumpdrive.signs_compat(pos1, pos2)
 	end
 
 end
