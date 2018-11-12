@@ -103,7 +103,12 @@ minetest.register_node("jumpdrive:engine", {
 		local meta = minetest.get_meta(pos);
 		local owner = meta:get_string("owner")
 
-		if not sender or owner ~= sender:get_player_name() then
+		if not sender then
+			return
+		end
+
+		if minetest.is_protected(pos, sender:get_player_name()) then
+			-- not allowed
 			return
 		end
 
