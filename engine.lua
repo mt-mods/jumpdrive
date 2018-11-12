@@ -74,7 +74,9 @@ minetest.register_node("jumpdrive:engine", {
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
-		return inv:is_empty("main")
+		local name = player:get_player_name()
+
+		return inv:is_empty("main") and not minetest.is_protected(pos, name)
 	end,
 
 	technic_run = function(pos, node)
