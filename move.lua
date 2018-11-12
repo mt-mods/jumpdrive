@@ -158,17 +158,25 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		local isPlayer = obj:is_player()
 
 		if xMatch and yMatch and zMatch and not isPlayer then
+			minetest.log("action", "[jumpdrive] object:  @ " .. minetest.pos_to_string(objPos))
+
 			-- coords in range
 			local entity = obj:get_luaentity()
+
 			-- if obj:get_attach() == nil then
 			-- https://github.com/minetest-mods/technic/blob/488f80d95095efeae38e08884b5ba34724e1bf71/technic/machines/other/frames.lua#L150
 			if not entity then
-
-				minetest.log("action", "[jumpdrive] moving object @ " .. minetest.pos_to_string(objPos))
+				minetest.log("action", "[jumpdrive] moving object")
 				obj:set_pos( vector.add(objPos, delta_vector) )
+
+			elseif entity.name == "__builtin:item" then
+				minetest.log("action", "[jumpdrive] moving dropped item")
+				obj:set_pos( vector.add(objPos, delta_vector) )
+
 			else
-				minetest.log("action", "[jumpdrive] removing entity '" .. entity.name .. "' @ " .. minetest.pos_to_string(objPos))
+				minetest.log("action", "[jumpdrive] removing entity: " .. entity.name)
 				obj:remove()
+
 			end
 		end
 	end
