@@ -1,10 +1,12 @@
 local has_areas_mod = minetest.get_modpath("areas")
 local has_protector_mod = minetest.get_modpath("protector")
 
+local protector_radius = (tonumber(minetest.setting_get("protector_radius")) or 5)
+
 jumpdrive.is_area_protected = function(pos1, pos2, playername)
 
 	if has_protector_mod then
-		local radius_vector = {x=protector.radius, y=protector.radius, z=protector.radius}
+		local radius_vector = {x=protector_radius, y=protector_radius, z=protector_radius}
 		local protectors = minetest.find_nodes_in_area(
 			vector.subtract(pos1, radius_vector),
 			vector.add(pos2, radius_vector),
