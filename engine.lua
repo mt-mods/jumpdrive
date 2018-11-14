@@ -173,17 +173,12 @@ minetest.register_node("jumpdrive:engine", {
 	end
 })
 
-local engine_craft_side = "default:diamond"
-local engine_craft_center = "default:mese_block"
-local engine_craft_bottom = "default:mese_crystal"
-local engine_craft_top = "default:mese_crystal_fragment"
-
 minetest.register_craft({
 	output = 'jumpdrive:engine',
 	recipe = {
-		{'', engine_craft_top, ''},
-		{engine_craft_side, engine_craft_center, engine_craft_side},
-		{'', engine_craft_bottom, ''}
+		{'jumpdrive:backbone', 'default:steelblock', 'jumpdrive:backbone'},
+		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
+		{'jumpdrive:backbone', 'default:steelblock', 'jumpdrive:backbone'}
 	}
 })
 
