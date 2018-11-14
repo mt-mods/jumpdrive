@@ -127,7 +127,6 @@ minetest.register_node("jumpdrive:fleet_controller", {
 
 		-- sort by distance, farthes first
 		jumpdrive.fleet.sort_engines(pos, engines_pos_list)
-		print(dump(engines_pos_list))--XXX
 
 		-- apply new coordinates
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
@@ -169,7 +168,6 @@ minetest.register_abm({
 	action = function(pos)
 		local meta = minetest.get_meta(pos)
 		local active = meta:get_int("active")
-		print(active)--XXX
 
 		if active == 1 then
 			local jump_index = meta:get_int("jump_index")
@@ -180,7 +178,9 @@ minetest.register_abm({
 				local success, msg = jumpdrive.execute_jump(node_pos)
 
 				if success then
+					-- at this point if it is the last engine the metadata does not exist anymore in the current location
 					meta:set_int("jump_index", jump_index+1)
+					update_formspec(meta, pos)
 				else
 					meta:set_string("infotext", "Engine (".. minetest.pos_to_string(node_pos) .. ") failed with: " .. msg)
 					meta:set_int("active", 0)

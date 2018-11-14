@@ -44,6 +44,8 @@ jumpdrive.fleet.find_engines = function(pos, visited_hashes, engine_pos_list)
 			visited_hashes[hash] = true
 			minetest.log("action", "[jumpdrive-fleet] adding engine @ " .. minetest.pos_to_string(node_pos))
 			table.insert(engine_pos_list, node_pos)
+
+			jumpdrive.fleet.find_engines(node_pos, visited_hashes, engine_pos_list)
 		end
 	end
 
