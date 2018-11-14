@@ -23,5 +23,7 @@ dofile(MP.."/common.lua")
 dofile(MP.."/digiline.lua")
 dofile(MP.."/engine.lua")
 dofile(MP.."/backbone.lua")
+dofile(MP.."/fleet_functions.lua")
+dofile(MP.."/fleet_controller.lua")
 
 print("[OK] Jumpdrive")

@@ -2,6 +2,17 @@
 jumpdrive.show_marker = function(pos, radius, color)
 	local entity = "jumpdrive:marker_" .. color
 
+	minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=pos.z+radius}, entity)
+	minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=pos.z+radius}, entity)
+	minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=pos.z-radius}, entity)
+	minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=pos.z-radius}, entity)
+	minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=pos.z+radius}, entity)
+	minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=pos.z+radius}, entity)
+	minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=pos.z-radius}, entity)
+	minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=pos.z-radius}, entity)
+
+
+	--[[
 	for x=pos.x-radius, pos.x+radius do
 		-- 4 columns along x axis
 		minetest.add_entity({x=x, y=pos.y+radius, z=pos.z+radius}, entity)
@@ -25,6 +36,7 @@ jumpdrive.show_marker = function(pos, radius, color)
 		minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=z}, entity)
 		minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=z}, entity)
 	end
+	-]]
 end
 
 local register_marker = function(color)
@@ -34,6 +46,7 @@ local register_marker = function(color)
 		initial_properties = {
 			visual = "cube",
 			visual_size = {x=1.05, y=1.05},
+			static_save = false,
 			textures = {
 				texture,
 				texture,

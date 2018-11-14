@@ -24,14 +24,22 @@ jumpdrive.calculate_power = function(radius, distance)
 	return 10 * distance * radius
 end
 
-jumpdrive.simulate_jump = function(pos, player)
+jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local meta = minetest.get_meta(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 	local radius = jumpdrive.get_radius(pos)
 	local distance = vector.distance(pos, targetPos)
 
-	jumpdrive.show_marker(targetPos, radius, "red")
-	jumpdrive.show_marker(pos, radius, "green")
+	local playername = meta:get_string("owner")
+
+	if player ~= nil then
+		playername = player:get_player_name()
+	end
+
+	if show_marker then
+		jumpdrive.show_marker(targetPos, radius, "red")
+		jumpdrive.show_marker(pos, radius, "green")
+	end
 
 	local power_req = jumpdrive.calculate_power(radius, distance)
 
@@ -47,21 +55,56 @@ jumpdrive.simulate_jump = function(pos, player)
 		success = false
 	end
 
-	if player and player:is_player() then
-		minetest.chat_send_player(player:get_player_name(), "Power-requirements: " .. power_req .. " EU")
-		if msg then
-			-- additional message
-			minetest.chat_send_player(player:get_player_name(), msg)
-		end
-	else
-		return success, msg
+
+	local radius_vector = {x=radius, y=radius, z=radius}
+	local source_pos1 = vector.subtract(pos, radius_vector)
+	local source_pos2 = vector.add(pos, radius_vector)
+	local target_pos1 = vector.subtract(targetPos, radius_vector)
+	local target_pos2 = vector.add(targetPos, radius_vector)
+
+	if jumpdrive.is_area_protected(source_pos1, source_pos2, playername) then
+		msg = "Jump-source is protected!"
+		success = false
 	end
 
+	if jumpdrive.is_area_protected(target_pos1, target_pos2, playername) then
+		msg = "Jump-target is protected!"
+		success = false
+	end
 
+	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)
+
+	if not is_empty then
+		msg = "Jump-target is obstructed (" .. empty_msg .. ")"
+		success = false
+	end
+
+	-- check preflight conditions
+	local preflight_result = jumpdrive.preflight_check(pos, targetPos, radius, playername)
+
+	if not preflight_result.success then
+		-- check failed in customization
+		msg = "Preflight check failed!"
+		if preflight_result.message then
+			msg = preflight_result.message
+		end
+		success = false
+	end
+
+	local power_req = jumpdrive.calculate_power(radius, distance)
+	local powerstorage = meta:get_int("powerstorage")
+
+	if powerstorage < power_req then
+		-- not enough power
+		msg = "Not enough power: required=" .. power_req .. ", actual: " .. powerstorage .. " EU"
+		success = false
+	end
+
+	return success, msg
 end
 
 -- preflight check, for overriding
-jumpdrive.preflight_check = function(source, destination, radius, player)
+jumpdrive.preflight_check = function(source, destination, radius, playername)
 	return { success=true }
 end
 
@@ -84,52 +127,20 @@ jumpdrive.execute_jump = function(pos, player)
 	local distance = vector.distance(pos, targetPos)
 	local power_req = jumpdrive.calculate_power(radius, distance)
 
-	local powerstorage = meta:get_int("powerstorage")
-
-	if powerstorage < power_req then
-		-- not enough power
-		minetest.chat_send_player(player:get_player_name(), "Not enough power: required=" .. power_req .. 
-			", actual: " .. powerstorage .. " EU")
-		return false
-	end
-
-	-- check preflight conditions
-	local preflight_result = jumpdrive.preflight_check(pos, targetPos, radius, player)
-
-	if not preflight_result.success then
-		-- check failed in customization
-		local message = "Preflight check failed!"
-		if preflight_result.message then
-			message = preflight_result.message
-		end
-		minetest.chat_send_player(playername, message);
-		return false
-	end
-
 	local radius_vector = {x=radius, y=radius, z=radius}
 	local source_pos1 = vector.subtract(pos, radius_vector)
 	local source_pos2 = vector.add(pos, radius_vector)
 	local target_pos1 = vector.subtract(targetPos, radius_vector)
 	local target_pos2 = vector.add(targetPos, radius_vector)
 
-	if jumpdrive.is_area_protected(source_pos1, source_pos2, playername) then
-		minetest.chat_send_player(playername, "Jump-source is protected!");
-		return false
-	end
-
-	if jumpdrive.is_area_protected(target_pos1, target_pos2, playername) then
-		minetest.chat_send_player(playername, "Jump-target is protected!");
-		return false
-	end
-
-	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)
-
-	if not is_empty then
-		minetest.chat_send_player(playername, "Jump-target is occupied (" .. empty_msg .. ")")
-		return false
+	local success, msg = jumpdrive.simulate_jump(pos, player, false)
+	if not success then
+		minetest.chat_send_player(playername, msg)
+		return false, msg
 	end
 
 	-- consume power from storage
+	local powerstorage = meta:get_int("powerstorage")
 	meta:set_int("powerstorage", powerstorage - power_req)
 
 	local t0 = minetest.get_us_time()
@@ -257,9 +268,6 @@ jumpdrive.read_from_book = function(pos)
 		meta:set_int("y", y)
 		meta:set_int("z", z)
 
-		-- update form
-		jumpdrive.update_formspec(meta, pos)
-
 		-- put book back
 		inv:add_item("main", stack)
 	end
@@ -271,8 +279,5 @@ jumpdrive.reset_coordinates = function(pos)
 	meta:set_int("x", pos.x)
 	meta:set_int("y", pos.y)
 	meta:set_int("z", pos.z)
-
-	-- update form
-	jumpdrive.update_formspec(meta, pos)
 
 end
