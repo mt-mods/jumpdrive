@@ -2,14 +2,7 @@
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
 
-	tiles = {
-		"jumpdrive.png",
-		"jumpdrive.png",
-		"jumpdrive.png",
-		"jumpdrive.png",
-		"jumpdrive.png",
-		"jumpdrive.png"
-	},
+	tiles = {"jumpdrive.png"},
 
 	tube = {
 		insert_object = function(pos, node, stack, direction)
@@ -91,7 +84,7 @@ minetest.register_node("jumpdrive:engine", {
 			-- charge
 			meta:set_int("HV_EU_demand", jumpdrive.config.powerrequirement)
 			store = store + eu_input
-			meta:set_int("powerstorage", store)
+			meta:set_int("powerstorage", math.min(store, jumpdrive.config.powerstorage))
 		else
 			-- charged
 			meta:set_int("HV_EU_demand", 0)
@@ -114,11 +107,13 @@ minetest.register_node("jumpdrive:engine", {
 
 		if fields.read_book then
 			jumpdrive.read_from_book(pos)
+			jumpdrive.update_formspec(meta, pos)
 			return
 		end
 
 		if fields.reset then
 			jumpdrive.reset_coordinates(pos)
+			jumpdrive.update_formspec(meta, pos)
 			return
 		end
 
@@ -155,7 +150,12 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		if fields.show then
-			jumpdrive.simulate_jump(pos, sender)
+			local success, msg = jumpdrive.simulate_jump(pos, sender, true)
+			if not success then
+				minetest.chat_send_player(sender:get_player_name(), msg)
+				return
+			end
+			minetest.chat_send_player(sender:get_player_name(), "Simulation successful")
 		end
 		
 	end,
