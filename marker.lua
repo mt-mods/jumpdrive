@@ -1,17 +1,30 @@
 
 jumpdrive.show_marker = function(pos, radius, color)
-	-- TODO: mark whole outline
 	local entity = "jumpdrive:marker_" .. color
 
-	minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=pos.z+radius}, entity)
-	minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=pos.z-radius}, entity)
-	minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=pos.z+radius}, entity)
-	minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=pos.z-radius}, entity)
+	for x=pos.x-radius, pos.x+radius do
+		-- 4 columns along x axis
+		minetest.add_entity({x=x, y=pos.y+radius, z=pos.z+radius}, entity)
+		minetest.add_entity({x=x, y=pos.y-radius, z=pos.z+radius}, entity)
+		minetest.add_entity({x=x, y=pos.y+radius, z=pos.z-radius}, entity)
+		minetest.add_entity({x=x, y=pos.y-radius, z=pos.z-radius}, entity)
+	end
 
-	minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=pos.z+radius}, entity)
-	minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=pos.z-radius}, entity)
-	minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=pos.z+radius}, entity)
-	minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=pos.z-radius}, entity)
+	for y=pos.y-radius, pos.y+radius do
+		-- 4 columns along y axis
+		minetest.add_entity({x=pos.x+radius, y=y, z=pos.z+radius}, entity)
+		minetest.add_entity({x=pos.x-radius, y=y, z=pos.z+radius}, entity)
+		minetest.add_entity({x=pos.x+radius, y=y, z=pos.z-radius}, entity)
+		minetest.add_entity({x=pos.x-radius, y=y, z=pos.z-radius}, entity)
+	end
+
+	for z=pos.z-radius, pos.z+radius do
+		-- 4 columns along z axis
+		minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=z}, entity)
+		minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=z}, entity)
+		minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=z}, entity)
+		minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=z}, entity)
+	end
 end
 
 local register_marker = function(color)
@@ -54,3 +67,4 @@ end
 register_marker("red")
 register_marker("green")
 register_marker("blue")
+

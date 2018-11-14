@@ -158,6 +158,18 @@ minetest.register_node("jumpdrive:engine", {
 			jumpdrive.simulate_jump(pos, sender)
 		end
 		
+	end,
+
+	on_punch = function(pos, node, puncher)
+
+		if minetest.is_protected(pos, puncher:get_player_name()) then
+			return
+		end
+
+		local meta = minetest.get_meta(pos);
+		local radius = meta:get_int("radius")
+
+		jumpdrive.show_marker(pos, radius, "green")
 	end
 })
 
