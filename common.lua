@@ -36,6 +36,16 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		playername = player:get_player_name()
 	end
 
+
+	local radius_vector = {x=radius, y=radius, z=radius}
+	local source_pos1 = vector.subtract(pos, radius_vector)
+	local source_pos2 = vector.add(pos, radius_vector)
+	local target_pos1 = vector.subtract(targetPos, radius_vector)
+	local target_pos2 = vector.add(targetPos, radius_vector)
+
+	-- load chunk
+	minetest.get_voxel_manip():read_from_map(target_pos1, target_pos2)
+
 	if show_marker then
 		jumpdrive.show_marker(targetPos, radius, "red")
 		jumpdrive.show_marker(pos, radius, "green")
@@ -54,13 +64,6 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		msg = "Warning: Jump-target is in uncharted area"
 		success = false
 	end
-
-
-	local radius_vector = {x=radius, y=radius, z=radius}
-	local source_pos1 = vector.subtract(pos, radius_vector)
-	local source_pos2 = vector.add(pos, radius_vector)
-	local target_pos1 = vector.subtract(targetPos, radius_vector)
-	local target_pos2 = vector.add(targetPos, radius_vector)
 
 	if jumpdrive.is_area_protected(source_pos1, source_pos2, playername) then
 		msg = "Jump-source is protected!"
