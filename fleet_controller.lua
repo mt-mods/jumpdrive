@@ -132,6 +132,9 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
 		if fields.jump then
+			local timer = minetest.get_node_timer(pos)
+			timer:start(2.0)
+
 			--TODO check overlapping engines/radius
 			meta:set_int("active", 1)
 			meta:set_int("jump_index", 1)
@@ -141,6 +144,8 @@ minetest.register_node("jumpdrive:fleet_controller", {
 
 		if fields.stop then
 			meta:set_int("active", 0)
+			local timer = minetest.get_node_timer(pos)
+			timer:stop()
 			update_formspec(meta, pos)
 		end
 
@@ -157,38 +162,41 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		end
 		
 	end,
-})
 
--- fleet jump every n seconds
-minetest.register_abm({
-        label = "Jumpdrive fleet controller",
-	nodenames = {"jumpdrive:fleet_controller"},
-	interval = 2,
-	chance = 1,
-	action = function(pos)
+	on_timer = function(pos, elapsed)
 		local meta = minetest.get_meta(pos)
-		local active = meta:get_int("active")
+		local jump_index = meta:get_int("jump_index")
+		local jump_list = minetest.deserialize( meta:get_string("jump_list") )
 
-		if active == 1 then
-			local jump_index = meta:get_int("jump_index")
-			local jump_list = minetest.deserialize( meta:get_string("jump_list") )
+		if jump_list and jump_index and #jump_list >= jump_index then
 
-			if jump_list and jump_index and #jump_list >= jump_index then
-				local node_pos = jump_list[jump_index]
-				local success, msg = jumpdrive.execute_jump(node_pos)
+			local is_last = #jump_list == jump_index
 
-				if success then
-					-- at this point if it is the last engine the metadata does not exist anymore in the current location
+			local node_pos = jump_list[jump_index]
+			local success, msg = jumpdrive.execute_jump(node_pos)
+
+			if success then
+				-- at this point if it is the last engine the metadata does not exist anymore in the current location
+
+				if is_last then
+					-- update new fleet controller
+					--TODO
+				else
 					meta:set_int("jump_index", jump_index+1)
 					update_formspec(meta, pos)
-				else
-					meta:set_string("infotext", "Engine (".. minetest.pos_to_string(node_pos) .. ") failed with: " .. msg)
-					meta:set_int("active", 0)
-				end
 
+					-- re-schedule
+					local timer = minetest.get_node_timer(pos)
+					timer:start(2.0)
+				end
 			else
 				meta:set_int("active", 0)
+				update_formspec(meta, pos)
+				meta:set_string("infotext", "Engine ".. minetest.pos_to_string(node_pos) .. " failed with: " .. msg)
 			end
+		else
+			meta:set_int("active", 0)
+			update_formspec(meta, pos)
 		end
 	end
 })
