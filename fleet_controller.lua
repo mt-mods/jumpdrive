@@ -132,14 +132,14 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
 		if fields.jump then
-			local timer = minetest.get_node_timer(pos)
-			timer:start(2.0)
-
 			--TODO check overlapping engines/radius
 			meta:set_int("active", 1)
 			meta:set_int("jump_index", 1)
 			meta:set_string("jump_list", minetest.serialize(engines_pos_list))
 			update_formspec(meta, pos)
+
+			local timer = minetest.get_node_timer(pos)
+			timer:start(2.0)
 		end
 
 		if fields.stop then
