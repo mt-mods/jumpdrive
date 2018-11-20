@@ -12,20 +12,11 @@ dofile(MP.."/compat/elevator.lua")
 dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 
-local c_beacon1
-local c_beacon2
-local c_beacon3
 
-if has_locator_mod then
-	c_beacon1 = minetest.get_content_id("locator:beacon_1")
-	c_beacon2 = minetest.get_content_id("locator:beacon_2")
-	c_beacon3 = minetest.get_content_id("locator:beacon_3")
-end
-
-jumpdrive.node_compat = function(content_id, source_pos, target_pos)
+jumpdrive.node_compat = function(name, source_pos, target_pos)
 	if not has_locator_mod then return end
 
-	if content_id == c_beacon1 or content_id == c_beacon2 or content_id == c_beacon3 then
+	if name == "locator:beacon_1" or name == "locator:beacon_2" or name == "locator:beacon_3" then
 		jumpdrive.locator_compat(source_pos, target_pos)
 	end
 end

@@ -93,7 +93,9 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		local source_meta = minetest.get_meta(source_pos):to_table()
 		minetest.get_meta(target_pos):from_table(source_meta)
 
-		jumpdrive.node_compat(source_id, source_pos, target_pos)
+		local node = minetest.get_node(source_pos)
+
+		jumpdrive.node_compat(node.name, source_pos, target_pos)
 	end
 
 	t1 = minetest.get_us_time()
