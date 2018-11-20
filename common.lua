@@ -99,7 +99,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 
 	if powerstorage < power_req then
 		-- not enough power
-		msg = "Not enough power: required=" .. power_req .. ", actual: " .. powerstorage .. " EU"
+		msg = "Not enough power: required=" .. math.floor(power_req) .. ", actual: " .. powerstorage .. " EU"
 		success = false
 	end
 
