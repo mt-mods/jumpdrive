@@ -29,12 +29,6 @@ minetest.register_node("jumpdrive:engine", {
 
 	sounds = default.node_sound_glass_defaults(),
 
-	mesecons = {effector = {
-		action_on = function (pos, node)
-			jumpdrive.prepare_jump(pos)
-		end
-	}},
-
 	digiline = {
 		receptor = {action = function() end},
 		effector = {
