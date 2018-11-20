@@ -2,6 +2,7 @@ default
 technic
 mesecons?
 travelnet?
+telemosaic?
 elevator?
 vacuum?
 locator?
