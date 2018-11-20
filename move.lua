@@ -2,22 +2,6 @@
 
 local c_air = minetest.get_content_id("air")
 
--- simple blocks without metadata
-local simple_block_list = {
-	"air", "default:dirt",
-	"default:stone", "default:cobble",
-	"vacuum:vacuum"
-}
-
--- simple block id's
-local simple_block_ids = {}
-
-for _,name in pairs(simple_block_list) do
-	local id = minetest.get_content_id(name)
-	table.insert(simple_block_ids, id)
-end
-
-minetest.log("action", "[jumpdrive] simple block list count: " .. #simple_block_ids)
 
 -- moves the source to the target area
 -- no protection- or overlap checking is done here
@@ -101,34 +85,14 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	-- step 2: check meta and copy if needed
 	t0 = minetest.get_us_time()
 
-	for z=source_pos1.z, source_pos2.z do
-	for y=source_pos1.y, source_pos2.y do
-	for x=source_pos1.x, source_pos2.x do
+	local meta_pos_list = minetest.find_nodes_with_meta(source_pos1, source_pos2)
+	for _,source_pos in pairs(meta_pos_list) do
+		local target_pos = vector.add(source_pos, delta_vector)
 
-		local source_index = source_area:index(x, y, z)
-		local source_id = source_data[source_index]
+		local source_meta = minetest.get_meta(source_pos):to_table()
+		minetest.get_meta(target_pos):from_table(source_meta)
 
-		local skip_meta = false
-
-		for _,id in pairs(simple_block_ids) do
-			if source_id == id then
-				skip_meta = true
-				break
-			end
-		end
-
-		if not skip_meta then
-			-- copy metadata
-			local source_pos = {x=x, y=y, z=z}
-			local target_pos = vector.add(source_pos, delta_vector)
-
-			local source_meta = minetest.get_meta(source_pos):to_table()
-			minetest.get_meta(target_pos):from_table(source_meta)
-
-			jumpdrive.node_compat(source_id, source_pos, target_pos)
-		end
-	end
-	end
+		jumpdrive.node_compat(source_id, source_pos, target_pos)
 	end
 
 	t1 = minetest.get_us_time()
@@ -213,7 +177,6 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 		local source_index = source_area:index(x, y, z)
 		source_data[source_index] = c_air
-		--TODO: check if meta still exists in source and will be a problem
 	end
 	end
 	end
