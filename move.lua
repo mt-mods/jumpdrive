@@ -21,24 +21,24 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	minetest.log("action", "[jumpdrive] source-center: " .. minetest.pos_to_string(source_center))
 
 	-- read source
-	local source_manip = minetest.get_voxel_manip()
-	local e1, e2 = source_manip:read_from_map(source_pos1, source_pos2)
+	local manip = minetest.get_voxel_manip()
+	local e1, e2 = manip:read_from_map(source_pos1, source_pos2)
 	local source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
-	local source_data = source_manip:get_data()
-	local source_param1 = source_manip:get_light_data()
-	local source_param2 = source_manip:get_param2_data()
+	local source_data = manip:get_data()
+	local source_param1 = manip:get_light_data()
+	local source_param2 = manip:get_param2_data()
 
 	minetest.log("action", "[jumpdrive] read source-data")
 
 	local t0 = minetest.get_us_time()
 
 	-- write target
-	local target_manip = minetest.get_voxel_manip()
-	e1, e2 = target_manip:read_from_map(target_pos1, target_pos2)
+	manip = minetest.get_voxel_manip()
+	e1, e2 = manip:read_from_map(target_pos1, target_pos2)
 	local target_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
-	local target_data = target_manip:get_data()
-	local target_param1 = target_manip:get_light_data()
-	local target_param2 = target_manip:get_param2_data()
+	local target_data = manip:get_data()
+	local target_param1 = manip:get_light_data()
+	local target_param2 = manip:get_param2_data()
 
 	minetest.log("action", "[jumpdrive] read target-data");
 
@@ -60,12 +60,11 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	end
 
 
-	target_manip:set_data(target_data)
-	target_manip:set_light_data(target_param1)
-	target_manip:set_param2_data(target_param2)
-	--target_manip:calc_lighting()
-	target_manip:write_to_map()
-	target_manip:update_map()
+	manip:set_data(target_data)
+	manip:set_light_data(target_param1)
+	manip:set_param2_data(target_param2)
+	manip:write_to_map()
+	manip:update_map()
 
 	local t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step I took " .. (t1 - t0) .. " us")
@@ -168,6 +167,11 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	-- step 5: clear source area with voxel manip
 	t0 = minetest.get_us_time()
+	manip = minetest.get_voxel_manip()
+	e1, e2 = manip:read_from_map(source_pos1, source_pos2)
+	source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
+	source_data = manip:get_data()
+
 
 	for z=source_pos1.z, source_pos2.z do
 	for y=source_pos1.y, source_pos2.y do
@@ -179,10 +183,9 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	end
 	end
 
-	source_manip:set_data(source_data)
-	--source_manip:calc_lighting()
-	source_manip:write_to_map()
-	source_manip:update_map()
+	manip:set_data(source_data)
+	manip:write_to_map()
+	manip:update_map()
 
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")
