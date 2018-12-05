@@ -156,7 +156,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		local zMatch = playerPos.z >= source_pos1.z and playerPos.z <= source_pos2.z
 
 		if xMatch and yMatch and zMatch and player:is_player() then
-			minetest.log("action", "[Jumpdrive] moving player: " .. player:get_player_name())
+			minetest.log("action", "[jumpdrive] moving player: " .. player:get_player_name())
 			player:moveto( vector.add(playerPos, delta_vector), false);
 		end
 	end
