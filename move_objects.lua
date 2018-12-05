@@ -29,12 +29,15 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 				minetest.log("action", "[jumpdrive] moving dropped item")
 				obj:set_pos( vector.add(objPos, delta_vector) )
 
+			elseif entity.name == "pipeworks:tubed_item" then
+				minetest.log("action", "[jumpdrive] moving tubed item")
+				obj:set_pos( vector.add(objPos, delta_vector) )
+
 			else
 				minetest.log("action", "[jumpdrive] removing entity: " .. entity.name)
 				obj:remove()
 
 			end
-			-- pipeworks:tubed_item
 		end
 	end
 
