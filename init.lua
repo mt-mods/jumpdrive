@@ -18,7 +18,11 @@ dofile(MP.."/marker.lua")
 dofile(MP.."/compat/compat.lua")
 dofile(MP.."/is_area_empty.lua")
 dofile(MP.."/is_area_protected.lua")
+
+dofile(MP.."/move_objects.lua")
+dofile(MP.."/move_metadata.lua")
 dofile(MP.."/move.lua")
+
 dofile(MP.."/common.lua")
 dofile(MP.."/digiline.lua")
 dofile(MP.."/engine.lua")
