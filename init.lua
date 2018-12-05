@@ -21,6 +21,7 @@ dofile(MP.."/is_area_protected.lua")
 
 dofile(MP.."/move_objects.lua")
 dofile(MP.."/move_metadata.lua")
+dofile(MP.."/move_nodetimers.lua")
 dofile(MP.."/move.lua")
 
 dofile(MP.."/common.lua")
