@@ -69,83 +69,23 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step I took " .. (t1 - t0) .. " us")
 
-	--[[
-	perf stats
-		just copying blocks without meta:
-			radius=10: around 30ms
-		copying with meta (ALL meta):
-			radius=10: from 50 to 100 ms
-		copying with meta (NO air meta):
-			radius=10: around 50ms
-		copying with meta and players (randomly):
-			radius=10: from 50 to 200ms
-	--]]
-
-
 	-- step 2: check meta and copy if needed
 	t0 = minetest.get_us_time()
-
-	local meta_pos_list = minetest.find_nodes_with_meta(source_pos1, source_pos2)
-	for _,source_pos in pairs(meta_pos_list) do
-		local target_pos = vector.add(source_pos, delta_vector)
-
-		local source_meta = minetest.get_meta(source_pos):to_table()
-		minetest.get_meta(target_pos):from_table(source_meta)
-
-		local node = minetest.get_node(source_pos)
-
-		jumpdrive.node_compat(node.name, source_pos, target_pos)
-	end
-
+	jumpdrive.move_metadata(source_pos1, source_pos2, delta_vector)
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step II took " .. (t1 - t0) .. " us")
 
 
-	t0 = minetest.get_us_time()
-
 	-- step 3: execute target region compat code
+	t0 = minetest.get_us_time()
 	jumpdrive.target_region_compat(target_pos1, target_pos2)
-
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step III took " .. (t1 - t0) .. " us")
 
 
 	-- step 4: move objects
 	t0 = minetest.get_us_time()
-	local all_objects = minetest.get_objects_inside_radius(source_center, 20);
-	for _,obj in ipairs(all_objects) do
-
-		local objPos = obj:get_pos()
-
-		local xMatch = objPos.x >= source_pos1.x and objPos.x <= source_pos2.x
-		local yMatch = objPos.y >= source_pos1.y and objPos.y <= source_pos2.y
-		local zMatch = objPos.z >= source_pos1.z and objPos.z <= source_pos2.z
-
-		local isPlayer = obj:is_player()
-
-		if xMatch and yMatch and zMatch and not isPlayer then
-			minetest.log("action", "[jumpdrive] object:  @ " .. minetest.pos_to_string(objPos))
-
-			-- coords in range
-			local entity = obj:get_luaentity()
-
-			-- if obj:get_attach() == nil then
-			-- https://github.com/minetest-mods/technic/blob/488f80d95095efeae38e08884b5ba34724e1bf71/technic/machines/other/frames.lua#L150
-			if not entity then
-				minetest.log("action", "[jumpdrive] moving object")
-				obj:set_pos( vector.add(objPos, delta_vector) )
-
-			elseif entity.name == "__builtin:item" then
-				minetest.log("action", "[jumpdrive] moving dropped item")
-				obj:set_pos( vector.add(objPos, delta_vector) )
-
-			else
-				minetest.log("action", "[jumpdrive] removing entity: " .. entity.name)
-				obj:remove()
-
-			end
-		end
-	end
+	jumpdrive.move_objects(source_center, source_pos1, source_pos2, delta_vector)
 
 	-- move players
 	for _,player in ipairs(minetest.get_connected_players()) do
