@@ -34,6 +34,7 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 				obj:remove()
 
 			end
+			-- pipeworks:tubed_item
 		end
 	end
 
