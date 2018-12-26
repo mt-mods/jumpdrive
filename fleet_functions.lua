@@ -49,6 +49,9 @@ jumpdrive.fleet.find_engines = function(pos, visited_hashes, engine_pos_list)
 		end
 	end
 
+	-- load far-away areas
+	local manip = minetest.get_voxel_manip()
+	manip:read_from_map(pos1, pos2)
 	local backbone_nodes = minetest.find_nodes_in_area(pos1, pos2, {"jumpdrive:backbone"})
 
 	for _,node_pos in pairs(backbone_nodes) do
