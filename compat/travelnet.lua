@@ -1,5 +1,3 @@
-local has_travelnet_mod = minetest.get_modpath("travelnet")
-
 jumpdrive.travelnet_compat = function(pos)
 
 	local meta = minetest.get_meta(pos);
@@ -20,4 +18,3 @@ jumpdrive.travelnet_compat = function(pos)
 		end
 	end
 end
-

@@ -60,17 +60,13 @@ local register_marker = function(color)
 		},
 
 		on_activate = function(self, staticdata)
-			minetest.after(8.0, 
-				function(self) 
-					self.object:remove()
-				end,
-				self)
+			minetest.after(8.0, function() self.object:remove() end)
 		end,
-	
+
 		on_rightclick=function(self, clicker)
 			self.object:remove()
 		end,
-	
+
 		on_punch = function(self, hitter)
 			self.object:remove()
 		end,
@@ -80,4 +76,3 @@ end
 register_marker("red")
 register_marker("green")
 register_marker("blue")
-

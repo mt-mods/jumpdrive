@@ -7,7 +7,8 @@ local c_air = minetest.get_content_id("air")
 -- no protection- or overlap checking is done here
 jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
-	minetest.log("action", "[jumpdrive] initiating jump (" .. minetest.pos_to_string(source_pos1) .. "-" .. minetest.pos_to_string(source_pos2) .. 
+	minetest.log("action", "[jumpdrive] initiating jump (" ..
+		minetest.pos_to_string(source_pos1) .. "-" .. minetest.pos_to_string(source_pos2) ..
 		") (" .. minetest.pos_to_string(target_pos1) .. "-" .. minetest.pos_to_string(target_pos2) .. ")")
 
 	-- step 1: copy via voxel manip

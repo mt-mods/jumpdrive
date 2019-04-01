@@ -51,8 +51,6 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		jumpdrive.show_marker(pos, radius, "green")
 	end
 
-	local power_req = jumpdrive.calculate_power(radius, distance)
-
 	local msg = nil
 	local success = true
 
@@ -187,8 +185,6 @@ end
 
 jumpdrive.update_formspec = function(meta, pos)
 
-	local spos = pos.x..','..pos.y..','..pos.z
-
 	meta:set_string("formspec", "size[8,10;]" ..
 		"field[0,1;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[2,1;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
@@ -219,7 +215,6 @@ jumpdrive.write_to_book = function(pos, sender)
 		local stack = inv:remove_item("main", {name="default:book", count=1})
 
 		local new_stack = ItemStack("default:book_written")
-		local stackMeta = new_stack:get_meta()
 
 		local data = {}
 
@@ -254,7 +249,7 @@ jumpdrive.read_from_book = function(pos)
 
 		local text = stackMeta:get_string("text")
 		local data = minetest.deserialize(text)
-		
+
 		if data == nil then
 			return
 		end

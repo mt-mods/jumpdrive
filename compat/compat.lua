@@ -4,8 +4,6 @@ local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_locator_mod = minetest.get_modpath("locator")
 local has_elevator_mod = minetest.get_modpath("elevator")
 local has_display_mod = minetest.get_modpath("display_api")
-local has_itemframes_mod = minetest.get_modpath("itemframes")
-local has_telemosaic_mod = minetest.get_modpath("telemosaic")
 
 dofile(MP.."/compat/travelnet.lua")
 dofile(MP.."/compat/locator.lua")
@@ -40,12 +38,6 @@ jumpdrive.target_region_compat = function(pos1, pos2)
 
 	if has_display_mod then
 		jumpdrive.signs_compat(pos1, pos2)
-	end
-
-	if has_itemframes_mod then
-		--jumpdrive.itemframes_compat(pos1, pos2)
-		-- does not work: enclosed tmp variable in on_activate :(
-		--https://gitlab.com/VanessaE/homedecor_modpack/blob/master/itemframes/init.lua#L15
 	end
 
 end

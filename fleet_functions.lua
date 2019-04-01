@@ -27,9 +27,8 @@ end
 jumpdrive.fleet.find_engines = function(pos, visited_hashes, engine_pos_list)
 
 	-- minetest.hash_node_position(pos)
-	local visited_hashes = visited_hashes or {}
-
-	local engine_pos_list = engine_pos_list or {}
+	visited_hashes = visited_hashes or {}
+	engine_pos_list = engine_pos_list or {}
 
 	local pos1 = vector.subtract(pos, 1)
 	local pos2 = vector.add(pos,1)

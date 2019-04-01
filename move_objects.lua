@@ -19,8 +19,6 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 			-- coords in range
 			local entity = obj:get_luaentity()
 
-			-- if obj:get_attach() == nil then
-			-- https://github.com/minetest-mods/technic/blob/488f80d95095efeae38e08884b5ba34724e1bf71/technic/machines/other/frames.lua#L150
 			if not entity then
 				minetest.log("action", "[jumpdrive] moving object")
 				obj:set_pos( vector.add(objPos, delta_vector) )

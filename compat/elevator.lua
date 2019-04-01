@@ -15,5 +15,4 @@ jumpdrive.elevator_compat = function(pos1, pos2)
 		def.after_place_node(pos, nil, nil)
 	end
 
-	
 end

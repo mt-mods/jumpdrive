@@ -15,7 +15,7 @@ local update_formspec = function(meta, pos)
 
 		meta:set_string("infotext", "Controller active: " .. jump_index .. "/" .. #jump_list)
 
-		local button_line = "button_exit[0,2;8,1;stop;Stop]"
+		button_line = "button_exit[0,2;8,1;stop;Stop]"
 	else
 		meta:set_string("infotext", "Ready")
 	end
@@ -121,7 +121,8 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		local t0 = minetest.get_us_time()
 		local engines_pos_list = jumpdrive.fleet.find_engines(pos)
 		local t1 = minetest.get_us_time()
-		minetest.log("action", "[jumpdrive-fleet] backbone traversing took " .. (t1 - t0) .. " us @ " .. minetest.pos_to_string(pos))
+		minetest.log("action", "[jumpdrive-fleet] backbone traversing took " ..
+			(t1 - t0) .. " us @ " .. minetest.pos_to_string(pos))
 
 		local targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
 
@@ -160,7 +161,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 			end
 			minetest.chat_send_player(sender:get_player_name(), "Simulation successful")
 		end
-		
+
 	end,
 
 	on_timer = function(pos, elapsed)
@@ -178,10 +179,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 			if success then
 				-- at this point if it is the last engine the metadata does not exist anymore in the current location
 
-				if is_last then
-					-- update new fleet controller
-					--TODO
-				else
+				if not is_last then
 					meta:set_int("jump_index", jump_index+1)
 					update_formspec(meta, pos)
 

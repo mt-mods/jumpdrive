@@ -17,7 +17,8 @@ end
 jumpdrive.telemosaic_compat = function(source_pos, target_pos)
 
 	-- delegate to compat
-	minetest.log("action", "[jumpdrive] Trying to rewire telemosaic @ " .. target_pos.x .. "/" .. target_pos.y .. "/" .. target_pos.z)
+	minetest.log("action", "[jumpdrive] Trying to rewire telemosaic @ " ..
+    target_pos.x .. "/" .. target_pos.y .. "/" .. target_pos.z)
 
 	local local_meta = minetest.get_meta(target_pos)
 	local local_hash = local_meta:get_string('telemosaic:dest')
@@ -41,12 +42,10 @@ jumpdrive.telemosaic_compat = function(source_pos, target_pos)
 					" to " .. minetest.pos_to_string(target_pos))
 
 				remote_meta:set_string("telemosaic:dest", hash_pos(target_pos))
-			else
-				-- unknown link
 			end
 		end
-		
+
 
 	end
-		
+
 end

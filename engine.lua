@@ -88,7 +88,6 @@ minetest.register_node("jumpdrive:engine", {
 	on_receive_fields = function(pos, formname, fields, sender)
 
 		local meta = minetest.get_meta(pos);
-		local owner = meta:get_string("owner")
 
 		if not sender then
 			return
@@ -151,7 +150,7 @@ minetest.register_node("jumpdrive:engine", {
 			end
 			minetest.chat_send_player(sender:get_player_name(), "Simulation successful")
 		end
-		
+
 	end,
 
 	on_punch = function(pos, node, puncher)
@@ -177,5 +176,3 @@ minetest.register_craft({
 })
 
 technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
-
-
