@@ -21,6 +21,15 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local source_center = vector.add(source_pos1, vector.divide(vector.subtract(source_pos2, source_pos1), 2))
 	minetest.log("action", "[jumpdrive] source-center: " .. minetest.pos_to_string(source_center))
 
+	local t0 = minetest.get_us_time()
+
+
+	-- load areas (just a precaution)
+	if minetest.load_area then
+		minetest.load_area(source_pos1, source_pos2)
+		minetest.load_area(target_pos1, target_pos2)
+	end
+
 	-- read source
 	local manip = minetest.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(source_pos1, source_pos2)
@@ -30,8 +39,6 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local source_param2 = manip:get_param2_data()
 
 	minetest.log("action", "[jumpdrive] read source-data")
-
-	local t0 = minetest.get_us_time()
 
 	-- write target
 	manip = minetest.get_voxel_manip()
