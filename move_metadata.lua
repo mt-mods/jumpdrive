@@ -11,12 +11,12 @@ jumpdrive.move_metadata = function(source_pos1, source_pos2, delta_vector)
 		-- copy metadata to target
 		minetest.get_meta(target_pos):from_table(source_table)
 
-		-- clear metadata in source
-		source_meta:from_table(nil)
-
 		local node = minetest.get_node(source_pos)
 
 		jumpdrive.node_compat(node.name, source_pos, target_pos)
+
+		-- clear metadata in source
+		source_meta:from_table(nil)
 	end
 
 end

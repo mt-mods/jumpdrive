@@ -52,6 +52,6 @@ jumpdrive.anchor_compat = function(from, to)
   if from_meta:get_int("enabled") ~= 0 then
     -- anchor enabled
     forceload_off(from_meta)
-    forceload_on(to_meta)
+    forceload_on(to, to_meta)
   end
 end
