@@ -4,7 +4,6 @@ local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_locator_mod = minetest.get_modpath("locator")
 local has_elevator_mod = minetest.get_modpath("elevator")
 local has_display_mod = minetest.get_modpath("display_api")
-local has_technic_mod = minetest.get_modpath("technic")
 
 dofile(MP.."/compat/travelnet.lua")
 dofile(MP.."/compat/locator.lua")
