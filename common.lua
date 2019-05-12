@@ -43,6 +43,14 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local target_pos1 = vector.subtract(targetPos, radius_vector)
 	local target_pos2 = vector.add(targetPos, radius_vector)
 
+	local x_overlap = (target_pos1.x <= source_pos2.x and target_pos1.x >= source_pos1.x) or (target_pos2.x <= source_pos2.x and target_pos2.x >= source_pos1.x)
+	local y_overlap = (target_pos1.y <= source_pos2.y and target_pos1.y >= source_pos1.y) or (target_pos2.y <= source_pos2.y and target_pos2.y >= source_pos1.y)
+	local z_overlap = (target_pos1.z <= source_pos2.z and target_pos1.z >= source_pos1.z) or (target_pos2.z <= source_pos2.z and target_pos2.z >= source_pos1.z)
+
+	if x_overlap and y_overlap and z_overlap then
+		return false, "Error: jump into itself! extend your jump target"
+	end
+
 	-- load chunk
 	minetest.get_voxel_manip():read_from_map(target_pos1, target_pos2)
 
