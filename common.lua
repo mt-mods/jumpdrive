@@ -20,7 +20,7 @@ jumpdrive.get_radius = function(pos)
 end
 
 -- calculates the power requirements for a jump
-jumpdrive.calculate_power = function(radius, distance)
+jumpdrive.calculate_power = function(radius, distance, sourcePos, targetPos)
 	return 10 * distance * radius
 end
 
@@ -103,7 +103,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		success = false
 	end
 
-	local power_req = jumpdrive.calculate_power(radius, distance)
+	local power_req = jumpdrive.calculate_power(radius, distance, pos, targetPos)
 	local powerstorage = meta:get_int("powerstorage")
 
 	if powerstorage < power_req then
@@ -137,7 +137,7 @@ jumpdrive.execute_jump = function(pos, player)
 	local targetPos = jumpdrive.get_meta_pos(pos)
 
 	local distance = vector.distance(pos, targetPos)
-	local power_req = jumpdrive.calculate_power(radius, distance)
+	local power_req = jumpdrive.calculate_power(radius, distance, pos, targetPos)
 
 	local radius_vector = {x=radius, y=radius, z=radius}
 	local source_pos1 = vector.subtract(pos, radius_vector)

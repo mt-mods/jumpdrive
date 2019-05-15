@@ -105,6 +105,17 @@ jumpdrive.preflight_check = function(source, destination, radius, player)
 end
 ```
 
+## Fuel calc
+
+The default fuel calc can be overwritten by a depending mod:
+
+```lua
+-- calculates the power requirements for a jump
+jumpdrive.calculate_power = function(radius, distance, sourcePos, targetPos)
+	return 10 * distance * radius
+end
+```
+
 # Sources
 
 * jumprive_engine.ogg: https://freesound.org/people/kaboose102/sounds/340257/
@@ -113,6 +124,8 @@ end
 
 ## Next
 
+* calculate_power() override
+* overlap check
 * No fuel consumption if creative
 * Protection checks for source and destination
 * Ability to jump with smaller increments (1-block range) instead of radius min-range
