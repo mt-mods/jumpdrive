@@ -1,4 +1,8 @@
 
+jumpdrive.sanitize_coord = function(coord)
+	return math.max( math.min( coord, 31000 ), -31000 )
+end
+
 -- get pos object from pos
 jumpdrive.get_meta_pos = function(pos)
 	local meta = minetest.get_meta(pos);
@@ -273,9 +277,9 @@ jumpdrive.read_from_book = function(pos)
 			return
 		end
 
-		meta:set_int("x", x)
-		meta:set_int("y", y)
-		meta:set_int("z", z)
+		meta:set_int("x", jumpdrive.sanitize_coord(x))
+		meta:set_int("y", jumpdrive.sanitize_coord(y))
+		meta:set_int("z", jumpdrive.sanitize_coord(z))
 
 		-- put book back
 		inv:add_item("main", stack)

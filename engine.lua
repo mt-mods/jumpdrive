@@ -132,9 +132,9 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		-- update coords
-		meta:set_int("x", x)
-		meta:set_int("y", y)
-		meta:set_int("z", z)
+		meta:set_int("x", jumpdrive.sanitize_coord(x))
+		meta:set_int("y", jumpdrive.sanitize_coord(y))
+		meta:set_int("z", jumpdrive.sanitize_coord(z))
 		meta:set_int("radius", radius)
 		jumpdrive.update_formspec(meta, pos)
 
