@@ -14,7 +14,10 @@ dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/anchor.lua")
 dofile(MP.."/compat/telemosaic.lua")
-dofile(MP.."/compat/teleporttube.lua")
+
+if has_pipeworks_mod then
+	dofile(MP.."/compat/teleporttube.lua")
+end
 
 
 jumpdrive.node_compat = function(name, source_pos, target_pos)
