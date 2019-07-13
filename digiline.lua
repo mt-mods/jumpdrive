@@ -26,6 +26,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		digilines.receptor_send(pos, digilines.rules.default, set_channel, {
 			powerstorage = meta:get_int("powerstorage"),
 			radius = radius,
+			position = pos,
 			target = targetPos,
 			distance = distance,
 			power_req = power_req
