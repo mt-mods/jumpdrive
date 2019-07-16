@@ -31,6 +31,11 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 			power_req = power_req
 		})
 
+	elseif msg.command == "reset" then
+		meta:set_int("x", pos.x)
+		meta:set_int("y", pos.y)
+		meta:set_int("z", pos.z)
+
 	elseif msg.command == "set" then
 		local value = tonumber(msg.value)
 
