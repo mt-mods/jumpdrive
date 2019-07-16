@@ -27,7 +27,7 @@ jumpdrive.node_compat = function(name, source_pos, target_pos)
 	elseif has_technic_mod and name == "technic:admin_anchor" then
 		jumpdrive.anchor_compat(source_pos, target_pos)
 
-	elseif has_pipeworks_mod and name == "pipeworks:teleport_tube" then
+	elseif has_pipeworks_mod and string.find(name, "^pipeworks:teleport_tube") then
 		jumpdrive.teleporttube_compat(source_pos, target_pos)
 
 	elseif name == "telemosaic:beacon" or name == "telemosaic:beacon_protected" then
