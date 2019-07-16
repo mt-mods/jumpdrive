@@ -3,7 +3,10 @@ allow_defined_top = true
 
 globals = {
 	"jumpdrive",
-	"travelnet" -- write
+
+	-- write
+	"travelnet",
+	"pipeworks"
 }
 
 read_globals = {

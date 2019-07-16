@@ -36,6 +36,13 @@ jumpdrive.node_compat = function(name, source_pos, target_pos)
 	end
 end
 
+jumpdrive.commit_node_compat = function()
+	if has_pipeworks_mod then
+		jumpdrive.teleporttube_compat_commit()
+	end
+end
+
+
 jumpdrive.target_region_compat = function(pos1, pos2)
 	if has_travelnet_mod then
 		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"travelnet:travelnet"})
@@ -55,3 +62,4 @@ jumpdrive.target_region_compat = function(pos1, pos2)
 	end
 
 end
+

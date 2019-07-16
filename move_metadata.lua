@@ -31,4 +31,6 @@ jumpdrive.move_metadata = function(source_pos1, source_pos2, delta_vector)
 		source_meta:from_table(nil)
 	end
 
+	jumpdrive.commit_node_compat()
+
 end
