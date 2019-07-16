@@ -5,7 +5,15 @@ local protector_radius = (tonumber(minetest.setting_get("protector_radius")) or 
 
 jumpdrive.is_area_protected = function(pos1, pos2, playername)
 
-	if has_protector_mod then
+
+	if minetest.is_area_protected then
+		-- use area protection check
+		if minetest.is_area_protected(pos1, pos2, playername, 4) then
+			return true
+		end
+
+	elseif has_protector_mod then
+		-- use improvised find_nodes check
 		local radius_vector = {x=protector_radius, y=protector_radius, z=protector_radius}
 		local protectors = minetest.find_nodes_in_area(
 			vector.subtract(pos1, radius_vector),
