@@ -1,7 +1,9 @@
 
-jumpdrive.show_marker = function(pos, radius, color)
+jumpdrive.show_marker = function(pos, radius, color, center_color)
 	local entity = "jumpdrive:marker_" .. color
+	local center_entity = "jumpdrive:marker_" .. (center_color or "blue")
 
+	minetest.add_entity(pos, center_entity)
 	minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=pos.z+radius}, entity)
 	minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=pos.z+radius}, entity)
 	minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=pos.z-radius}, entity)
@@ -11,32 +13,6 @@ jumpdrive.show_marker = function(pos, radius, color)
 	minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=pos.z-radius}, entity)
 	minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=pos.z-radius}, entity)
 
-
-	--[[
-	for x=pos.x-radius, pos.x+radius do
-		-- 4 columns along x axis
-		minetest.add_entity({x=x, y=pos.y+radius, z=pos.z+radius}, entity)
-		minetest.add_entity({x=x, y=pos.y-radius, z=pos.z+radius}, entity)
-		minetest.add_entity({x=x, y=pos.y+radius, z=pos.z-radius}, entity)
-		minetest.add_entity({x=x, y=pos.y-radius, z=pos.z-radius}, entity)
-	end
-
-	for y=pos.y-radius, pos.y+radius do
-		-- 4 columns along y axis
-		minetest.add_entity({x=pos.x+radius, y=y, z=pos.z+radius}, entity)
-		minetest.add_entity({x=pos.x-radius, y=y, z=pos.z+radius}, entity)
-		minetest.add_entity({x=pos.x+radius, y=y, z=pos.z-radius}, entity)
-		minetest.add_entity({x=pos.x-radius, y=y, z=pos.z-radius}, entity)
-	end
-
-	for z=pos.z-radius, pos.z+radius do
-		-- 4 columns along z axis
-		minetest.add_entity({x=pos.x+radius, y=pos.y+radius, z=z}, entity)
-		minetest.add_entity({x=pos.x-radius, y=pos.y+radius, z=z}, entity)
-		minetest.add_entity({x=pos.x+radius, y=pos.y-radius, z=z}, entity)
-		minetest.add_entity({x=pos.x-radius, y=pos.y-radius, z=z}, entity)
-	end
-	-]]
 end
 
 local register_marker = function(color)
