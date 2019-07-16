@@ -31,4 +31,9 @@ dofile(MP.."/backbone.lua")
 dofile(MP.."/fleet_functions.lua")
 dofile(MP.."/fleet_controller.lua")
 
+if minetest.get_modpath("monitoring") then
+	-- enable metrics
+	dofile(MP.."/metrics.lua")
+end
+
 print("[OK] Jumpdrive")
