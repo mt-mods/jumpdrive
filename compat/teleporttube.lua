@@ -26,6 +26,10 @@ jumpdrive.teleporttube_compat = function(from, to)
 
 	minetest.log("action", "[jumpdrive] moving tp-tube data from " .. from_hash .. " to " .. to_hash .. " at pos: " .. minetest.pos_to_string(from))
 
+	data.x = to.x
+	data.y = to.y
+	data.z = to.z
+
 	pipeworks.tptube.db[from_hash] = nil
 	pipeworks.tptube.db[to_hash] = data
 

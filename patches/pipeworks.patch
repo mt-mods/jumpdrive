@@ -1,11 +1,12 @@
 diff --git a/teleport_tube.lua b/teleport_tube.lua
-index f4bad74..bee5f24 100644
+index f4bad74..d236f04 100644
 --- a/teleport_tube.lua
 +++ b/teleport_tube.lua
-@@ -19,6 +19,15 @@ local function save_tube_db()
- 	end
+@@ -50,6 +50,16 @@ local function read_tube_db()
+ 	return tp_tube_db
  end
  
++
 +-- expose for external batch use (jumpdrive)
 +pipeworks.tptube = {
 +	hash = hash,
@@ -15,6 +16,6 @@ index f4bad74..bee5f24 100644
 +}
 +
 +
- local function migrate_tube_db()
- 		local tmp_db = {}
- 		tp_tube_db.version = nil
+ -- debug formatter for coordinates used below
+ local fmt = function(pos)
+ 	return pos.x..", "..pos.y..", "..pos.z
