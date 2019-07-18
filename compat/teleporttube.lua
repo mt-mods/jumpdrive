@@ -30,8 +30,8 @@ jumpdrive.teleporttube_compat = function(from, to)
 	data.y = to.y
 	data.z = to.z
 
-	pipeworks.tptube.db[from_hash] = nil
-	pipeworks.tptube.db[to_hash] = data
+	db[from_hash] = nil
+	db[to_hash] = data
 
 end
 
