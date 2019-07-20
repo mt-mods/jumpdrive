@@ -8,7 +8,7 @@ jumpdrive.is_area_protected = function(pos1, pos2, playername)
 
 	if minetest.is_area_protected then
 		-- use area protection check
-		if minetest.is_area_protected(pos1, pos2, playername, 4) then
+		if minetest.is_area_protected(pos1, pos2, playername, 8) then
 			return true
 		end
 
