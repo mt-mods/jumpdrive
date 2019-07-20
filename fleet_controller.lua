@@ -151,15 +151,38 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		end
 
 		if fields.show then
-			minetest.chat_send_player(sender:get_player_name(), "Found " .. #engines_pos_list .. " jumpdrives")
-			for _,engine_pos in pairs(engines_pos_list) do
+			local playername = sender:get_player_name()
+			minetest.chat_send_player(playername, "Found " .. #engines_pos_list .. " jumpdrives")
+
+			if #engines_pos_list == 0 then
+				return
+			end
+
+			local index = 1
+			local async_check
+			async_check = function()
+				local engine_pos = engines_pos_list[index]
 				local success, msg = jumpdrive.simulate_jump(engine_pos, sender, true)
 				if not success then
-					minetest.chat_send_player(sender:get_player_name(), msg .. " @ " .. minetest.pos_to_string(engine_pos))
+					minetest.chat_send_player(playername, msg .. " @ " .. minetest.pos_to_string(engine_pos))
 					return
 				end
+
+				minetest.chat_send_player(sender:get_player_name(), "Check passed for engine " .. index .. "/" .. #engines_pos_list)
+
+				if index < #engines_pos_list then
+					-- more drives to check
+					index = index + 1
+					minetest.after(1, async_check)
+
+				elseif index >= #engines_pos_list then
+					-- done
+					minetest.chat_send_player(sender:get_player_name(), "Simulation successful")
+				end
 			end
-			minetest.chat_send_player(sender:get_player_name(), "Simulation successful")
+
+			minetest.after(1, async_check)
+			
 		end
 
 	end,
