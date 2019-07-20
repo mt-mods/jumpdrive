@@ -20,11 +20,13 @@ jumpdrive.teleporttube_compat = function(from, to)
 	local data = db[from_hash]
 
 	if not data then
-		minetest.log("warning", "[jumpdrive] no tp-tube data found at hash: " .. from_hash .. " / pos: " .. minetest.pos_to_string(from))
+		minetest.log("warning", "[jumpdrive] no tp-tube data found at hash: " ..
+			from_hash .. " / pos: " .. minetest.pos_to_string(from))
 		return
 	end
 
-	minetest.log("action", "[jumpdrive] moving tp-tube data from " .. from_hash .. " to " .. to_hash .. " at pos: " .. minetest.pos_to_string(from))
+	minetest.log("action", "[jumpdrive] moving tp-tube data from " ..
+		from_hash .. " to " .. to_hash .. " at pos: " .. minetest.pos_to_string(from))
 
 	data.x = to.x
 	data.y = to.y

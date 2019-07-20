@@ -182,7 +182,6 @@ minetest.register_node("jumpdrive:fleet_controller", {
 			end
 
 			minetest.after(1, async_check)
-			
 		end
 
 	end,
