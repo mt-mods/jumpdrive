@@ -9,7 +9,9 @@ jumpdrive = {
 
 		-- allowed radius
 		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15
-	}
+	},
+
+	blacklist = {}
 }
 
 local MP = minetest.get_modpath("jumpdrive")
@@ -30,6 +32,7 @@ dofile(MP.."/engine.lua")
 dofile(MP.."/backbone.lua")
 dofile(MP.."/fleet_functions.lua")
 dofile(MP.."/fleet_controller.lua")
+dofile(MP.."/blacklist.lua")
 
 if minetest.get_modpath("monitoring") then
 	-- enable metrics

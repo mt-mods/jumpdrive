@@ -82,23 +82,25 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local msg = nil
 	local success = true
 
+	local blacklisted_pos_list = minetest.find_nodes_in_area(source_pos1, source_pos2, jumpdrive.blacklist)
+	for nodepos in ipairs(blacklisted_pos_list) do
+		return false, "Can't jump node @ " .. minetest.pos_to_string(nodepos)
+	end
+
 	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
 		msg = "Warning: Jump-target is in vacuum!"
 	end
 
 	if minetest.find_node_near(targetPos, radius, "ignore", true) then
-		msg = "Warning: Jump-target is in uncharted area"
-		success = false
+		return false, "Warning: Jump-target is in uncharted area"
 	end
 
 	if jumpdrive.is_area_protected(source_pos1, source_pos2, playername) then
-		msg = "Jump-source is protected!"
-		success = false
+		return false, "Jump-source is protected!"
 	end
 
 	if jumpdrive.is_area_protected(target_pos1, target_pos2, playername) then
-		msg = "Jump-target is protected!"
-		success = false
+		return false, "Jump-target is protected!"
 	end
 
 	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)

@@ -1,6 +1,8 @@
 unused_args = false
 allow_defined_top = true
 
+ignore = {"512"}
+
 globals = {
 	"jumpdrive",
 
