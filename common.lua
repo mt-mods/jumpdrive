@@ -187,9 +187,10 @@ jumpdrive.execute_jump = function(pos, player)
 
 	local t1 = minetest.get_us_time()
 	local time_micros = t1 - t0
+	local time_millis = math.floor(time_micros / 1000)
 
 	minetest.log("action", "[jumpdrive] jump took " .. time_micros .. " us")
-	minetest.chat_send_player(playername, "Jump executed in " .. time_micros .. " us")
+	minetest.chat_send_player(playername, "Jump executed in " .. time_millis .. " ms")
 
 
 	-- show animation in source
