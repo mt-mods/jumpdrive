@@ -35,6 +35,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		meta:set_int("x", pos.x)
 		meta:set_int("y", pos.y)
 		meta:set_int("z", pos.z)
+		jumpdrive.update_formspec(meta, pos)
 
 	elseif msg.command == "set" then
 		local value = tonumber(msg.value)
