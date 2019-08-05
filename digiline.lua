@@ -57,7 +57,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		end
 
 
-	elseif msg.command == "simluate" or msg.command == "show" then
+	elseif msg.command == "simulate" or msg.command == "show" then
 		local success, resultmsg = jumpdrive.simulate_jump(pos)
 
 		digilines.receptor_send(pos, digilines.rules.default, set_channel, {
