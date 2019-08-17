@@ -83,7 +83,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local success = true
 
 	local blacklisted_pos_list = minetest.find_nodes_in_area(source_pos1, source_pos2, jumpdrive.blacklist)
-	for nodepos in ipairs(blacklisted_pos_list) do
+	for _, nodepos in ipairs(blacklisted_pos_list) do
 		return false, "Can't jump node @ " .. minetest.pos_to_string(nodepos)
 	end
 
