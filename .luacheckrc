@@ -15,6 +15,7 @@ read_globals = {
 	-- Stdlib
 	string = {fields = {"split"}},
 	table = {fields = {"copy", "getn"}},
+	"VoxelManip",
 
 	-- Minetest
 	"minetest",
@@ -25,6 +26,7 @@ read_globals = {
 	"unified_inventory", "default", "monitoring",
 	"digilines",
 	"mesecons",
+	"mesecon",
 	"technic",
 	"locator",
 	"display_api",

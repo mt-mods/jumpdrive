@@ -8,7 +8,10 @@ jumpdrive = {
 		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
 
 		-- allowed radius
-		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15
+		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15,
+
+		-- force override teleport tube from pipeworks to be jump-capable
+		override_pipeworks_teleport_tube = minetest.settings:get("jumpdrive.override_pipeworks_teleport_tube") == "true"
 	},
 
 	blacklist = {}
@@ -33,6 +36,10 @@ dofile(MP.."/backbone.lua")
 dofile(MP.."/fleet_functions.lua")
 dofile(MP.."/fleet_controller.lua")
 dofile(MP.."/blacklist.lua")
+
+if jumpdrive.config.override_pipeworks_teleport_tube then
+	dofile(MP.."/override/teleport_tube.lua")
+end
 
 if minetest.get_modpath("monitoring") then
 	-- enable metrics
