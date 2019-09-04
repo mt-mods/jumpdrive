@@ -26,6 +26,7 @@ dofile(MP.."/move_metadata.lua")
 dofile(MP.."/move_nodetimers.lua")
 dofile(MP.."/move.lua")
 
+dofile(MP.."/mapgen.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/digiline.lua")
 dofile(MP.."/engine.lua")
