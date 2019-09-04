@@ -30,14 +30,14 @@ minetest.register_globalstep(function(dtime)
 	timer=0
 
   local time = minetest.get_us_time()
-  local delay_seconds = 10
+  local delay_seconds = 20
 
   local copied_events = events
   events = {}
 
   local count = 0
   for _, event in ipairs(copied_events) do
-    if event.time > (time + (delay_seconds * 10000000)) then
+    if event.time > (time - (delay_seconds * 1000000)) then
       -- still recent
       table.insert(events, event)
       count = count + 1
