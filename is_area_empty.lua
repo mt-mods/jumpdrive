@@ -1,15 +1,20 @@
-local c_air = minetest.get_content_id("air")
 local c_ignore = minetest.get_content_id("ignore")
 
-local has_vacuum_mod = minetest.get_modpath("vacuum")
--- TODO: what about ignore?
+local buildable_to_nodes = {}
 
-local c_vacuum
-if has_vacuum_mod then
-	c_vacuum = minetest.get_content_id("vacuum:vacuum")
-else
-	c_vacuum = c_air
-end
+minetest.after(4, function()
+	local count = 0
+	for name, node in pairs(minetest.registered_nodes) do
+		if node.buildable_to then
+			count = count + 1
+			local id = minetest.get_content_id(name)
+			buildable_to_nodes[id] = true
+		end
+	end
+	minetest.log("action", "[jumpdrive] collected " .. count .. " nodes that are buildable_to")
+end)
+
+
 
 jumpdrive.is_area_empty = function(pos1, pos2)
 	local manip = minetest.get_voxel_manip()
@@ -24,19 +29,19 @@ jumpdrive.is_area_empty = function(pos1, pos2)
 		local index = area:index(x, y, z)
 		local id = data[index]
 
-		if id ~= c_air and id ~= c_vacuum then
-			-- not air or vacuum
-			if id == c_ignore then
-				return false, "Uncharted"
-			else
-				return false, "Neither air or vacuum"
-			end
+		if id == c_ignore then
+			return false, "Uncharted"
+		end
+
+		if not buildable_to_nodes[id] then
+			-- not buildable_to
+			return false, "Occupied"
 		end
 	end
 	end
 	end
 
-	-- only air and vacuum nodes found
+	-- only buildable_to nodes found
 	return true, ""
 end
 
