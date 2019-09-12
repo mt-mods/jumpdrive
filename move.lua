@@ -100,13 +100,15 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local playerPos = player:get_pos()
 
-		local xMatch = playerPos.x >= source_pos1.x and playerPos.x <= source_pos2.x
-		local yMatch = playerPos.y >= source_pos1.y and playerPos.y <= source_pos2.y
-		local zMatch = playerPos.z >= source_pos1.z and playerPos.z <= source_pos2.z
+		local xMatch = playerPos.x >= (source_pos1.x-0.5) and playerPos.x <= (source_pos2.x+0.5)
+		local yMatch = playerPos.y >= (source_pos1.y-0.5) and playerPos.y <= (source_pos2.y+0.5)
+		local zMatch = playerPos.z >= (source_pos1.z-0.5) and playerPos.z <= (source_pos2.z+0.5)
 
 		if xMatch and yMatch and zMatch and player:is_player() then
 			minetest.log("action", "[jumpdrive] moving player: " .. player:get_player_name())
-			player:set_pos( vector.add(playerPos, delta_vector) );
+			local new_player_pos = vector.add(playerPos, delta_vector)
+			new_player_pos = vector.add(new_player_pos, {x=0, y=1, z=0})
+			player:set_pos( new_player_pos );
 		end
 	end
 

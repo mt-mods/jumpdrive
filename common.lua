@@ -28,23 +28,15 @@ jumpdrive.calculate_power = function(radius, distance, sourcePos, targetPos)
 	return 10 * distance * radius
 end
 
--- time of last mapgen event
-local last_mapgen_call = minetest.get_us_time()
-
--- update last mapgen event time
-minetest.register_on_generated(function(minp, maxp, seed)
-	last_mapgen_call = minetest.get_us_time()
-end)
-
 jumpdrive.simulate_jump = function(pos, player, show_marker)
 
-	if (minetest.get_us_time() - last_mapgen_call) < 5000000 then
-		-- 5 seconds mapgen grace time
-		return false, "Error: mapgen may still be active, please try again later for your own safety!"
+	local targetPos = jumpdrive.get_meta_pos(pos)
+
+	if jumpdrive.check_mapgen(pos) then
+		return false, "Error: mapgen was active in this area, please try again later for your own safety!"
 	end
 
 	local meta = minetest.get_meta(pos)
-	local targetPos = jumpdrive.get_meta_pos(pos)
 	local radius = jumpdrive.get_radius(pos)
 	local distance = vector.distance(pos, targetPos)
 

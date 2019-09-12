@@ -8,7 +8,7 @@ minetest.after(4, function()
 		end
 	end
 	minetest.log("action", "[jumpdrive] collected " .. #node_names_with_timer .. " items with node timers")
-end);
+end)
 
 
 -- invoked from move.lua
