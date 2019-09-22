@@ -49,12 +49,7 @@ end
 
 jumpdrive.target_region_compat = function(pos1, pos2, delta_vector)
 	if has_travelnet_mod then
-		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"travelnet:travelnet"})
-		if pos_list then
-			for _,pos in pairs(pos_list) do
-				jumpdrive.travelnet_compat(pos)
-			end
-		end
+		jumpdrive.travelnet_compat(pos1, pos2)
 	end
 
 	if has_elevator_mod then
