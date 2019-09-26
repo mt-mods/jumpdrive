@@ -7,6 +7,7 @@ local has_elevator_mod = minetest.get_modpath("elevator")
 local has_display_mod = minetest.get_modpath("display_api")
 local has_pipeworks_mod = minetest.get_modpath("pipeworks")
 local has_beds_mod = minetest.get_modpath("beds")
+local has_ropes_mod = minetest.get_modpath("ropes")
 
 dofile(MP.."/compat/travelnet.lua")
 dofile(MP.."/compat/locator.lua")
@@ -16,6 +17,7 @@ dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/anchor.lua")
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
+dofile(MP.."/compat/ropes.lua")
 
 if has_pipeworks_mod then
 	dofile(MP.."/compat/teleporttube.lua")
@@ -47,12 +49,7 @@ end
 
 jumpdrive.target_region_compat = function(pos1, pos2, delta_vector)
 	if has_travelnet_mod then
-		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"travelnet:travelnet"})
-		if pos_list then
-			for _,pos in pairs(pos_list) do
-				jumpdrive.travelnet_compat(pos)
-			end
-		end
+		jumpdrive.travelnet_compat(pos1, pos2)
 	end
 
 	if has_elevator_mod then
@@ -65,6 +62,10 @@ jumpdrive.target_region_compat = function(pos1, pos2, delta_vector)
 
 	if has_beds_mod then
 		jumpdrive.beds_compat(pos1, pos2, delta_vector)
+	end
+
+	if has_ropes_mod then
+		jumpdrive.ropes_compat(pos1, pos2, delta_vector)
 	end
 end
 
