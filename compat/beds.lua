@@ -14,7 +14,7 @@ end
 jumpdrive.beds_compat = function(target_pos1, target_pos2, delta_vector)
 	if beds == nil or
 			beds.spawn == nil or
-			beds.save_spawns == nil then 
+			beds.save_spawns == nil then
 		-- Something is wrong. Don't do anything
 		return
 	end

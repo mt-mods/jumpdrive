@@ -5,7 +5,7 @@ local rope_nodes = { -- Top, middle, bottom
 
 jumpdrive.ropes_compat = function(target_pos1, target_pos2, delta_vector)
 	if ropes == nil or
-			ropes.destroy_rope == nil then 
+			ropes.destroy_rope == nil then
 		-- Something is wrong. Don't do anything
 		return
 	end
@@ -45,7 +45,7 @@ jumpdrive.ropes_compat = function(target_pos1, target_pos2, delta_vector)
 			})
 
 			-- Destroy remainder of the rope below the source area
-			remainder_pos = {
+			local remainder_pos = {
 				x = pos.x - delta_vector.x,
 				y = pos.y - delta_vector.y - 1,
 				z = pos.z - delta_vector.z
