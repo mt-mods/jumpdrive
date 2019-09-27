@@ -311,6 +311,31 @@ jumpdrive.read_from_book = function(pos)
 
 		-- put book back
 		inv:add_item("main", stack)
+	elseif inv:contains_item("main", {name="missions:wand_position", count=1}) then
+		local stack = inv:remove_item("main", {name="missions:wand_position", count=1})
+		local stackMeta = stack:get_meta()
+
+		local text = stackMeta:get_string("pos")
+		local pos = minetest.string_to_pos(text)
+
+		if nil == pos then
+			return
+		end
+
+		local x = pos.x
+		local y = pos.y
+		local z = pos.z
+
+		if x == nil or y == nil or z == nil then
+			return
+		end
+
+		meta:set_int("x", jumpdrive.sanitize_coord(x))
+		meta:set_int("y", jumpdrive.sanitize_coord(y))
+		meta:set_int("z", jumpdrive.sanitize_coord(z))
+
+		-- put wand back
+		inv:add_item("main", stack)
 	end
 end
 
