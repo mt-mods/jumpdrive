@@ -11,9 +11,10 @@ Take your buildings with you on your journey
 # Operation
 
 * Place a 'jumpdrive:engine' into the center of your creation.
-* Insert mese crystals as fuel for the jumps (optionally: connect to technic:hv network)
+* Connect the engine to a technic HV network
+* Let the engine charge
 * Choose your target coordinates (should be air or ignore blocks)
-* Select your cube-radius (from 1 to 19 blocks)
+* Select your cube-radius
 * Click "show" and check the green (source) and red (target) destination markers if everything is in range
 * Click "jump"
 
