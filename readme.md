@@ -11,9 +11,10 @@ Take your buildings with you on your journey
 # Operation
 
 * Place a 'jumpdrive:engine' into the center of your creation.
-* Insert mese crystals as fuel for the jumps (optionally: connect to technic:hv network)
+* Connect the engine to a technic HV network
+* Let the engine charge
 * Choose your target coordinates (should be air or ignore blocks)
-* Select your cube-radius (from 1 to 19 blocks)
+* Select your cube-radius
 * Click "show" and check the green (source) and red (target) destination markers if everything is in range
 * Click "jump"
 
@@ -25,20 +26,20 @@ Optional dependencies:
 * Travelnet box (gets rewired after jump)
 * Elevator (on_place gets called after jump)
 * Locator (gets removed and added after each jump)
+* Pipeworks teleport tubes (with a patch to pipeworks)
+* Beds (thx to @tuedel)
+* Ropes (thx to @tuedel)
+* Mission-wand as coordinate bookmark (thx to @SwissalpS)
 
 # Fuel
 
-The engine accepts mese crystals (configurable in init.lua) or connects to a technic hv network, if enabled.
-There are no fuel checks if the player has creative privs.
-
-A crystal equals 1000 power units / EU
-
-The fuel formula looks like this: **10 x radius x distance**
+The engine connects to a technic hv network.
+The energy requirements formula looks like this: **10 x radius x distance**
 
 For example:
 * Distance: 100 blocks
 * Radius: 5 blocks
-* Required energy: 10 x 5 x 100 = 5000 / 5 mese crystals
+* Required energy: 10 x 5 x 100 = 5000
 
 # Protection
 
@@ -46,18 +47,8 @@ The source and destination areas are checked for protection so you can't remove 
 There are currently no checks for plain populated areas (normal terrain) so you can jump happily into the mountains and make swiss cheese :)
 A possible solution against this would be a global height or area restriction (see Preflight check).
 
-# Crafting
 
-Without technic mod:
-
-![](screenshots/recipe.png?raw=true)
-
-With technic mod:
-
-![](screenshots/recipe_technic.png?raw=true)
-
-
-# Screenshot
+# Screenshots
 
 Interface:
 
@@ -78,13 +69,8 @@ The "Read from book" reads the coordinates from the next book in the inventory
 
 Settings in minetest.conf:
 
-* **jumpdrive.maxradius** max radius of the jumpdrive (default: *20*)
-* **jumpdrive.power_item_name** item that powers the drive (default: *default:mese_crystal*)
-* **jumpdrive.power_item_value** power value of the item (default: *1000*)
-
-Technic-relevant settings:
-
-* **jumpdrive.powerstorage** power storage of the drive (default: *100000*)
+* **jumpdrive.maxradius** max radius of the jumpdrive (default: *15*)
+* **jumpdrive.powerstorage** power storage of the drive (default: *1000000*)
 * **jumpdrive.power_requirement** power requirement for chargin (default: *2500*)
 
 # Lua api
@@ -120,15 +106,27 @@ end
 
 * jumprive_engine.ogg: https://freesound.org/people/kaboose102/sounds/340257/
 
+# Contributors
+
+* @tuedel
+* @SwissalpS
+* @Panquesito7
+
 # History
 
 ## Next
 
+## 2.0
+
+* various fixes and optimizations
+* Fleetcontroller
+* Digiline interface
+* mod.conf (minetest >= 5.0)
+* Beds,ropes,missions compatibility
 * calculate_power() override
 * overlap check
 * No fuel consumption if creative
 * Protection checks for source and destination
-* Ability to jump with smaller increments (1-block range) instead of radius min-range
 * preflight check with custom override
 * Settings in minetest.conf
 * vacuum compatibility (jump into vacuum with air filled vessel)

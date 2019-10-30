@@ -316,15 +316,15 @@ jumpdrive.read_from_book = function(pos)
 		local stackMeta = stack:get_meta()
 
 		local text = stackMeta:get_string("pos")
-		local pos = minetest.string_to_pos(text)
+		local target_pos = minetest.string_to_pos(text)
 
-		if nil == pos then
+		if nil == target_pos then
 			return
 		end
 
-		local x = pos.x
-		local y = pos.y
-		local z = pos.z
+		local x = target_pos.x
+		local y = target_pos.y
+		local z = target_pos.z
 
 		if x == nil or y == nil or z == nil then
 			return
