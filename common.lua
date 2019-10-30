@@ -285,6 +285,7 @@ end
 jumpdrive.read_from_book = function(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
+	local player_name = meta:get_string("owner")
 
 	if inv:contains_item("main", {name="default:book_written", count=1}) then
 		local stack = inv:remove_item("main", {name="default:book_written", count=1})
@@ -294,6 +295,12 @@ jumpdrive.read_from_book = function(pos)
 		local data = minetest.deserialize(text)
 
 		if data == nil then
+			-- put book back, it may contain other information
+			inv:add_item("main", stack)
+			-- alert player
+			if nil ~= player_name then
+				minetest.chat_send_player(player_name, "Invalid data")
+			end
 			return
 		end
 
@@ -302,6 +309,12 @@ jumpdrive.read_from_book = function(pos)
 		local z = tonumber(data.z)
 
 		if x == nil or y == nil or z == nil then
+			-- put book back, it may contain other information
+			inv:add_item("main", stack)
+			-- alert player
+			if nil ~= player_name then
+				minetest.chat_send_player(player_name, "Invalid coordinates")
+			end
 			return
 		end
 
@@ -319,6 +332,8 @@ jumpdrive.read_from_book = function(pos)
 		local target_pos = minetest.string_to_pos(text)
 
 		if nil == target_pos then
+			-- put wand back, I don't see a way to corrupt a wand atm
+			inv:add_item("main", stack)
 			return
 		end
 
@@ -327,6 +342,8 @@ jumpdrive.read_from_book = function(pos)
 		local z = target_pos.z
 
 		if x == nil or y == nil or z == nil then
+			-- put wand back, I don't see a way to corrupt a wand atm
+			inv:add_item("main", stack)
 			return
 		end
 
