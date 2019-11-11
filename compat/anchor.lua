@@ -46,12 +46,12 @@ local function forceload_on(pos, meta)
 end
 
 jumpdrive.anchor_compat = function(from, to)
-  local to_meta = minetest.get_meta(to)
-  local from_meta = minetest.get_meta(from)
+	local to_meta = minetest.get_meta(to)
+	local from_meta = minetest.get_meta(from)
 
-  if from_meta:get_int("enabled") ~= 0 then
-    -- anchor enabled
-    forceload_off(from_meta)
-    forceload_on(to, to_meta)
-  end
+	if from_meta:get_int("enabled") ~= 0 then
+		-- anchor enabled
+		forceload_off(from_meta)
+		forceload_on(to, to_meta)
+	end
 end

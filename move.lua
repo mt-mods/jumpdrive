@@ -87,7 +87,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	-- step 3: execute target region compat code
 	t0 = minetest.get_us_time()
-	jumpdrive.target_region_compat(target_pos1, target_pos2)
+	jumpdrive.target_region_compat(target_pos1, target_pos2, delta_vector)
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step III took " .. (t1 - t0) .. " us")
 
@@ -107,7 +107,6 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 		if xMatch and yMatch and zMatch and player:is_player() then
 			minetest.log("action", "[jumpdrive] moving player: " .. player:get_player_name())
 			local new_player_pos = vector.add(playerPos, delta_vector)
-			new_player_pos = vector.add(new_player_pos, {x=0, y=1, z=0})
 			player:set_pos( new_player_pos );
 		end
 	end
