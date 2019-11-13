@@ -40,7 +40,9 @@ local function read_tube_db()
 		io.close(file)
 
 		if file_content and file_content ~= "" then
+			print(file_content)--XXX
 			tp_tube_db = minetest.deserialize(file_content)
+			print(dump(tp_tube_db))--XXX
 			if(not tp_tube_db.version or tonumber(tp_tube_db.version) < tp_tube_db_version) then
 				migrate_tube_db()
 			end
@@ -87,13 +89,13 @@ local function set_tube(pos, channel, can_receive)
 	if  existing ~= nil then
 		local e = "error"
 		minetest.log(e, "pipeworks teleport tube update refused due to position hash collision")
-		minetest.log(e, "collided hash: "..hash)
+		minetest.log(e, "collided hash: "..hashpos)
 		minetest.log(e, "tried-to-place tube: "..fmt(pos))
 		minetest.log(e, "existing tube: "..fmt(existing))
 		return
 	end
 
-	tp_tube_db[hash] = {x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive}
+	tp_tube_db[hashpos] = {x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive}
 	save_tube_db()
 end
 
@@ -258,4 +260,3 @@ minetest.override_item("pipeworks:teleport_tube_7", node_def)
 minetest.override_item("pipeworks:teleport_tube_8", node_def)
 minetest.override_item("pipeworks:teleport_tube_9", node_def)
 minetest.override_item("pipeworks:teleport_tube_10", node_def)
-
