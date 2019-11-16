@@ -40,9 +40,7 @@ local function read_tube_db()
 		io.close(file)
 
 		if file_content and file_content ~= "" then
-			print(file_content)--XXX
 			tp_tube_db = minetest.deserialize(file_content)
-			print(dump(tp_tube_db))--XXX
 			if(not tp_tube_db.version or tonumber(tp_tube_db.version) < tp_tube_db_version) then
 				migrate_tube_db()
 			end
