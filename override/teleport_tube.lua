@@ -152,109 +152,114 @@ local function update_meta(meta, can_receive)
 end
 
 
-local node_def = {
-	is_teleport_tube = true,
-	tube = {
-		can_go = function(pos,node,velocity,stack)
-			velocity.x = 0
-			velocity.y = 0
-			velocity.z = 0
+-- override tp tubes
+for i=1,10 do
+	local nodename = "pipeworks:teleport_tube_" .. i
+	assert(minetest.registered_nodes[nodename])
 
-			local channel = minetest.get_meta(pos):get_string("channel")
-			if channel == "" then return {} end
+	local tube_def = minetest.registered_nodes[nodename].tube
+	assert(type(tube_def) == "table")
 
-			local target = get_receivers(pos, channel)
-			if target[1] == nil then return {} end
+	local node_def = {
+		is_teleport_tube = true,
+		tube = {
+			-- copy previous definitions
+			connect_sides = tube_def.connect_sides,
+			priority = tube_def.priority,
 
-			local d = math.random(1,#target)
-			pos.x = target[d].x
-			pos.y = target[d].y
-			pos.z = target[d].z
-			return pipeworks.meseadjlist
-		end
-	},
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		update_meta(meta, true)
-		meta:set_string("infotext", "unconfigured Teleportation Tube")
-	end,
-	on_receive_fields = function(pos,formname,fields,sender)
-		if not fields.channel -- ignore escaping or clientside manipulation of the form
-		or not pipeworks.may_configure(pos, sender) then
-			return
-		end
-		local new_channel = tostring(fields.channel):trim()
+			-- intercept can_go function for jumpdrive-compat tp-tube impl
+			can_go = function(pos,node,velocity,stack)
+				velocity.x = 0
+				velocity.y = 0
+				velocity.z = 0
 
-		local meta = minetest.get_meta(pos)
-		local can_receive = meta:get_int("can_receive")
+				local channel = minetest.get_meta(pos):get_string("channel")
+				if channel == "" then return {} end
 
-		-- check for private channels each time before actually changing anything
-		-- to not even allow switching between can_receive states of private channels
-		if new_channel ~= "" then
-			local sender_name = sender:get_player_name()
-			local name, mode = new_channel:match("^([^:;]+)([:;])")
-			if name and mode and name ~= sender_name then
-				--channels starting with '[name]:' can only be used by the named player
-				if mode == ":" then
-					minetest.chat_send_player(sender_name, "Sorry, channel '"..
-						new_channel.."' is reserved for exclusive use by "..name)
-					return
+				local target = get_receivers(pos, channel)
+				if target[1] == nil then return {} end
 
-				--channels starting with '[name];' can be used by other players, but cannot be received from
-				elseif mode == ";" and (fields.cr1 or (can_receive ~= 0 and not fields.cr0)) then
-					minetest.chat_send_player(sender_name, "Sorry, receiving from channel '"..new_channel.."' is reserved for "..name)
-					return
+				local d = math.random(1,#target)
+				pos.x = target[d].x
+				pos.y = target[d].y
+				pos.z = target[d].z
+				return pipeworks.meseadjlist
+			end
+		},
+		on_construct = function(pos)
+			local meta = minetest.get_meta(pos)
+			update_meta(meta, true)
+			meta:set_string("infotext", "unconfigured Teleportation Tube")
+		end,
+		on_receive_fields = function(pos,formname,fields,sender)
+			if not fields.channel -- ignore escaping or clientside manipulation of the form
+			or not pipeworks.may_configure(pos, sender) then
+				return
+			end
+			local new_channel = tostring(fields.channel):trim()
+
+			local meta = minetest.get_meta(pos)
+			local can_receive = meta:get_int("can_receive")
+
+			-- check for private channels each time before actually changing anything
+			-- to not even allow switching between can_receive states of private channels
+			if new_channel ~= "" then
+				local sender_name = sender:get_player_name()
+				local name, mode = new_channel:match("^([^:;]+)([:;])")
+				if name and mode and name ~= sender_name then
+					--channels starting with '[name]:' can only be used by the named player
+					if mode == ":" then
+						minetest.chat_send_player(sender_name, "Sorry, channel '"..
+							new_channel.."' is reserved for exclusive use by "..name)
+						return
+
+					--channels starting with '[name];' can be used by other players, but cannot be received from
+					elseif mode == ";" and (fields.cr1 or (can_receive ~= 0 and not fields.cr0)) then
+						minetest.chat_send_player(sender_name, "Sorry, receiving from channel '"..new_channel.."' is reserved for "..name)
+						return
+					end
 				end
 			end
-		end
 
-		local dirty = false
+			local dirty = false
 
-		-- was the channel changed?
-		local channel = meta:get_string("channel")
-		if new_channel ~= channel then
-			channel = new_channel
-			meta:set_string("channel", channel)
-			dirty = true
-		end
-
-		-- test if a can_receive button was pressed
-		if fields.cr0 and can_receive ~= 0 then
-			can_receive = 0
-			update_meta(meta, false)
-			dirty = true
-		elseif fields.cr1 and can_receive ~= 1 then
-			can_receive = 1
-			update_meta(meta, true)
-			dirty = true
-		end
-
-		-- save if we changed something, handle the empty channel while we're at it
-		if dirty then
-			if channel ~= "" then
-				set_tube(pos, channel, can_receive)
-				local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
-				meta:set_string("infotext", string.format("Teleportation Tube %s on '%s'", cr_description, channel))
-			else
-				-- remove empty channel tubes, to not have to search through them
-				remove_tube(pos)
-				meta:set_string("infotext", "unconfigured Teleportation Tube")
+			-- was the channel changed?
+			local channel = meta:get_string("channel")
+			if new_channel ~= channel then
+				channel = new_channel
+				meta:set_string("channel", channel)
+				dirty = true
 			end
-		end
-	end,
-	on_destruct = function(pos)
-		remove_tube(pos)
-	end
-}
 
--- TODO simple loop
-minetest.override_item("pipeworks:teleport_tube_1", node_def)
-minetest.override_item("pipeworks:teleport_tube_2", node_def)
-minetest.override_item("pipeworks:teleport_tube_3", node_def)
-minetest.override_item("pipeworks:teleport_tube_4", node_def)
-minetest.override_item("pipeworks:teleport_tube_5", node_def)
-minetest.override_item("pipeworks:teleport_tube_6", node_def)
-minetest.override_item("pipeworks:teleport_tube_7", node_def)
-minetest.override_item("pipeworks:teleport_tube_8", node_def)
-minetest.override_item("pipeworks:teleport_tube_9", node_def)
-minetest.override_item("pipeworks:teleport_tube_10", node_def)
+			-- test if a can_receive button was pressed
+			if fields.cr0 and can_receive ~= 0 then
+				can_receive = 0
+				update_meta(meta, false)
+				dirty = true
+			elseif fields.cr1 and can_receive ~= 1 then
+				can_receive = 1
+				update_meta(meta, true)
+				dirty = true
+			end
+
+			-- save if we changed something, handle the empty channel while we're at it
+			if dirty then
+				if channel ~= "" then
+					set_tube(pos, channel, can_receive)
+					local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
+					meta:set_string("infotext", string.format("Teleportation Tube %s on '%s'", cr_description, channel))
+				else
+					-- remove empty channel tubes, to not have to search through them
+					remove_tube(pos)
+					meta:set_string("infotext", "unconfigured Teleportation Tube")
+				end
+			end
+		end,
+		on_destruct = function(pos)
+			remove_tube(pos)
+		end
+	}
+
+	minetest.override_item(nodename, node_def)
+
+end
