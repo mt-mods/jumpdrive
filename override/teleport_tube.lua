@@ -9,7 +9,16 @@ local function hash(pos)
 	return string.format("%.30g", minetest.hash_node_position(pos))
 end
 
+local last_save_time
 local function save_tube_db()
+	local now = minetest.get_us_time()
+	if last_save_time and (now - last_save_time) < 500000 then
+		-- rate limit
+		return
+	end
+
+	last_save_time = now
+
 	local file, err = io.open(filename, "w")
 	if file then
 		tp_tube_db.version = tp_tube_db_version
