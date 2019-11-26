@@ -35,9 +35,9 @@ dofile(MP.."/fleet_functions.lua")
 dofile(MP.."/fleet_controller.lua")
 dofile(MP.."/blacklist.lua")
 
-if minetest.get_modpath("pipeworks") then
-	dofile(MP.."/override/teleport_tube.lua")
-end
+-- if minetest.get_modpath("pipeworks") then
+--	dofile(MP.."/override/teleport_tube.lua")
+-- end
 
 if minetest.get_modpath("monitoring") then
 	-- enable metrics
