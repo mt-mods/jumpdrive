@@ -160,6 +160,20 @@ for i=1,10 do
 	local tube_def = minetest.registered_nodes[nodename].tube
 	assert(type(tube_def) == "table")
 
+	minetest.register_abm({
+		label = "broken tp tube fix",
+		nodenames = {nodename},
+		interval = 5,
+		chance = 20,
+		action = function(pos)
+			local meta = minetest.get_meta(pos)
+			local channel = meta:get_string("channel")
+			local can_receive = meta:get_int("can_receive")
+
+			set_tube(pos, channel, can_receive)
+		end
+	})
+
 	local node_def = {
 		is_teleport_tube = true,
 		tube = {
