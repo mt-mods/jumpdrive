@@ -10,7 +10,17 @@ local function execute_move(callback)
 	minetest.get_voxel_manip(source_pos1, source_pos1)
 	local src_node = minetest.get_node(source_pos1)
 
+	areas:add("dummy", "landscape", source_pos1, source_pos2)
+	assert(not minetest.is_protected(source_pos1, "dummy"))
+	assert(minetest.is_protected(source_pos1, "dummy2"))
+
 	jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
+
+	assert(not minetest.is_protected(source_pos1, "dummy"))
+	assert(not minetest.is_protected(source_pos1, "dummy2"))
+
+	assert(not minetest.is_protected(target_pos1, "dummy"))
+	assert(minetest.is_protected(target_pos1, "dummy2"))
 
 	minetest.get_voxel_manip(target_pos1, target_pos1)
 	local target_node = minetest.get_node(target_pos1)

@@ -9,6 +9,7 @@ local has_pipeworks_mod = minetest.get_modpath("pipeworks")
 local has_beds_mod = minetest.get_modpath("beds")
 local has_ropes_mod = minetest.get_modpath("ropes")
 local has_sethome_mod = minetest.get_modpath("sethome")
+local has_areas_mod = minetest.get_modpath("areas")
 
 dofile(MP.."/compat/travelnet.lua")
 dofile(MP.."/compat/locator.lua")
@@ -20,6 +21,7 @@ dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
 dofile(MP.."/compat/sethome.lua")
+dofile(MP.."/compat/areas.lua")
 
 if has_pipeworks_mod then
 	dofile(MP.."/compat/teleporttube.lua")
@@ -72,5 +74,9 @@ jumpdrive.target_region_compat = function(pos1, pos2, delta_vector)
 
 	if has_ropes_mod then
 		jumpdrive.ropes_compat(pos1, pos2, delta_vector)
+	end
+
+	if has_areas_mod then
+		jumpdrive.areas_compat(pos1, pos2, delta_vector)
 	end
 end
