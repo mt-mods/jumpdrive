@@ -154,13 +154,5 @@ minetest.register_node("jumpdrive:engine", {
 	end
 })
 
-minetest.register_craft({
-	output = 'jumpdrive:engine',
-	recipe = {
-		{'jumpdrive:backbone', 'default:steelblock', 'jumpdrive:backbone'},
-		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
-		{'jumpdrive:backbone', 'default:steelblock', 'jumpdrive:backbone'}
-	}
-})
 
 technic.register_machine("HV", "jumpdrive:engine", technic.receiver)

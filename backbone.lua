@@ -8,12 +8,3 @@ minetest.register_node("jumpdrive:backbone", {
 	sounds = default.node_sound_glass_defaults(),
 	light_source = 13
 })
-
-minetest.register_craft({
-	output = 'jumpdrive:backbone',
-	recipe = {
-		{'default:mese_block', 'default:steelblock', 'default:mese_block'},
-		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
-		{'default:mese_block', 'default:steelblock', 'default:mese_block'}
-	}
-})

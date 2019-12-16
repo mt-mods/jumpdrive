@@ -5,7 +5,11 @@ jumpdrive = {
 		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15
 	},
 
-	blacklist = {}
+	-- blacklisted nodes
+	blacklist = {},
+
+	-- fuel functions
+	fuel = {}
 }
 
 local MP = minetest.get_modpath("jumpdrive")
@@ -29,6 +33,7 @@ dofile(MP.."/common.lua")
 dofile(MP.."/digiline.lua")
 dofile(MP.."/engine.lua")
 dofile(MP.."/backbone.lua")
+dofile(MP.."/crafts.lua")
 dofile(MP.."/fleet_functions.lua")
 dofile(MP.."/fleet_controller.lua")
 dofile(MP.."/blacklist.lua")
