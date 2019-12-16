@@ -11,6 +11,8 @@ local function execute_move(callback)
 	local src_node = minetest.get_node(source_pos1)
 
 	areas:add("dummy", "landscape", source_pos1, source_pos2)
+	areas:save()
+
 	assert(not minetest.is_protected(source_pos1, "dummy"))
 	assert(minetest.is_protected(source_pos1, "dummy2"))
 

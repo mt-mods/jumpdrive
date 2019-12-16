@@ -12,7 +12,8 @@ EOF
 
 # clone repos for testing
 mkdir -p ${WORLDMODSDIR}
-git clone . ${WORLDMODSDIR}/jumpdrive
+rm ${WORLDMODSDIR}/jumpdrive -rf
+cp -R . ${WORLDMODSDIR}/jumpdrive
 git clone https://github.com/minetest-mods/areas.git ${WORLDMODSDIR}/areas
 
 mkdir -p ${WORLDDIR}

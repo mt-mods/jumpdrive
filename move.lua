@@ -87,7 +87,7 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	-- step 3: execute target region compat code
 	t0 = minetest.get_us_time()
-	jumpdrive.target_region_compat(target_pos1, target_pos2, delta_vector)
+	jumpdrive.target_region_compat(source_pos1, source_pos2, target_pos1, target_pos2, delta_vector)
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step III took " .. (t1 - t0) .. " us")
 

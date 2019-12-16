@@ -51,32 +51,32 @@ jumpdrive.commit_node_compat = function()
 end
 
 
-jumpdrive.target_region_compat = function(pos1, pos2, delta_vector)
+jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1, target_pos2, delta_vector)
 	if has_travelnet_mod then
-		jumpdrive.travelnet_compat(pos1, pos2)
+		jumpdrive.travelnet_compat(target_pos1, target_pos2)
 	end
 
 	if has_elevator_mod then
-		jumpdrive.elevator_compat(pos1, pos2)
+		jumpdrive.elevator_compat(target_pos1, target_pos2)
 	end
 
 	if has_display_mod then
-		jumpdrive.signs_compat(pos1, pos2)
+		jumpdrive.signs_compat(target_pos1, target_pos2)
 	end
 
 	if has_sethome_mod then
-		jumpdrive.sethome_compat(pos1, pos2, delta_vector)
+		jumpdrive.sethome_compat(source_pos1, source_pos2, delta_vector)
 	end
 
 	if has_beds_mod then
-		jumpdrive.beds_compat(pos1, pos2, delta_vector)
+		jumpdrive.beds_compat(target_pos1, target_pos2, delta_vector)
 	end
 
 	if has_ropes_mod then
-		jumpdrive.ropes_compat(pos1, pos2, delta_vector)
+		jumpdrive.ropes_compat(target_pos1, target_pos2, delta_vector)
 	end
 
 	if has_areas_mod then
-		jumpdrive.areas_compat(pos1, pos2, delta_vector)
+		jumpdrive.areas_compat(source_pos1, source_pos2, delta_vector)
 	end
 end
