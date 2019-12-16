@@ -21,7 +21,7 @@ jumpdrive.update_formspec = function(meta, pos)
     "list[context;main;0,4;8,1;]" ..
 
     "label[1,5;Upgrades]" ..
-    "list[context;upgrade;4,5;8,1;]" ..
+    "list[context;upgrade;4,5;4,1;]" ..
 
 		"list[current_player;main;0,6;8,4;]" ..
 
