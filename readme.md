@@ -1,6 +1,10 @@
 Minetest jumpdrive
 ======
 
+![](https://github.com/mt-mods/jumpdrive/workflows/luacheck/badge.svg)
+![](https://github.com/mt-mods/jumpdrive/workflows/integration-test/badge.svg)
+
+
 A simple [Jumpdrive](https://en.wikipedia.org/wiki/Jump_drive) for minetest
 
 Take your buildings with you on your journey

@@ -55,4 +55,8 @@ if minetest.get_modpath("monitoring") then
 	dofile(MP.."/metrics.lua")
 end
 
+if minetest.settings:get_bool("enable_jumpdrive_integration_test") then
+        dofile(MP.."/integration_test.lua")
+end
+
 print("[OK] Jumpdrive")
