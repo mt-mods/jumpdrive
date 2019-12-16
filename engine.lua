@@ -25,7 +25,14 @@ minetest.register_node("jumpdrive:engine", {
 	connect_sides = {"bottom", "top", "left", "right", "front", "back"},
 
 	light_source = 13,
-	groups = {cracky=3,oddly_breakable_by_hand=3,tubedevice=1, tubedevice_receiver=1,technic_machine = 1, technic_hv = 1},
+	groups = {
+		cracky = 3,
+		oddly_breakable_by_hand = 3,
+		tubedevice = 1,
+		tubedevice_receiver = 1,
+		technic_machine = 1,
+		technic_hv = 1
+	},
 
 	sounds = default.node_sound_glass_defaults(),
 
@@ -158,6 +165,24 @@ minetest.register_node("jumpdrive:engine", {
 			minetest.chat_send_player(sender:get_player_name(), "Simulation successful")
 		end
 
+	end,
+
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		if player and player:is_player() and minetest.is_protected(pos, player:get_player_name()) then
+			-- protected
+			return 0
+		end
+
+		return stack:get_count()
+	end,
+
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		if player and player:is_player() and minetest.is_protected(pos, player:get_player_name()) then
+			-- protected
+			return 0
+		end
+
+		return stack:get_count()
 	end,
 
 	on_punch = function(pos, node, puncher)

@@ -16,6 +16,7 @@ if minetest.get_modpath("technic") then
 end
 
 dofile(MP.."/fuel.lua")
+dofile(MP.."/upgrade.lua")
 dofile(MP.."/bookmark.lua")
 dofile(MP.."/formspec.lua")
 dofile(MP.."/migrate.lua")
