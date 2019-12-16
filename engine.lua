@@ -50,9 +50,6 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("powerstorage", 0)
 		jumpdrive.migrate_engine_meta(pos, meta)
 
-		local inv = meta:get_inventory()
-		inv:set_size("main", 8)
-
 		meta:set_int("HV_EU_input", 0)
 		meta:set_int("HV_EU_demand", 0)
 

@@ -18,4 +18,10 @@ jumpdrive.migrate_engine_meta = function(pos, meta)
   if not timer:is_started() then
     timer:start(2)
   end
+
+  -- inventories
+  local inv = meta:get_inventory()
+  inv:set_size("main", 8)
+  inv:set_size("upgrade", 4)
+
 end
