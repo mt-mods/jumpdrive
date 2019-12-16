@@ -33,13 +33,28 @@ Optional dependencies:
 
 # Fuel
 
-The engine connects to a technic hv network.
+The engine can be connected to a technic HV network or fuelled with power items.
+Power items are one of the following
+* `default:mese_crystal_fragment`
+* `default:mese_crystal`
+* `default:mese`
+
+# Energy requirements
+
 The energy requirements formula looks like this: **10 x radius x distance**
 
 For example:
 * Distance: 100 blocks
 * Radius: 5 blocks
 * Required energy: 10 x 5 x 100 = 5000
+
+# Upgrades
+
+If the `technic` mod is installed the following items can be used in the upgrade slot:
+* `technic:red_energy_crystal` increases power storage
+* `technic:green_energy_crystal` increases power storage
+* `technic:blue_energy_crystal` increases power storage
+* `technic:control_logic_unit` increases power recharge rate
 
 # Protection
 
@@ -70,6 +85,8 @@ The "Read from book" reads the coordinates from the next book in the inventory
 Settings in minetest.conf:
 
 * **jumpdrive.maxradius** max radius of the jumpdrive (default: *15*)
+* **jumpdrive.powerstorage** power storage of the drive (default: *1000000*)
+* **jumpdrive.power_requirement** power requirement for chargin (default: *2500*)
 
 # Lua api
 
@@ -113,6 +130,8 @@ end
 # History
 
 ## Next
+* optional technic mod
+* upgrade slots
 
 ## 2.0
 

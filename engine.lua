@@ -167,6 +167,7 @@ minetest.register_node("jumpdrive:engine", {
 
 	end,
 
+	-- inventory protection
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		if player and player:is_player() and minetest.is_protected(pos, player:get_player_name()) then
 			-- protected
@@ -183,6 +184,19 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		return stack:get_count()
+	end,
+
+	-- upgrade re-calculation
+	on_metadata_inventory_put = function(pos, listname)
+		if listname == "upgrade" then
+			jumpdrive.upgrade.calculate(pos)
+		end
+	end,
+
+	on_metadata_inventory_take = function(pos, listname)
+		if listname == "upgrade" then
+			jumpdrive.upgrade.calculate(pos)
+		end
 	end,
 
 	on_punch = function(pos, node, puncher)

@@ -2,7 +2,13 @@
 jumpdrive = {
 	config = {
 		-- allowed radius
-		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15
+		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15,
+
+		-- base storage value
+		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 1000000,
+
+		-- base technic power requirement
+		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
 	},
 
 	-- blacklisted nodes
