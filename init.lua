@@ -6,15 +6,16 @@ jumpdrive = {
 	},
 
 	-- blacklisted nodes
-	blacklist = {},
-
-	-- fuel functions
-	fuel = {}
+	blacklist = {}
 }
 
 local MP = minetest.get_modpath("jumpdrive")
 
-dofile(MP.."/technic_run.lua")
+if minetest.get_modpath("technic") then
+	dofile(MP.."/technic_run.lua")
+end
+
+dofile(MP.."/fuel.lua")
 dofile(MP.."/bookmark.lua")
 dofile(MP.."/formspec.lua")
 dofile(MP.."/migrate.lua")

@@ -1,11 +1,16 @@
 
 local fuel_list = {}
 
+jumpdrive.fuel = {}
+
 jumpdrive.fuel.register = function(item_name, value)
   fuel_list[item_name] = value
 end
 
 jumpdrive.fuel.get_value = function(item_name)
+  if not item_name then
+    return 0
+  end
   return fuel_list[item_name] or 0
 end
 

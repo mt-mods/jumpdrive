@@ -65,7 +65,26 @@ minetest.register_node("jumpdrive:engine", {
 	end,
 
 	on_timer = function(pos, elapsed)
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		local size = inv:get_size("main")
 
+		for i=1,size do
+			local stack = inv:get_stack("main", i)
+			if not stack:is_empty() then
+				local burn_value = jumpdrive.fuel.get_value(stack:get_name())
+				if burn_value > 0 then
+					burn_value = burn_value * stack:get_count()
+					stack:clear()
+					inv:set_stack("main", stack)
+
+					local store = meta:get_int("powerstorage") + burn_value
+					local max_store = meta:get_int("max_powerstorage")
+
+					meta:set_int("powerstorage", math.min(store, max_store))
+				end
+			end
+		end
 		-- restart timer
 		return true
 	end,
@@ -154,5 +173,6 @@ minetest.register_node("jumpdrive:engine", {
 	end
 })
 
-
-technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
+if minetest.get_modpath("technic") then
+	technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
+end
