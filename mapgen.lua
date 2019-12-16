@@ -8,9 +8,12 @@ if minetest.get_modpath("monitoring") then
 	)
 end
 
-
-
 local events = {} -- list of {minp, maxp, time}
+jumpdrive.mapgen = {}
+
+jumpdrive.mapgen.reset = function()
+	events = {}
+end
 
 -- update last mapgen event time
 minetest.register_on_generated(function(minp, maxp, seed)
