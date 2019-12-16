@@ -63,8 +63,6 @@ If the `technic` mod is installed the following items can be used in the upgrade
 # Protection
 
 The source and destination areas are checked for protection so you can't remove and jump into someone else's buildings.
-There are currently no checks for plain populated areas (normal terrain) so you can jump happily into the mountains and make swiss cheese :)
-A possible solution against this would be a global height or area restriction (see Preflight check).
 
 
 # Screenshots
