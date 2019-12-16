@@ -23,6 +23,10 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 				minetest.log("action", "[jumpdrive] moving object")
 				obj:set_pos( vector.add(objPos, delta_vector) )
 
+			elseif entity.name:find("^mobs_animal:") then
+				minetest.log("action", "[jumpdrive] moving animal")
+				obj:set_pos( vector.add(objPos, delta_vector) )
+
 			elseif entity.name == "__builtin:item" then
 				minetest.log("action", "[jumpdrive] moving dropped item")
 				obj:set_pos( vector.add(objPos, delta_vector) )
