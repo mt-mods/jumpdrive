@@ -48,6 +48,7 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("z", pos.z)
 		meta:set_int("radius", 5)
 		meta:set_int("powerstorage", 0)
+		jumpdrive.migrate_engine_meta(pos, meta)
 
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8)
@@ -68,17 +69,21 @@ minetest.register_node("jumpdrive:engine", {
 
 	technic_run = function(pos, node)
 		local meta = minetest.get_meta(pos)
+		jumpdrive.migrate_engine_meta(pos, meta)
+
 		local eu_input = meta:get_int("HV_EU_input")
 		local demand = meta:get_int("HV_EU_demand")
 		local store = meta:get_int("powerstorage")
+		local power_requirement = meta:get_int("power_requirement")
+		local max_store = meta:get_int("max_powerstorage")
 
 		meta:set_string("infotext", "Power: " .. eu_input .. "/" .. demand .. " Store: " .. store)
 
-		if store < jumpdrive.config.powerstorage then
+		if store < max_store then
 			-- charge
-			meta:set_int("HV_EU_demand", jumpdrive.config.powerrequirement)
+			meta:set_int("HV_EU_demand", power_requirement)
 			store = store + eu_input
-			meta:set_int("powerstorage", math.min(store, jumpdrive.config.powerstorage))
+			meta:set_int("powerstorage", math.min(store, max_store))
 		else
 			-- charged
 			meta:set_int("HV_EU_demand", 0)

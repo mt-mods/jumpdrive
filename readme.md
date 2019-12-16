@@ -70,8 +70,6 @@ The "Read from book" reads the coordinates from the next book in the inventory
 Settings in minetest.conf:
 
 * **jumpdrive.maxradius** max radius of the jumpdrive (default: *15*)
-* **jumpdrive.powerstorage** power storage of the drive (default: *1000000*)
-* **jumpdrive.power_requirement** power requirement for chargin (default: *2500*)
 
 # Lua api
 
@@ -141,8 +139,3 @@ end
 
 * Initial version
 * Cascade operation (with issues)
-
-
-
-
-
