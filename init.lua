@@ -10,6 +10,9 @@ jumpdrive = {
 
 local MP = minetest.get_modpath("jumpdrive")
 
+dofile(MP.."/technic_run.lua")
+dofile(MP.."/bookmark.lua")
+dofile(MP.."/formspec.lua")
 dofile(MP.."/migrate.lua")
 dofile(MP.."/marker.lua")
 dofile(MP.."/compat/compat.lua")

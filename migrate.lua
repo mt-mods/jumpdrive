@@ -12,4 +12,10 @@ jumpdrive.migrate_engine_meta = function(pos, meta)
   if power_requirement == 0 then
     meta:set_int("power_requirement", 2500)
   end
+
+  -- start nodetimer if not started
+  local timer = minetest.get_node_timer(pos)
+  if not timer:is_started() then
+    timer:start(2)
+  end
 end

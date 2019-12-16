@@ -67,32 +67,18 @@ minetest.register_node("jumpdrive:engine", {
 		return inv:is_empty("main") and not minetest.is_protected(pos, name)
 	end,
 
-	technic_run = function(pos, node)
-		local meta = minetest.get_meta(pos)
-		jumpdrive.migrate_engine_meta(pos, meta)
+	on_timer = function(pos, elapsed)
 
-		local eu_input = meta:get_int("HV_EU_input")
-		local demand = meta:get_int("HV_EU_demand")
-		local store = meta:get_int("powerstorage")
-		local power_requirement = meta:get_int("power_requirement")
-		local max_store = meta:get_int("max_powerstorage")
-
-		meta:set_string("infotext", "Power: " .. eu_input .. "/" .. demand .. " Store: " .. store)
-
-		if store < max_store then
-			-- charge
-			meta:set_int("HV_EU_demand", power_requirement)
-			store = store + eu_input
-			meta:set_int("powerstorage", math.min(store, max_store))
-		else
-			-- charged
-			meta:set_int("HV_EU_demand", 0)
-		end
+		-- restart timer
+		return true
 	end,
+
+	technic_run = jumpdrive.technic_run,
 
 	on_receive_fields = function(pos, formname, fields, sender)
 
 		local meta = minetest.get_meta(pos);
+		jumpdrive.migrate_engine_meta(pos, meta)
 
 		if not sender then
 			return
