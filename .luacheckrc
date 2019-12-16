@@ -32,5 +32,6 @@ read_globals = {
 	"locator",
 	"display_api",
 	"areas",
-	"ropes"
+	"ropes",
+	"sethome"
 }
