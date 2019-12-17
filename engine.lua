@@ -68,7 +68,9 @@ minetest.register_node("jumpdrive:engine", {
 		local inv = meta:get_inventory()
 		local name = player:get_player_name()
 
-		return inv:is_empty("main") and not minetest.is_protected(pos, name)
+		return inv:is_empty("main") and
+			inv:is_empty("upgrade") and
+			not minetest.is_protected(pos, name)
 	end,
 
 	on_timer = function(pos, elapsed)
