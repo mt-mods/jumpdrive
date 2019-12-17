@@ -75,9 +75,17 @@ minetest.register_node("jumpdrive:engine", {
 
 	on_timer = function(pos, elapsed)
 		local meta = minetest.get_meta(pos)
+
+		local store = meta:get_int("powerstorage")
+		local max_store = meta:get_int("max_powerstorage")
+
+		if store >= max_store then
+			-- internal store is full
+			return true
+		end
+
 		local inv = meta:get_inventory()
 		local size = inv:get_size("main")
-
 		for i=1,size do
 			local stack = inv:get_stack("main", i)
 			if not stack:is_empty() then
@@ -87,10 +95,7 @@ minetest.register_node("jumpdrive:engine", {
 					stack:clear()
 					inv:set_stack("main", i, stack)
 
-					local store = meta:get_int("powerstorage") + burn_value
-					local max_store = meta:get_int("max_powerstorage")
-
-					meta:set_int("powerstorage", math.min(store, max_store))
+					meta:set_int("powerstorage", math.min(store + burn_value, max_store))
 				end
 			end
 		end
