@@ -83,7 +83,7 @@ minetest.register_node("jumpdrive:engine", {
 				if burn_value > 0 then
 					burn_value = burn_value * stack:get_count()
 					stack:clear()
-					inv:set_stack("main", stack)
+					inv:set_stack("main", i, stack)
 
 					local store = meta:get_int("powerstorage") + burn_value
 					local max_store = meta:get_int("max_powerstorage")
