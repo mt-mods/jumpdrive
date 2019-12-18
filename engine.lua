@@ -85,20 +85,26 @@ minetest.register_node("jumpdrive:engine", {
 		end
 
 		local inv = meta:get_inventory()
-		local size = inv:get_size("main")
-		for i=1,size do
+		for i=1, inv:get_size("main") do
 			local stack = inv:get_stack("main", i)
 			if not stack:is_empty() then
 				local burn_value = jumpdrive.fuel.get_value(stack:get_name())
 				if burn_value > 0 then
-					burn_value = burn_value * stack:get_count()
-					stack:clear()
+					local store_space = max_store - store
+					local fuel_value = burn_value * stack:get_count()
+					if fuel_value > store_space then
+						stack:set_count(stack:get_count() - math.ceil(store_space / burn_value))
+						store = max_store
+					else
+						stack:clear()
+						store = store + fuel_value
+					end
 					inv:set_stack("main", i, stack)
-
-					meta:set_int("powerstorage", math.min(store + burn_value, max_store))
 				end
 			end
 		end
+		meta:set_int("powerstorage", store)
+
 		-- restart timer
 		return true
 	end,
