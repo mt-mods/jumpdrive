@@ -1,3 +1,4 @@
+local has_technic = minetest.get_modpath("technic")
 
 minetest.register_node("jumpdrive:engine", {
 	description = "Jumpdrive",
@@ -104,6 +105,10 @@ minetest.register_node("jumpdrive:engine", {
 			end
 		end
 		meta:set_int("powerstorage", store)
+
+		if not has_technic then
+			jumpdrive.update_infotext(meta, pos)
+		end
 
 		-- restart timer
 		return true
