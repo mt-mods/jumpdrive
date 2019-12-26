@@ -35,7 +35,7 @@ jumpdrive.update_formspec = function(meta, pos)
 	if has_technic then
 		formspec = formspec ..
 			-- technic upgrades
-			"label[3,5.2;Upgrades]" ..
+			"label[1,5.2;Upgrades]" ..
 			"list[context;upgrade;4,5;4,1;]"
 	end
 
