@@ -64,10 +64,6 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 		jumpdrive.elevator_compat(target_pos1, target_pos2)
 	end
 
-	if has_display_mod then
-		jumpdrive.signs_compat(target_pos1, target_pos2)
-	end
-
 	if has_sethome_mod then
 		jumpdrive.sethome_compat(source_pos1, source_pos2, delta_vector)
 	end
@@ -89,4 +85,9 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 	if has_drawers_mod then
 		jumpdrive.drawers_compat(target_pos1, target_pos2)
 	end
+
+	if has_display_mod then
+		jumpdrive.signs_compat(target_pos1, target_pos2)
+	end
+
 end
