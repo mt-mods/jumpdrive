@@ -10,6 +10,7 @@ local has_beds_mod = minetest.get_modpath("beds")
 local has_ropes_mod = minetest.get_modpath("ropes")
 local has_sethome_mod = minetest.get_modpath("sethome")
 local has_areas_mod = minetest.get_modpath("areas")
+local has_drawers_mod = minetest.get_modpath("drawers")
 
 dofile(MP.."/compat/travelnet.lua")
 dofile(MP.."/compat/locator.lua")
@@ -22,6 +23,7 @@ dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
 dofile(MP.."/compat/sethome.lua")
 dofile(MP.."/compat/areas.lua")
+dofile(MP.."/compat/drawers.lua")
 
 if has_pipeworks_mod then
 	dofile(MP.."/compat/teleporttube.lua")
@@ -52,6 +54,8 @@ end
 
 
 jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1, target_pos2, delta_vector)
+	-- sync compat functions
+
 	if has_travelnet_mod then
 		jumpdrive.travelnet_compat(target_pos1, target_pos2)
 	end
@@ -78,5 +82,11 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 
 	if has_areas_mod then
 		jumpdrive.areas_compat(source_pos1, source_pos2, delta_vector)
+	end
+
+	-- async compat functions below here
+
+	if has_drawers_mod then
+		jumpdrive.drawers_compat(target_pos1, target_pos2)
 	end
 end

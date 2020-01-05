@@ -33,5 +33,6 @@ read_globals = {
 	"display_api",
 	"areas",
 	"ropes",
-	"sethome"
+	"sethome",
+	"drawers"
 }
