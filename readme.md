@@ -34,6 +34,8 @@ Optional dependencies:
 * Beds (thx to @tuedel)
 * Ropes (thx to @tuedel)
 * Mission-wand as coordinate bookmark (thx to @SwissalpS)
+* Areas
+* Drawers
 
 # Fuel
 
