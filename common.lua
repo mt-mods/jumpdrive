@@ -234,3 +234,11 @@ jumpdrive.reset_coordinates = function(pos)
 	meta:set_int("z", pos.z)
 
 end
+
+function jumpdrive.get_mapblock_from_pos(pos)
+	return {
+		x = math.floor(pos.x / 16),
+		y = math.floor(pos.y / 16),
+		z = math.floor(pos.z / 16)
+	}
+end
