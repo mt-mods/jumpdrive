@@ -28,7 +28,6 @@ end
 dofile(MP.."/fuel.lua")
 dofile(MP.."/upgrade.lua")
 dofile(MP.."/bookmark.lua")
-dofile(MP.."/formspec.lua")
 dofile(MP.."/infotext.lua")
 dofile(MP.."/migrate.lua")
 dofile(MP.."/marker.lua")
@@ -48,8 +47,11 @@ dofile(MP.."/engine.lua")
 dofile(MP.."/backbone.lua")
 dofile(MP.."/crafts.lua")
 dofile(MP.."/fleet_functions.lua")
+dofile(MP.."/fleet_digiline.lua")
 dofile(MP.."/fleet_controller.lua")
 dofile(MP.."/blacklist.lua")
+
+dofile(MP.."/formspec.lua")
 
 if minetest.get_modpath("monitoring") then
 	-- enable metrics
