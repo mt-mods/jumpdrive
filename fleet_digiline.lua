@@ -86,8 +86,19 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 	local msglist = {}
 	local async_check
 	async_check = function()
+		if meta:get_int("active") < 1 then
+			-- operation aborted by user while there's still work to do
+			digilines.receptor_send(pos, digilines.rules.default, channel, {
+				success = false,
+				index = index,
+				count = #engines,
+				msg = "simulation aborted",
+			})
+			return
+		end
+
 		local engine_pos = engines[index]
-		local success, msg = jumpdrive.simulate_jump(engine_pos, owner, true)
+		local success, msg = jumpdrive.simulate_jump(engine_pos, owner, false)
 
 		if not success then
 			digilines.receptor_send(pos, digilines.rules.default, channel, {
@@ -96,6 +107,7 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 				msg=msg,
 			})
 			meta:set_int("active", 0)
+			jumpdrive.fleet.update_formspec(meta, pos)
 			return
 		end
 		table.insert(msglist, msg)
@@ -113,9 +125,12 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 				msgs=msglist,
 			})
 			meta:set_int("active", 0)
+			jumpdrive.fleet.update_formspec(meta, pos)
 		end
 	end
+	meta:set_string("jump_list", minetest.serialize(engines))
 	meta:set_int("active", 1)
+	jumpdrive.fleet.update_formspec(meta, pos)
 	minetest.after(1, async_check)
 end
 
@@ -128,6 +143,16 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 	local async_jump
 	async_jump = function()
 		if engines and index and #engines >= index then
+			if meta:get_int("active") < 1 then
+				-- operation aborted by user while there's still work to do
+				digilines.receptor_send(pos, digilines.rules.default, channel, {
+					success = false,
+					index = index,
+					count = #engines,
+					msg = "jump aborted",
+				})
+				return
+			end
 
 			local node_pos = engines[index]
 			local success, msg = jumpdrive.execute_jump(node_pos)
@@ -146,7 +171,6 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 				index = index + 1
 				minetest.after(1, async_jump)
 			else
-				meta:set_string("infotext", "Engine ".. minetest.pos_to_string(node_pos) .. " failed with: " .. msg)
 				digilines.receptor_send(pos, digilines.rules.default, channel, {
 					success = false,
 					count = index,
@@ -154,6 +178,7 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 					msgs = msglist,
 				})
 				meta:set_int("active", 0)
+				jumpdrive.fleet.update_formspec(meta, pos)
 			end
 		else
 			local targetmeta = minetest.get_meta(pos)
@@ -165,9 +190,12 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 				time = t1 - t0
 			})
 			targetmeta:set_int("active", 0)
+			jumpdrive.fleet.update_formspec(targetmeta, target_pos)
 		end
 	end
+	meta:set_string("jump_list", minetest.serialize(engines))
 	meta:set_int("active", 1)
+	jumpdrive.fleet.update_formspec(meta, pos)
 	minetest.after(1, async_jump)
 end
 
