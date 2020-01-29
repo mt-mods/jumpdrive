@@ -181,7 +181,7 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 				jumpdrive.fleet.update_formspec(meta, pos)
 			end
 		else
-			local targetmeta = minetest.get_meta(pos)
+			local targetmeta = minetest.get_meta(target_pos)
 			local t1 = minetest.get_us_time()
 			digilines.receptor_send(target_pos, digilines.rules.default, channel, {
 				success = all_success, -- in case someone calls with zero engines should it be success or not?
