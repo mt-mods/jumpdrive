@@ -75,7 +75,7 @@ jumpdrive.fleet.update_formspec = function(meta, pos)
 
 		"list[current_player;main;0,5;8,4;]" ..
 
-		"field[4,9.8;3.2,1;digiline_channel;Digiline channel;" .. (meta:get_string("channel") or "") .. "]" ..
+		"field[4.3,9.52;3.2,1;digiline_channel;Digiline channel;" .. (meta:get_string("channel") or "") .. "]" ..
 		"button_exit[7,9.2;1,1;set_digiline_channel;Set]" ..
 
 		-- listring stuff
