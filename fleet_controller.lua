@@ -192,9 +192,14 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		if jump_list and jump_index and #jump_list >= jump_index then
 
 			local is_last = #jump_list == jump_index
-
 			local node_pos = jump_list[jump_index]
 			local success, msg = jumpdrive.execute_jump(node_pos)
+
+			local playername = meta:get_string("owner")
+			if not playername then
+				local node_meta = minetest.get_meta(node_pos)
+				playername = node_meta:get_string("owner")
+			end
 
 			if success then
 				-- at this point if it is the last engine the metadata does not exist anymore in the current location
@@ -207,10 +212,17 @@ minetest.register_node("jumpdrive:fleet_controller", {
 					local timer = minetest.get_node_timer(pos)
 					timer:start(2.0)
 				end
+				if playername then
+					local time_millis = math.floor(msg / 1000)
+					minetest.chat_send_player(playername, "Jump executed in " .. time_millis .. " ms")
+				end
 			else
 				meta:set_int("active", 0)
 				update_formspec(meta, pos)
 				meta:set_string("infotext", "Engine ".. minetest.pos_to_string(node_pos) .. " failed with: " .. msg)
+				if playername then
+					minetest.chat_send_player(playername, msg)
+				end
 			end
 		else
 			meta:set_int("active", 0)
