@@ -34,5 +34,6 @@ read_globals = {
 	"areas",
 	"ropes",
 	"sethome",
-	"drawers"
+	"drawers",
+	"player_monoids"
 }
