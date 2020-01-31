@@ -33,8 +33,8 @@ jumpdrive.fleet.get_fleet_data = function(pos, target_pos, engines_pos_list)
 			local engine_distance = nil
 			local engine_power_req = 0
 			if target_pos then
-				local engine_target_pos = vector.add(engine_pos, delta_vector)
-				local engine_distance = vector.distance(engine_pos, engine_target_pos)
+				engine_target_pos = vector.add(engine_pos, delta_vector)
+				engine_distance = vector.distance(engine_pos, engine_target_pos)
 				engine_power_req = jumpdrive.calculate_power(radius, engine_distance, engine_pos, engine_target_pos)
 				if engine_power_req > max_power_req then
 					max_power_req = engine_power_req
@@ -222,7 +222,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 	if msg.command == "get" then
 
 		local engines_pos_list = jumpdrive.fleet.find_engines(pos)
-		fleetdata = jumpdrive.fleet.get_fleet_data(pos, targetPos, engines_pos_list)
+		local fleetdata = jumpdrive.fleet.get_fleet_data(pos, targetPos, engines_pos_list)
 		digilines.receptor_send(pos, digilines.rules.default, set_channel, fleetdata)
 
 	elseif msg.command == "reset" then
@@ -275,7 +275,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		end
 
 		-- apply new coordinates
-		local targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
+		targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
 		local owner = minetest.get_player_by_name(playername)
@@ -298,7 +298,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		end
 
 		-- apply new coordinates
-		local targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
+		targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
 		local owner = minetest.get_player_by_name(playername)
