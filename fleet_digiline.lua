@@ -275,7 +275,6 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		end
 
 		-- apply new coordinates
-		targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
 		local owner = minetest.get_player_by_name(playername)
@@ -298,7 +297,6 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		end
 
 		-- apply new coordinates
-		targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
 		local owner = minetest.get_player_by_name(playername)
