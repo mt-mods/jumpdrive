@@ -137,12 +137,6 @@ end
 jumpdrive.execute_jump = function(pos, player)
 
 	local meta = minetest.get_meta(pos)
-	local playername = meta:get_string("owner")
-
-	if player ~= nil then
-		playername = player:get_player_name()
-	end
-
 
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
@@ -158,7 +152,6 @@ jumpdrive.execute_jump = function(pos, player)
 
 	local success, msg = jumpdrive.simulate_jump(pos, player, false)
 	if not success then
-		minetest.chat_send_player(playername, msg)
 		return false, msg
 	end
 
@@ -179,11 +172,8 @@ jumpdrive.execute_jump = function(pos, player)
 
 	local t1 = minetest.get_us_time()
 	local time_micros = t1 - t0
-	local time_millis = math.floor(time_micros / 1000)
 
 	minetest.log("action", "[jumpdrive] jump took " .. time_micros .. " us")
-	minetest.chat_send_player(playername, "Jump executed in " .. time_millis .. " ms")
-
 
 	-- show animation in source
 	minetest.add_particlespawner({
