@@ -29,7 +29,8 @@ jumpdrive.update_formspec = function(meta, pos)
 		"list[current_player;main;0,".. 4.5+inv_offset .. ";8,4;]" ..
 
 		-- digiline channel
-		"field[4.3," .. 9.02+inv_offset ..";3.2,1;digiline_channel;Digiline channel;" .. (meta:get_string("channel") or "") .. "]" ..
+		"field[4.3," .. 9.02+inv_offset ..";3.2,1;digiline_channel;Digiline channel;" ..
+		(meta:get_string("channel") or "") .. "]" ..
 		"button_exit[7," .. 8.7+inv_offset .. ";1,1;set_digiline_channel;Set]" ..
 
 		-- listring stuff
