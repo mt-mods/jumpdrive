@@ -47,6 +47,8 @@ minetest.register_node("jumpdrive:engine", {
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name() or "")
+		-- default digiline channel
+		meta:set_string("channel", "jumpdrive")
 	end,
 
 	on_construct = function(pos)
@@ -144,6 +146,12 @@ minetest.register_node("jumpdrive:engine", {
 
 		if fields.write_book then
 			jumpdrive.write_to_book(pos, sender)
+			return
+		end
+
+		if fields.set_digiline_channel and fields.digiline_channel then
+			meta:set_string("channel", fields.digiline_channel)
+			jumpdrive.update_formspec(meta, pos)
 			return
 		end
 
