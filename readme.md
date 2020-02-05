@@ -84,6 +84,10 @@ Example:
 You can place empty books into the drive inventory and write the coordinates to it with the "Write to book" button
 The "Read from book" reads the coordinates from the next book in the inventory
 
+## Diglines
+
+* See: [Digilines](doc/digiline.md)
+
 # Settings
 
 Settings in minetest.conf:
@@ -131,6 +135,7 @@ end
 * @SwissalpS
 * @Panquesito7
 * @OgelGames
+* @S-S-X
 
 # History
 
