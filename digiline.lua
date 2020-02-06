@@ -1,20 +1,28 @@
 
 --https://github.com/minetest-mods/technic/blob/master/technic/machines/HV/forcefield.lua
 
+local is_int = function(value)
+	return type(value) == 'number' and math.floor(value) == value
+end
+
 jumpdrive.digiline_effector = function(pos, _, channel, msg)
-	local set_channel = "jumpdrive" -- static channel for now
 
 	local msgt = type(msg)
-
 	if msgt ~= "table" then
 		return
+	end
+
+	local meta = minetest.get_meta(pos)
+
+	local set_channel = meta:get_string("channel")
+	if set_channel == "" then
+		-- backward compatibility with old static channel
+		set_channel = "jumpdrive"
 	end
 
 	if channel ~= set_channel then
 		return
 	end
-
-	local meta = minetest.get_meta(pos)
 
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
@@ -39,25 +47,38 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		jumpdrive.update_formspec(meta, pos)
 
 	elseif msg.command == "set" then
-		local value = tonumber(msg.value)
 
-		if value == nil then
-			-- not a number
-			return
-		end
+		if msg.key and msg.value then
+			local value = tonumber(msg.value)
 
-		if msg.key == "x" then
-			meta:set_int("x", value)
-		elseif msg.key == "y" then
-			meta:set_int("y", value)
-		elseif msg.key == "z" then
-			meta:set_int("z", value)
-		elseif msg.key == "radius" then
-			if value >= 1 and value <= jumpdrive.config.max_radius then
-				meta:set_int("radius", value)
+			if value == nil then
+				-- not a number
+				return
+			end
+			-- backward compatibility with old less flexible set command
+			if msg.key == "x" then
+				meta:set_int("x", value)
+			elseif msg.key == "y" then
+				meta:set_int("y", value)
+			elseif msg.key == "z" then
+				meta:set_int("z", value)
+			elseif msg.key == "radius" then
+				if value >= 1 and value <= jumpdrive.config.max_radius then
+					meta:set_int("radius", value)
+				end
+			end
+		else
+			-- API requires integers for coord values, noop for everything else
+			if is_int(msg.x) then meta:set_int("x", msg.x) end
+			if is_int(msg.y) then meta:set_int("y", msg.y) end
+			if is_int(msg.z) then meta:set_int("z", msg.z) end
+			if is_int(msg.r) and msg.r <= jumpdrive.config.max_radius then
+				meta:set_int("radius", msg.r)
+			end
+			if msg.formupdate then
+				jumpdrive.update_formspec(meta, pos)
 			end
 		end
-
 
 	elseif msg.command == "simulate" or msg.command == "show" then
 		local success, resultmsg = jumpdrive.simulate_jump(pos)
