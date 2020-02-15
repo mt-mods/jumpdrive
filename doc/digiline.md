@@ -50,6 +50,20 @@ digiline_send("jumpdrive", { command = "set", key = "z", value = 2048 })
 digiline_send("jumpdrive", { command = "set", key = "radius", value = 15 })
 ```
 
+Alternate way to set coordinates
+
+```lua
+-- request
+digiline_send("jumpdrive", { command = "set", x = 1024, y = 1024, z = 2048, r = 15, formupdate = false })
+```
+Where
+* `x` sets x coordinate
+* `y` sets y coordinate
+* `z` sets z coordinate
+* `r` sets radius
+* `formupdate` updates coordinates on formspec
+Every value is optional. `x`, `y`, `z` and `r` must be integers. `formupdate` is truth value.
+
 ### Simulate jump
 
 Simulate a jump
