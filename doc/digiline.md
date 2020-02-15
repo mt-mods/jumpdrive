@@ -62,6 +62,7 @@ Where
 * `z` sets z coordinate
 * `r` sets radius
 * `formupdate` updates coordinates on formspec
+
 Every value is optional. `x`, `y`, `z` and `r` must be integers. `formupdate` is truth value.
 
 ### Simulate jump
@@ -167,13 +168,22 @@ end
 
 Resets the target coordinates
 
+Where
+* `x` sets x coordinate
+* `y` sets y coordinate
+* `z` sets z coordinate
+* `formupdate` updates coordinates on formspec
+
+Every value is optional. `x`, `y` and `z` must be integers. `formupdate` is truth value.
+
 ```lua
 -- request
 digiline_send("fleetcontroller", {
 	command = "set",
   x = 0,
   y = 100,
-  z = 1024
+  z = 1024,
+  formupdate = false
 })
 
 -- response sent back on the same channel
@@ -185,6 +195,9 @@ if event.type == "digiline" and event.channel == "fleetcontroller" then
 	}
 end
 ```
+
+Response is only sent when operation fails due to another operation is in progress like simulation or jump.
+Error will not be sent for invalid values or missing values because every value is optional.
 
 ### Simulate jump
 
@@ -224,7 +237,7 @@ if event.type == "digiline" and event.channel == "fleetcontroller" then
     success = true,
     count = 10,
     msgs = {
-      -- error messages!?
+      -- possible warning messages for engines like target in vacuum warning
     }
   }
 end
