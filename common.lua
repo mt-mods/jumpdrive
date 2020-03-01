@@ -20,7 +20,7 @@ end
 -- get offset from meta
 jumpdrive.get_radius = function(pos)
 	local meta = minetest.get_meta(pos);
-	return meta:get_int("radius")
+	return math.max(math.min(meta:get_int("radius"), jumpdrive.config.max_radius), 1)
 end
 
 -- calculates the power requirements for a jump
