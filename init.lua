@@ -2,7 +2,11 @@
 jumpdrive = {
 	config = {
 		-- allowed radius
-		max_radius = tonumber(minetest.settings:get("jumpdrive.maxradius")) or 15,
+		max_radius = tonumber(minetest.settings:get("jumpdrive.max_radius")) or 15,
+		max_area_radius = tonumber(minetest.settings:get("jumpdrive.max_area_radius")) or 25,
+
+		-- max volume in nodes ( ((radius*2) + 1) ^ 3 )
+		max_area_volume = tonumber(minetest.settings:get("jumpdrive.max_area_volume")) or 29791,
 
 		-- base storage value
 		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 1000000,
@@ -51,6 +55,15 @@ dofile(MP.."/crafts.lua")
 -- engines
 dofile(MP.."/engines/default.lua")
 dofile(MP.."/engines/default_formspec.lua")
+dofile(MP.."/engines/default_jump.lua")
+
+--[[
+-- WIP
+if minetest.get_modpath("areas") then
+	dofile(MP.."/engines/area.lua")
+	dofile(MP.."/engines/area_formspec.lua")
+end
+--]]
 
 -- fleet
 dofile(MP.."/fleet/fleet_functions.lua")
