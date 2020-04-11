@@ -49,17 +49,18 @@ dofile(MP.."/backbone.lua")
 dofile(MP.."/crafts.lua")
 
 -- engines
-dofile(MP.."/engine/default.lua")
+dofile(MP.."/engines/default.lua")
+dofile(MP.."/engines/default_formspec.lua")
 
 -- fleet
 dofile(MP.."/fleet/fleet_functions.lua")
 dofile(MP.."/fleet/fleet_digiline.lua")
 dofile(MP.."/fleet/fleet_controller.lua")
+dofile(MP.."/fleet/fleet_formspec.lua")
 
 -- blacklist nodes
 dofile(MP.."/blacklist.lua")
 
-dofile(MP.."/formspec.lua")
 
 if minetest.get_modpath("monitoring") then
 	-- enable metrics
