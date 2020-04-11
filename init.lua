@@ -25,6 +25,7 @@ if minetest.get_modpath("pipeworks") then
 	dofile(MP.."/override/teleport_tube.lua")
 end
 
+-- common functions
 dofile(MP.."/fuel.lua")
 dofile(MP.."/upgrade.lua")
 dofile(MP.."/bookmark.lua")
@@ -35,20 +36,27 @@ dofile(MP.."/compat/compat.lua")
 dofile(MP.."/is_area_empty.lua")
 dofile(MP.."/is_area_protected.lua")
 
-dofile(MP.."/move_objects.lua")
-dofile(MP.."/move_metadata.lua")
-dofile(MP.."/move_nodetimers.lua")
-dofile(MP.."/move.lua")
+-- move logic
+dofile(MP.."/move/move_objects.lua")
+dofile(MP.."/move/move_metadata.lua")
+dofile(MP.."/move/move_nodetimers.lua")
+dofile(MP.."/move/move.lua")
 
 dofile(MP.."/mapgen.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/digiline.lua")
-dofile(MP.."/engine.lua")
 dofile(MP.."/backbone.lua")
 dofile(MP.."/crafts.lua")
-dofile(MP.."/fleet_functions.lua")
-dofile(MP.."/fleet_digiline.lua")
-dofile(MP.."/fleet_controller.lua")
+
+-- engines
+dofile(MP.."/engine/default.lua")
+
+-- fleet
+dofile(MP.."/fleet/fleet_functions.lua")
+dofile(MP.."/fleet/fleet_digiline.lua")
+dofile(MP.."/fleet/fleet_controller.lua")
+
+-- blacklist nodes
 dofile(MP.."/blacklist.lua")
 
 dofile(MP.."/formspec.lua")
