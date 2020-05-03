@@ -89,17 +89,21 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		})
 
 	elseif msg.command == "jump" then
-		local success, time = jumpdrive.execute_jump(pos)
+		local success, timeormsg = jumpdrive.execute_jump(pos)
 
 		local send_pos = pos
 		if success then
 			-- send new message in target pos
 			send_pos = targetPos
+			digilines.receptor_send(send_pos, digilines.rules.default, set_channel, {
+				success = success,
+				time = timeormsg
+			})
+		else
+			digilines.receptor_send(send_pos, digilines.rules.default, set_channel, {
+				success = success,
+				msg = timeormsg
+			})
 		end
-
-		digilines.receptor_send(send_pos, digilines.rules.default, set_channel, {
-			success = success,
-			time = time
-		})
 	end
 end
