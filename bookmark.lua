@@ -13,7 +13,7 @@ jumpdrive.write_to_book = function(pos, sender)
 
 		data.owner = sender:get_player_name()
 		data.title = "Jumpdrive coordinates"
-		data.description = "Jumpdrive coordiates"
+		data.description = "Jumpdrive coordinates"
 		data.text = minetest.serialize(jumpdrive.get_meta_pos(pos))
 		data.page = 1
 		data.page_max = 1
