@@ -7,10 +7,7 @@ local has_elevator_mod = minetest.get_modpath("elevator")
 local has_display_mod = minetest.get_modpath("display_api")
 local has_pipeworks_mod = minetest.get_modpath("pipeworks")
 local has_beds_mod = minetest.get_modpath("beds")
-
--- rope removal crashes with minetest >= 5.2 (get_content_id)
--- isse: https://github.com/minetest-mods/ropes/issues/19
--- local has_ropes_mod = minetest.get_modpath("ropes")
+local has_ropes_mod = minetest.get_modpath("ropes")
 local has_sethome_mod = minetest.get_modpath("sethome")
 local has_areas_mod = minetest.get_modpath("areas")
 local has_drawers_mod = minetest.get_modpath("drawers")
@@ -77,11 +74,9 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 		jumpdrive.beds_compat(target_pos1, target_pos2, delta_vector)
 	end
 
-	--[[
 	if has_ropes_mod then
 		jumpdrive.ropes_compat(target_pos1, target_pos2, delta_vector)
 	end
-	--]]
 
 	if has_areas_mod then
 		jumpdrive.areas_compat(source_pos1, source_pos2, delta_vector)
