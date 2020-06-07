@@ -9,11 +9,14 @@ minetest.register_node("jumpdrive:fleet_controller", {
 	light_source = 13,
 
 	digiline = {
-		rules = jumpdrive.digiline_rules,
-		receptor = {action = function() end},
-		effector = {
-			action = jumpdrive.fleet.digiline_effector
+		receptor = {
+			rules = jumpdrive.digiline_rules,
+			action = function() end
 		},
+		effector = {
+			rules = jumpdrive.digiline_rules,
+			action = jumpdrive.fleet.digiline_effector
+		}
 	},
 
 	after_place_node = function(pos, placer)

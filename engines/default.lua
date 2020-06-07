@@ -38,11 +38,14 @@ minetest.register_node("jumpdrive:engine", {
 	sounds = default.node_sound_glass_defaults(),
 
 	digiline = {
-		rules = jumpdrive.digiline_rules,
-		receptor = {action = function() end},
-		effector = {
-			action = jumpdrive.digiline_effector
+		receptor = {
+			rules = jumpdrive.digiline_rules,
+			action = function() end
 		},
+		effector = {
+			rules = jumpdrive.digiline_rules,
+			action = jumpdrive.digiline_effector
+		}
 	},
 
 	after_place_node = function(pos, placer)
