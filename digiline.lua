@@ -31,7 +31,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 	local power_req = jumpdrive.calculate_power(radius, distance, pos, targetPos)
 
 	if msg.command == "get" then
-		digilines.receptor_send(pos, digilines.rules.default, set_channel, {
+		digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, {
 			powerstorage = meta:get_int("powerstorage"),
 			radius = radius,
 			position = pos,
@@ -83,7 +83,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 	elseif msg.command == "simulate" or msg.command == "show" then
 		local success, resultmsg = jumpdrive.simulate_jump(pos)
 
-		digilines.receptor_send(pos, digilines.rules.default, set_channel, {
+		digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, {
 			success=success,
 			msg=resultmsg
 		})
@@ -95,12 +95,12 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		if success then
 			-- send new message in target pos
 			send_pos = targetPos
-			digilines.receptor_send(send_pos, digilines.rules.default, set_channel, {
+			digilines.receptor_send(send_pos, jumpdrive.digiline_rules, set_channel, {
 				success = success,
 				time = timeormsg
 			})
 		else
-			digilines.receptor_send(send_pos, digilines.rules.default, set_channel, {
+			digilines.receptor_send(send_pos, jumpdrive.digiline_rules, set_channel, {
 				success = success,
 				msg = timeormsg
 			})

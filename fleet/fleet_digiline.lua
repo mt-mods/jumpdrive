@@ -88,7 +88,7 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 	async_check = function()
 		if meta:get_int("active") < 1 then
 			-- operation aborted by user while there's still work to do
-			digilines.receptor_send(pos, digilines.rules.default, channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, channel, {
 				success = false,
 				index = index,
 				count = #engines,
@@ -101,7 +101,7 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 		local success, msg = jumpdrive.simulate_jump(engine_pos, owner, false)
 
 		if not success then
-			digilines.receptor_send(pos, digilines.rules.default, channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, channel, {
 				success=false,
 				pos=engine_pos,
 				msg=msg,
@@ -119,7 +119,7 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 
 		elseif index >= #engines then
 			-- done
-			digilines.receptor_send(pos, digilines.rules.default, channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, channel, {
 				success=true,
 				count=index,
 				msgs=msglist,
@@ -145,7 +145,7 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 		if engines and index and #engines >= index then
 			if meta:get_int("active") < 1 then
 				-- operation aborted by user while there's still work to do
-				digilines.receptor_send(pos, digilines.rules.default, channel, {
+				digilines.receptor_send(pos, jumpdrive.digiline_rules, channel, {
 					success = false,
 					index = index,
 					count = #engines,
@@ -171,7 +171,7 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 				index = index + 1
 				minetest.after(1, async_jump)
 			else
-				digilines.receptor_send(pos, digilines.rules.default, channel, {
+				digilines.receptor_send(pos, jumpdrive.digiline_rules, channel, {
 					success = false,
 					count = index,
 					msg = msg,
@@ -183,7 +183,7 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, 
 		else
 			local targetmeta = minetest.get_meta(target_pos)
 			local t1 = minetest.get_us_time()
-			digilines.receptor_send(target_pos, digilines.rules.default, channel, {
+			digilines.receptor_send(target_pos, jumpdrive.digiline_rules, channel, {
 				success = all_success, -- in case someone calls with zero engines should it be success or not?
 				count = index,
 				msgs = msglist,
@@ -223,12 +223,12 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 
 		local engines_pos_list = jumpdrive.fleet.find_engines(pos)
 		local fleetdata = jumpdrive.fleet.get_fleet_data(pos, targetPos, engines_pos_list)
-		digilines.receptor_send(pos, digilines.rules.default, set_channel, fleetdata)
+		digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, fleetdata)
 
 	elseif msg.command == "reset" then
 
 		if jumpdrive.fleet.is_active(pos) then
-			digilines.receptor_send(pos, digilines.rules.default, set_channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, {
 				success = false,
 				msg = "Operation not completed",
 			})
@@ -243,7 +243,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 	elseif msg.command == "set" then
 
 		if jumpdrive.fleet.is_active(pos) then
-			digilines.receptor_send(pos, digilines.rules.default, set_channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, {
 				success = false,
 				msg = "Operation not completed",
 			})
@@ -261,7 +261,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 	elseif msg.command == "simulate" or msg.command == "show" then
 
 		if jumpdrive.fleet.is_active(pos) then
-			digilines.receptor_send(pos, digilines.rules.default, set_channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, {
 				success = false,
 				msg = "Operation not completed",
 			})
@@ -283,7 +283,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 	elseif msg.command == "jump" then
 
 		if jumpdrive.fleet.is_active(pos) then
-			digilines.receptor_send(pos, digilines.rules.default, set_channel, {
+			digilines.receptor_send(pos, jumpdrive.digiline_rules, set_channel, {
 				success = false,
 				msg = "Operation not completed",
 			})
