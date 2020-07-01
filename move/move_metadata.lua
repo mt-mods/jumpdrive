@@ -25,7 +25,7 @@ jumpdrive.move_metadata = function(source_pos1, source_pos2, delta_vector)
 
 		local node = minetest.get_node(source_pos)
 
-		jumpdrive.node_compat(node.name, source_pos, target_pos)
+		jumpdrive.node_compat(node.name, source_pos, target_pos, source_pos1, source_pos2, delta_vector)
 
 		-- clear metadata in source
 		source_meta:from_table(nil)

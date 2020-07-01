@@ -32,7 +32,7 @@ if has_pipeworks_mod then
 end
 
 
-jumpdrive.node_compat = function(name, source_pos, target_pos)
+jumpdrive.node_compat = function(name, source_pos, target_pos, source_pos1, source_pos2, delta_vector)
 	if (name == "locator:beacon_1" or name == "locator:beacon_2" or name == "locator:beacon_3") and has_locator_mod then
 		jumpdrive.locator_compat(source_pos, target_pos)
 
@@ -42,8 +42,10 @@ jumpdrive.node_compat = function(name, source_pos, target_pos)
 	elseif has_pipeworks_mod and string.find(name, "^pipeworks:teleport_tube") then
 		jumpdrive.teleporttube_compat(source_pos, target_pos)
 
-	elseif name == "telemosaic:beacon" or name == "telemosaic:beacon_protected" then
-		jumpdrive.telemosaic_compat(source_pos, target_pos)
+	elseif name == "telemosaic:beacon" or name == "telemosaic:beacon_err"
+			or name == "telemosaic:beacon_disabled" or name == "telemosaic:beacon_protected"
+			or name == "telemosaic:beacon_err_protected" or name == "telemosaic:beacon_disabled_protected" then
+		jumpdrive.telemosaic_compat(source_pos, target_pos, source_pos1, source_pos2, delta_vector)
 
 	end
 end
