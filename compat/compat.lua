@@ -19,6 +19,7 @@ dofile(MP.."/compat/elevator.lua")
 dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/anchor.lua")
+dofile(MP.."/compat/switching_station.lua")
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
@@ -38,6 +39,8 @@ jumpdrive.node_compat = function(name, source_pos, target_pos, source_pos1, sour
 
 	elseif has_technic_mod and name == "technic:admin_anchor" then
 		jumpdrive.anchor_compat(source_pos, target_pos)
+	elseif has_technic_mod and technic.networks and name == "technic:switching_station" then
+		jumpdrive.switching_station_compat(source_pos, target_pos)
 
 	elseif has_pipeworks_mod and string.find(name, "^pipeworks:teleport_tube") then
 		jumpdrive.teleporttube_compat(source_pos, target_pos)
