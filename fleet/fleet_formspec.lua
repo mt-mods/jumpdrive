@@ -26,7 +26,7 @@ jumpdrive.fleet.update_formspec = function(meta, pos)
 		button_line ..
 
 		"button[0,2.5;4,1;write_book;Write to book]" ..
-		"button[4,2.5;4,1;read_book;Read from book]" ..
+		"button[4,2.5;4,1;read_book;Read from bookmark]" ..
 
 		"list[context;main;0,3.75;8,1;]" ..
 
@@ -38,3 +38,4 @@ jumpdrive.fleet.update_formspec = function(meta, pos)
 		-- listring stuff
 		"listring[]")
 end
+
