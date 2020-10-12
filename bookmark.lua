@@ -32,21 +32,21 @@ jumpdrive.write_to_book = function(pos, sender)
 
 end
 
-local function hasNil(tPos)
-	if nil == tPos
-		or nil == tPos.x
-		or nil == tPos.y
-		or nil == tPos.z
+local function has_nil(pos)
+	if nil == pos
+		or nil == pos.x
+		or nil == pos.y
+		or nil == pos.z
 	then
 		return true
 	end
 	return false
 end
 
-local function sanitizeAndSetCoordinates(meta, tPos)
-	meta:set_int("x", jumpdrive.sanitize_coord(tPos.x))
-	meta:set_int("y", jumpdrive.sanitize_coord(tPos.y))
-	meta:set_int("z", jumpdrive.sanitize_coord(tPos.z))
+local function sanitize_and_set_coordinates(meta, pos)
+	meta:set_int("x", jumpdrive.sanitize_coord(pos.x))
+	meta:set_int("y", jumpdrive.sanitize_coord(pos.y))
+	meta:set_int("z", jumpdrive.sanitize_coord(pos.z))
 end
 
 jumpdrive.read_from_book = function(pos)
@@ -54,22 +54,22 @@ jumpdrive.read_from_book = function(pos)
 	local inv = meta:get_inventory()
 	local player_name = meta:get_string("owner")
 
-	local iSize = inv:get_size("main")
+	local inv_size = inv:get_size("main")
 	local stack
-	local stackName
-	local stackMeta
+	local stack_name
+	local stack_meta
 	local text
 	local target_pos
-	for i = iSize, 1, -1 do
+	for i = inv_size, 1, -1 do
 		stack = inv:get_stack("main", i)
-		stackName = stack:get_name()
-		if "default:book_written" == stackName then
+		stack_name = stack:get_name()
+		if "default:book_written" == stack_name then
 			-- remove item from inventory
 			inv:set_stack("main", i, ItemStack())
-			stackMeta = stack:get_meta()
-			text = stackMeta:get_string("text")
+			stack_meta = stack:get_meta()
+			text = stack_meta:get_string("text")
 			local data = minetest.deserialize(text)
-			if hasNil(data) then
+			if has_nil(data) then
 				-- put book back where it was, it may contain other information
 				inv:set_stack("main", i, stack)
 			else
@@ -80,7 +80,7 @@ jumpdrive.read_from_book = function(pos)
 					z = tonumber(data.z)
 				}
 
-				if hasNil(target_pos) then
+				if has_nil(target_pos) then
 					-- put book back where it was, it may contain other information
 					inv:set_stack("main", i, stack)
 					-- alert player
@@ -89,48 +89,48 @@ jumpdrive.read_from_book = function(pos)
 					end
 					return
 				end
-				sanitizeAndSetCoordinates(meta, target_pos)
+				sanitize_and_set_coordinates(meta, target_pos)
 				-- put book back to next free slot
 				inv:add_item("main", stack)
 				return
 			end
 
-		elseif "missions:wand_position" == stackName then
+		elseif "missions:wand_position" == stack_name then
 			-- remove item from inventory
 			inv:set_stack("main", i, ItemStack())
-			stackMeta = stack:get_meta()
+			stack_meta = stack:get_meta()
 
-			text = stackMeta:get_string("pos")
+			text = stack_meta:get_string("pos")
 			target_pos = minetest.string_to_pos(text)
 
-			if hasNil(target_pos) then
+			if has_nil(target_pos) then
 				-- put wand back where it was.
 				-- In singleplayer/creative you can get an invalid position wand
 				inv:set_stack("main", i, stack)
 			else
 				-- don't know how you could get unsanitary coords in a wand,
 				-- let's just be safe
-				sanitizeAndSetCoordinates(meta, target_pos)
+				sanitize_and_set_coordinates(meta, target_pos)
 				-- put wand back to next free slot
 				inv:add_item("main", stack)
 				return
 			end
 
-		elseif "ccompass:" == stackName:sub(1, 9)
-				or "compass:" == stackName:sub(1, 8) then
+		elseif "ccompass:" == stack_name:sub(1, 9)
+				or "compass:" == stack_name:sub(1, 8) then
 			-- remove item from inventory
 			inv:set_stack("main", i, ItemStack())
-			stackMeta = stack:get_meta()
+			stack_meta = stack:get_meta()
 
-			text = stackMeta:get_string("target_pos")
+			text = stack_meta:get_string("target_pos")
 			target_pos = minetest.string_to_pos(text)
 
-			if hasNil(target_pos) then
+			if has_nil(target_pos) then
 				-- put compass back, it is probably not calibrated
 				-- we put it at same position as we did not actually use it
 				inv:set_stack("main", i, stack)
 			else
-				sanitizeAndSetCoordinates(meta, target_pos)
+				sanitize_and_set_coordinates(meta, target_pos)
 				-- put compass back to next free slot
 				inv:add_item("main", stack)
 				return
