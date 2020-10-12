@@ -129,7 +129,6 @@ jumpdrive.read_from_book = function(pos)
 				-- put compass back, it is probably not calibrated
 				-- we put it at same position as we did not actually use it
 				inv:set_stack("main", i, stack)
-				target_pos = {}
 			else
 				sanitizeAndSetCoordinates(meta, target_pos)
 				-- put compass back to next free slot
