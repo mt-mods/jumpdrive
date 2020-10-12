@@ -137,5 +137,12 @@ jumpdrive.read_from_book = function(pos)
 			end
 		end -- switch item type
 	end -- loop inventory
+	-- if we got here, there was nothing.
+	-- should we or should we not message user?
+	--[[
+	if nil ~= player_name then
+		minetest.chat_send_player(player_name, "No valid bookmark item found.")
+	end
+	--]]
 end
 
