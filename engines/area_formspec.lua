@@ -17,7 +17,7 @@ jumpdrive.update_area_formspec = function(meta, pos)
 		"button[6,1;2,1;reset;Reset]" ..
 
 		"button[0,2;4,1;write_book;Write to book]" ..
-		"button[4,2;4,1;read_book;Read from book]" ..
+		"button[4,2;4,1;read_book;Read from bookmark]" ..
 
 		-- main inventory for fuel and books
 		"list[context;main;0,3.25;8,1;]" ..
@@ -43,3 +43,4 @@ jumpdrive.update_area_formspec = function(meta, pos)
 
 	meta:set_string("formspec", formspec)
 end
+

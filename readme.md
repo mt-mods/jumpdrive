@@ -34,6 +34,7 @@ Optional dependencies:
 * Beds (thx to @tuedel)
 * Ropes (thx to @tuedel)
 * Mission-wand as coordinate bookmark (thx to @SwissalpS)
+* Compass as coordinate bookmark (thx to @SwissalpS)
 * Areas
 * Drawers
 
@@ -81,8 +82,13 @@ Example:
 
 ## Coordinate bookmarking
 
-You can place empty books into the drive inventory and write the coordinates to it with the "Write to book" button
-The "Read from book" reads the coordinates from the next book in the inventory
+You can place empty books into the drive inventory and write the coordinates to them with the "Write to book" button.
+The "Read from bookmark" button reads the coordinates from the next valid bookmark item in the inventory. From right to left.
+A used bookmark item is placed in the first free slot from the left.
+Bookmark items are:
+* Written books saved by jumpdrive (or correctly by hand)
+* Mission position wands
+* Compasses
 
 ## Diglines
 
@@ -169,3 +175,4 @@ end
 
 * Initial version
 * Cascade operation (with issues)
+
