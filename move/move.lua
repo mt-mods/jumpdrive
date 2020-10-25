@@ -2,6 +2,22 @@
 local use_player_monoids = minetest.global_exists("player_monoids")
 local c_air = minetest.get_content_id("air")
 
+-- map of "on_movenode" aware node id's
+-- content_id = nodedef
+local movenode_aware_nodeids = {}
+
+-- collect movenode aware node id's
+minetest.register_on_mods_loaded(function()
+	local count = 0
+	for nodename, nodedef in pairs(minetest.registered_nodes) do
+		if type(nodedef.on_movenode) == "function" then
+			count = count + 1
+			local id = minetest.get_content_id(nodename)
+			movenode_aware_nodeids[id] = nodedef
+		end
+	end
+	minetest.log("action", "[jumpdrive] collected " .. count .. " 'on_movenode' aware nodes")
+end)
 
 -- moves the source to the target area
 -- no protection- or overlap checking is done here
@@ -48,17 +64,46 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	local target_param1 = manip:get_light_data()
 	local target_param2 = manip:get_param2_data()
 
+	-- list of { from_pos, to_pos, }
+	local movenode_list = {}
+
 	minetest.log("action", "[jumpdrive] read target-data");
 
 	for z=source_pos1.z, source_pos2.z do
 	for y=source_pos1.y, source_pos2.y do
 	for x=source_pos1.x, source_pos2.x do
 
-		local source_index = source_area:index(x, y, z)
-		local target_index = target_area:index(x+delta_vector.x, y+delta_vector.y, z+delta_vector.z)
+		local from_pos = { x=x, y=y, z=z }
+		local to_pos = vector.add(from_pos, delta_vector)
+
+		local source_index = source_area:indexp(from_pos)
+		local target_index = target_area:indexp(to_pos)
 
 		-- copy block id
-		target_data[target_index] = source_data[source_index]
+		local id = source_data[source_index]
+		target_data[target_index] = id
+
+		if movenode_aware_nodeids[id] then
+
+			-- check if we are on an edge
+			local edge = { x=0, y=0, z=0 }
+
+			-- negative edge
+			if source_pos1.x == x then edge.x = -1 end
+			if source_pos1.y == y then edge.y = -1 end
+			if source_pos1.z == z then edge.z = -1 end
+			-- positive edge
+			if source_pos2.z == x then edge.x = 1 end
+			if source_pos2.y == y then edge.y = 1 end
+			if source_pos2.z == z then edge.z = 1 end
+
+			table.insert(movenode_list, {
+				from_pos = from_pos,
+				to_pos = to_pos,
+				edge = edge,
+				nodedef = movenode_aware_nodeids[id]
+			})
+		end
 
 		-- copy params
 		target_param1[target_index] = source_param1[source_index]
@@ -81,6 +126,15 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	t0 = minetest.get_us_time()
 	jumpdrive.move_metadata(source_pos1, source_pos2, delta_vector)
 	jumpdrive.move_nodetimers(source_pos1, source_pos2, delta_vector)
+
+	-- move "on_movenode" aware nodes
+	for _, entry in ipairs(movenode_list) do
+		entry.nodedef.on_movenode(entry.from_pos, entry.to_pos, {
+			edge = entry.edge
+		})
+	end
+
+	-- print stats
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step II took " .. (t1 - t0) .. " us")
 
@@ -163,6 +217,13 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")
 
-
+	-- call after_jump callbacks
+	jumpdrive.fire_after_jump({
+		pos1 = source_pos1,
+		pos2 = source_pos2
+	}, {
+		pos1 = target_pos1,
+		pos2 = target_pos2
+	})
 
 end

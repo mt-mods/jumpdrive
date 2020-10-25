@@ -1,9 +1,7 @@
 local MP = minetest.get_modpath("jumpdrive")
 
-local has_travelnet_mod = minetest.get_modpath("travelnet")
 local has_technic_mod = minetest.get_modpath("technic")
 local has_locator_mod = minetest.get_modpath("locator")
-local has_elevator_mod = minetest.get_modpath("elevator")
 local has_display_mod = minetest.get_modpath("display_api")
 local has_pipeworks_mod = minetest.get_modpath("pipeworks")
 local has_beds_mod = minetest.get_modpath("beds")
@@ -13,9 +11,16 @@ local has_areas_mod = minetest.get_modpath("areas")
 local has_drawers_mod = minetest.get_modpath("drawers")
 local has_textline_mod = minetest.get_modpath("textline")
 
-dofile(MP.."/compat/travelnet.lua")
+if minetest.get_modpath("travelnet") then
+	dofile(MP.."/compat/travelnet.lua")
+end
+
+if minetest.get_modpath("elevator") then
+	dofile(MP.."/compat/elevator.lua")
+end
+
+
 dofile(MP.."/compat/locator.lua")
-dofile(MP.."/compat/elevator.lua")
 dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/anchor.lua")
@@ -59,14 +64,6 @@ end
 
 jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1, target_pos2, delta_vector)
 	-- sync compat functions
-
-	if has_travelnet_mod then
-		jumpdrive.travelnet_compat(target_pos1, target_pos2)
-	end
-
-	if has_elevator_mod then
-		jumpdrive.elevator_compat(target_pos1, target_pos2)
-	end
 
 	if has_sethome_mod then
 		jumpdrive.sethome_compat(source_pos1, source_pos2, delta_vector)
