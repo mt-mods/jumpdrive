@@ -2,6 +2,16 @@
 local use_player_monoids = minetest.global_exists("player_monoids")
 local c_air = minetest.get_content_id("air")
 
+
+-- map of replaced content id's on jump
+-- <id> = <id>
+local mapped_content_ids = {}
+
+if minetest.get_modpath("vacuum") then
+	-- don't jump vacuum
+	mapped_content_ids[minetest.get_content_id("vacuum:vacuum")] = c_air
+end
+
 -- map of "on_movenode" aware node id's
 -- content_id = nodedef
 local movenode_aware_nodeids = {}
@@ -81,6 +91,12 @@ jumpdrive.move = function(source_pos1, source_pos2, target_pos1, target_pos2)
 
 		-- copy block id
 		local id = source_data[source_index]
+
+		if mapped_content_ids[id] then
+			-- replace original content id
+			id = mapped_content_ids[id]
+		end
+
 		target_data[target_index] = id
 
 		if movenode_aware_nodeids[id] then
