@@ -2,8 +2,15 @@
 local vecadd = vector.add
 local poshash = minetest.hash_node_position
 local get_node = minetest.get_node
-local cables = technic.cables
-local machines = technic.machine_tiers
+local cables = technic and technic.cables
+local machines = technic and technic.machine_tiers
+
+-- Check for technic mod compatibility, compatible with technic plus
+if not technic.remove_network or not technic.networks or not cables or not machines then
+	minetest.log("warning", "[jumpdrive] Incompatible technic mod loaded")
+	jumpdrive.technic_network_compat = function() end
+	return
+end
 
 -- Function to move technic network to another position
 local network_node_arrays = {"PR_nodes","BA_nodes","RE_nodes"}
@@ -42,17 +49,17 @@ local function add_edge_cable_net(pos, size, delta, t)
 	local y = pos.y == 0 and -1 or (pos.y == size.y and 1)
 	local z = pos.z == 0 and -1 or (pos.z == size.z and 1)
 	if x then
-		local v = vecadd(vecadd(pos, {x=x,y=0,z=0}),delta)
+		local v = vecadd2(pos, {x=x,y=0,z=0}, delta)
 		local net_id = cables[poshash(v)]
 		if net_id then t[net_id] = true end
 	end
 	if y then
-		local v = vecadd(vecadd(pos, {x=0,y=y,z=0}),delta)
+		local v = vecadd2(pos, {x=0,y=y,z=0}, delta)
 		local net_id = cables[poshash(v)]
 		if net_id then t[net_id] = true end
 	end
 	if z then
-		local v = vecadd(vecadd(pos, {x=0,y=0,z=z}),delta)
+		local v = vecadd2(pos, {x=0,y=0,z=z}, delta)
 		local net_id = cables[poshash(v)]
 		if net_id then t[net_id] = true end
 	end
@@ -60,8 +67,6 @@ local function add_edge_cable_net(pos, size, delta, t)
 end
 
 jumpdrive.technic_network_compat = function(source_pos1, source_pos2, target_pos1, delta_vector)
-	-- Check for technic mod compatibility
-	if not technic.remove_network or not technic.networks then return end
 
 	-- search results
 	local jump_networks = {} -- jumped fully contained networks
@@ -83,17 +88,17 @@ jumpdrive.technic_network_compat = function(source_pos1, source_pos2, target_pos
 					-- Candidate for border crossing network, check neighbors across border
 					if net_id then
 						-- Inside network is active, check outside for active and inactive
-						local x, y, z = add_edge_cable_net(local_pos, size, source_pos1, edge_networks)
-						if x then
-							local name = get_node(vecadd2(local_pos, target_pos1, {x=x,y=0,z=0})).name
+						local dir_x, dir_y, dir_z = add_edge_cable_net(local_pos, size, source_pos1, edge_networks)
+						if dir_x then
+							local name = get_node(vecadd2(local_pos, target_pos1, {x=dir_x,y=0,z=0})).name
 							if machines[name] or technic.get_cable_tier(name) then edge_networks[net_id] = true end
 						end
-						if y then
-							local name = get_node(vecadd2(local_pos, target_pos1, {x=0,y=y,z=0})).name
+						if dir_y then
+							local name = get_node(vecadd2(local_pos, target_pos1, {x=0,y=dir_y,z=0})).name
 							if machines[name] or technic.get_cable_tier(name) then edge_networks[net_id] = true end
 						end
-						if z then
-							local name = get_node(vecadd2(local_pos, target_pos1, {x=0,y=0,z=z})).name
+						if dir_z then
+							local name = get_node(vecadd2(local_pos, target_pos1, {x=0,y=0,z=dir_z})).name
 							if machines[name] or technic.get_cable_tier(name) then edge_networks[net_id] = true end
 						end
 					else
