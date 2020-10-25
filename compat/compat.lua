@@ -19,6 +19,7 @@ dofile(MP.."/compat/elevator.lua")
 dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/anchor.lua")
+dofile(MP.."/compat/technic_networks.lua")
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
@@ -82,6 +83,10 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 
 	if has_areas_mod then
 		jumpdrive.areas_compat(source_pos1, source_pos2, delta_vector)
+	end
+
+	if has_technic_mod then
+		jumpdrive.technic_network_compat(source_pos1, source_pos2, target_pos1, delta_vector)
 	end
 
 	-- async compat functions below here
