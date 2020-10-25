@@ -32,6 +32,9 @@ local function move_network(net, delta)
 		new_all_nodes[node_id] = new_pos
 	end
 	net.all_nodes = new_all_nodes
+	technic.networks[net.id] = nil
+	net.id = new_net_id
+	technic.networks[net.id] = net
 end
 
 local function vecadd2(a, b, c)
