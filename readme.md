@@ -140,14 +140,15 @@ on the node-definition:
 ```lua
 -- example with an override
 minetest.override_item("travelnet:travelnet", {
-	on_movenode = function(from_pos, to_pos, additional_info)
-		-- additional_info = { edge = { x=0, y=0, z=0 } }
-		-- magic!
+  on_movenode = function(from_pos, to_pos, additional_info)
+    -- additional_info = { edge = { x=0, y=0, z=0 } }
+    -- magic!
   end
 })
+```
 
 * `additional_info.edge` is the vector to the nearest edge if any
-```
+
 
 ## Hooks
 
@@ -177,6 +178,8 @@ end)
 ## Next
 * optional technic mod
 * upgrade slots
+* "on_movenode" node definition
+* "jumpdrive.register_after_jump" function
 
 ## 2.0
 
