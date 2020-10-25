@@ -6,7 +6,7 @@ local cables = technic and technic.cables
 local machines = technic and technic.machine_tiers
 
 -- Check for technic mod compatibility, compatible with technic plus
-if not technic.remove_network or not technic.networks or not cables or not machines then
+if not technic or not technic.remove_network or not technic.networks or not cables or not machines then
 	minetest.log("warning", "[jumpdrive] Incompatible technic mod loaded")
 	jumpdrive.technic_network_compat = function() end
 	return
