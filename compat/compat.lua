@@ -35,13 +35,16 @@ if has_display_mod then
 	dofile(MP.."/compat/signs.lua")
 end
 
+if has_textline_mod then
+	dofile(MP.."/compat/textline.lua")
+end
+
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
 dofile(MP.."/compat/sethome.lua")
 dofile(MP.."/compat/areas.lua")
-dofile(MP.."/compat/textline.lua")
 
 if has_pipeworks_mod then
 	dofile(MP.."/compat/teleporttube.lua")
@@ -85,14 +88,5 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 	if has_areas_mod then
 		jumpdrive.areas_compat(source_pos1, source_pos2, delta_vector)
 	end
-
-	-- async compat functions below here
-	minetest.after(1.0, function()
-
-		if has_textline_mod then
-			jumpdrive.textline_compat(target_pos1, target_pos2)
-		end
-
-	end)
 
 end
