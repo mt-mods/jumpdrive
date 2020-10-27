@@ -11,6 +11,8 @@ local has_areas_mod = minetest.get_modpath("areas")
 local has_drawers_mod = minetest.get_modpath("drawers")
 local has_textline_mod = minetest.get_modpath("textline")
 
+dofile(MP.."/compat/technic_networks.lua")
+
 if minetest.get_modpath("travelnet") then
 	dofile(MP.."/compat/travelnet.lua")
 end
@@ -85,4 +87,7 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 		jumpdrive.beds_compat(target_pos1, target_pos2, delta_vector)
 	end
 
+	if has_technic_mod then
+		jumpdrive.technic_network_compat(source_pos1, source_pos2, target_pos1, delta_vector)
+	end
 end
