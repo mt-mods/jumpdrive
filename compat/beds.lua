@@ -1,5 +1,10 @@
 local bed_bottoms = {"beds:bed_bottom", "beds:fancy_bed_bottom"}
 
+-- sanity checks
+assert(beds)
+assert(beds.spawn)
+assert(beds.save_spawns)
+
 -- Calculate a bed's middle position (where players would spawn)
 local function calc_bed_middle(bed_pos, facedir)
 	local dir = minetest.facedir_to_dir(facedir)
@@ -11,54 +16,48 @@ local function calc_bed_middle(bed_pos, facedir)
 	return bed_middle
 end
 
-jumpdrive.beds_compat = function(target_pos1, target_pos2, delta_vector)
-	if beds == nil or
-			beds.spawn == nil or
-			beds.save_spawns == nil then
-		-- Something is wrong. Don't do anything
-		return
-	end
+local bed_from_positions = {}
 
-	-- Look for beds in target area
-	local beds_list = minetest.find_nodes_in_area(target_pos1, target_pos2, bed_bottoms)
 
-	if next(beds_list) ~= nil then
-		-- We found some beds!
-		local source_pos1 = vector.subtract(target_pos1, delta_vector)
-		local source_pos2 = vector.subtract(target_pos2, delta_vector)
-
-		-- Look for players with spawn in source area
-		local affected_players = {}
-		for name, pos in pairs(beds.spawn) do
-			-- pos1 and pos2 must already be sorted
-			if pos.x >= source_pos1.x and pos.x <= source_pos2.x and
-					pos.y >= source_pos1.y and pos.y <= source_pos2.y and
-					pos.z >= source_pos1.z and pos.z <= source_pos2.z then
-				table.insert(affected_players, name)
-			end
+for _, nodename in ipairs(bed_bottoms) do
+	-- override bed definitions
+	minetest.override_item(nodename, {
+		on_movenode = function(from_pos, to_pos)
+			-- collect bed positions while jumping
+			table.insert(bed_from_positions, from_pos)
 		end
-
-		if next(affected_players) ~= nil then
-			-- Some players seem to be affected.
-			-- Iterate over all beds
-			for _, pos in pairs(beds_list) do
-				local facedir = minetest.get_node(pos).param2
-				local old_middle = calc_bed_middle(vector.subtract(pos, delta_vector), facedir)
-
-				for _, name in ipairs(affected_players) do
-					local spawn = beds.spawn[name]
-					if spawn.x == old_middle.x and
-							spawn.y == old_middle.y and
-							spawn.z == old_middle.z then
-						---- Player spawn seems to match old bed position; update
-						beds.spawn[name] = calc_bed_middle(pos, facedir)
-						minetest.log("action",
-								"[jumpdrive] Updated bed spawn for player " .. name)
-					end
-				end
-			end
-			-- Tell beds mod to save the new spawns.
-			beds.save_spawns()
-		end
-	end
+	})
 end
+
+-- executed after jump
+jumpdrive.register_after_jump(function(from_area, to_area)
+	local delta_vector = vector.subtract(to_area.pos1, from_area.pos1)
+	local modified = false
+
+	-- go over all collected bed positions
+	for _, bed_pos in ipairs(bed_from_positions) do
+		local facedir = minetest.get_node(bed_pos).param2
+		local sleep_pos = calc_bed_middle(bed_pos, facedir)
+		-- sleep position in target area
+		local new_sleep_pos = vector.add(sleep_pos, delta_vector)
+
+		for player_name, player_pos in pairs(beds.spawn) do
+			if vector.equals(sleep_pos, player_pos) then
+				-- player sleeps here, move position
+				beds.spawn[player_name] = new_sleep_pos
+				minetest.log("action", "[jumpdrive] Updated bed spawn for player " .. player_name)
+
+				-- set modified flag to save afterwards
+				modified = true
+			end
+		end
+	end
+
+	if modified then
+		-- Tell beds mod to save the new spawns.
+		beds.save_spawns()
+	end
+
+	-- clear collected bed positions
+	bed_from_positions = {}
+end)
