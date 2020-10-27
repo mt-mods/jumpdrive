@@ -27,6 +27,10 @@ if has_locator_mod then
 	dofile(MP.."/compat/locator.lua")
 end
 
+if has_drawers_mod then
+	dofile(MP.."/compat/drawers.lua")
+end
+
 dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/telemosaic.lua")
@@ -34,7 +38,6 @@ dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
 dofile(MP.."/compat/sethome.lua")
 dofile(MP.."/compat/areas.lua")
-dofile(MP.."/compat/drawers.lua")
 dofile(MP.."/compat/textline.lua")
 
 if has_pipeworks_mod then
@@ -82,10 +85,6 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 
 	-- async compat functions below here
 	minetest.after(1.0, function()
-
-		if has_drawers_mod then
-			jumpdrive.drawers_compat(target_pos1, target_pos2)
-		end
 
 		if has_display_mod then
 			jumpdrive.signs_compat(target_pos1, target_pos2)
