@@ -132,6 +132,35 @@ jumpdrive.calculate_power = function(radius, distance, sourcePos, targetPos)
 end
 ```
 
+## Movenode compatibility
+
+Nodes can be made aware of a changing position if they implement a `on_movenode` function
+on the node-definition:
+
+```lua
+-- example with an override
+minetest.override_item("travelnet:travelnet", {
+  on_movenode = function(from_pos, to_pos, additional_info)
+    -- additional_info = { edge = { x=0, y=0, z=0 } }
+    -- magic!
+  end
+})
+```
+
+* `additional_info.edge` is the vector to the nearest edge if any
+
+
+## Hooks
+
+```lua
+-- register a callback that is called upon jump completion
+-- can also be used if the `on_movenode` above needs a kind of "commit" to write the changed state to files
+jumpdrive.register_after_jump(function(from_area, to_area)
+	-- from_area/to_area = { pos1, pos2 }
+end)
+```
+
+
 # Sources
 
 * jumprive_engine.ogg: https://freesound.org/people/kaboose102/sounds/340257/
@@ -149,6 +178,8 @@ end
 ## Next
 * optional technic mod
 * upgrade slots
+* "on_movenode" node definition
+* "jumpdrive.register_after_jump" function
 
 ## 2.0
 
@@ -175,4 +206,3 @@ end
 
 * Initial version
 * Cascade operation (with issues)
-

@@ -1,18 +1,9 @@
 
+local nodedef = minetest.registered_nodes["elevator:motor"]
 
-jumpdrive.elevator_compat = function(pos1, pos2)
-
-	-- find potential elevators
-	local elevator_motors = minetest.find_nodes_in_area(pos1, pos2, "elevator:motor")
-
-	for _,pos in ipairs(elevator_motors) do
-		-- delegate to compat
-
-		local def = minetest.registered_nodes["elevator:motor"]
-		minetest.log("action", "[jumpdrive] Restoring elevator @ " .. pos.x .. "/" .. pos.y .. "/" .. pos.z)
-
-		-- function(pos, placer, itemstack)
-		def.after_place_node(pos, nil, nil)
+minetest.override_item("elevator:motor", {
+	on_movenode = function(from_pos, to_pos)
+		minetest.log("action", "[jumpdrive] Restoring elevator @ " .. to_pos.x .. "/" .. to_pos.y .. "/" .. to_pos.z)
+		nodedef.after_place_node(to_pos, nil, nil)
 	end
-
-end
+})

@@ -45,13 +45,15 @@ local function forceload_on(pos, meta)
 	meta:set_string("forceloaded", #have_flposes == 0 and "" or minetest.serialize(have_flposes))
 end
 
-jumpdrive.anchor_compat = function(from, to)
-	local to_meta = minetest.get_meta(to)
-	local from_meta = minetest.get_meta(from)
+minetest.override_item("technic:admin_anchor", {
+	on_movenode = function(from_pos, to_pos)
+		local to_meta = minetest.get_meta(to_pos)
+		local from_meta = minetest.get_meta(from_pos)
 
-	if from_meta:get_int("enabled") ~= 0 then
-		-- anchor enabled
-		forceload_off(from_meta)
-		forceload_on(to, to_meta)
+		if from_meta:get_int("enabled") ~= 0 then
+			-- anchor enabled
+			forceload_off(from_meta)
+			forceload_on(to_pos, to_meta)
+		end
 	end
-end
+})

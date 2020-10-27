@@ -1,6 +1,9 @@
+jumpdrive.register_after_jump(function(from_area, to_area)
+	local delta_vector = vector.subtract(to_area.pos1, from_area.pos1)
+	local pos1 = from_area.pos1
+	local pos2 = from_area.pos2
 
-jumpdrive.areas_compat = function(pos1, pos2, delta_vector)
-  local list = areas:getAreasIntersectingArea(pos1, pos2)
+	local list = areas:getAreasIntersectingArea(pos1, pos2)
   local dirty = false
 
   for id, area in pairs(list) do
@@ -24,4 +27,4 @@ jumpdrive.areas_compat = function(pos1, pos2, delta_vector)
   if dirty then
     areas:save()
   end
-end
+end)

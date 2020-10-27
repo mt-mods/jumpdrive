@@ -1,10 +1,16 @@
+assert(type(display_api.update_entities) == "function")
 
-jumpdrive.signs_compat = function(pos1, pos2)
-	local nodes = minetest.find_nodes_in_area(pos1, pos2, {"group:display_api"})
-	if nodes then
-		for _,pos in pairs(nodes) do
-			minetest.log("action", "[jumpdrive] updating display @ " .. minetest.pos_to_string(pos))
-			display_api.update_entities(pos)
+-- refresh signs in new area after jump
+minetest.register_on_mods_loaded(function()
+	for nodename, nodedef in pairs(minetest.registered_nodes) do
+		if nodedef.groups and nodedef.groups.display_api then
+			minetest.override_item(nodename, {
+				on_movenode = function(_, to_pos)
+					minetest.after(1, function()
+						display_api.update_entities(to_pos)
+					end)
+				end
+			})
 		end
 	end
-end
+end)
