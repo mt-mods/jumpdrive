@@ -9,7 +9,8 @@ globals = {
 	-- write
 	"travelnet",
 	"pipeworks",
-	"beds"
+	"beds",
+	"technic"
 }
 
 read_globals = {
@@ -28,7 +29,6 @@ read_globals = {
 	"digilines",
 	"mesecons",
 	"mesecon",
-	"technic",
 	"locator",
 	"display_api",
 	"areas",
