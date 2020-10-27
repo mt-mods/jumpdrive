@@ -23,7 +23,10 @@ if has_technic_mod then
 	dofile(MP.."/compat/anchor.lua")
 end
 
-dofile(MP.."/compat/locator.lua")
+if has_locator_mod then
+	dofile(MP.."/compat/locator.lua")
+end
+
 dofile(MP.."/compat/signs.lua")
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/telemosaic.lua")
@@ -39,10 +42,8 @@ if has_pipeworks_mod then
 end
 
 jumpdrive.node_compat = function(name, source_pos, target_pos, source_pos1, source_pos2, delta_vector)
-	if (name == "locator:beacon_1" or name == "locator:beacon_2" or name == "locator:beacon_3") and has_locator_mod then
-		jumpdrive.locator_compat(source_pos, target_pos)
 
-	elseif has_pipeworks_mod and string.find(name, "^pipeworks:teleport_tube") then
+	if has_pipeworks_mod and string.find(name, "^pipeworks:teleport_tube") then
 		jumpdrive.teleporttube_compat(source_pos, target_pos)
 
 	elseif name == "telemosaic:beacon" or name == "telemosaic:beacon_err"
