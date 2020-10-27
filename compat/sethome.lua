@@ -1,5 +1,9 @@
 
-jumpdrive.sethome_compat = function(pos1, pos2, delta_vector)
+jumpdrive.register_after_jump(function(from_area, to_area)
+	local delta_vector = vector.subtract(to_area.pos1, from_area.pos1)
+	local pos1 = from_area.pos1
+	local pos2 = from_area.pos2
+
   -- move /home positions of online players
   for _,player in ipairs(minetest.get_connected_players()) do
     local name = player:get_player_name()
@@ -16,4 +20,4 @@ jumpdrive.sethome_compat = function(pos1, pos2, delta_vector)
       end
     end
   end
-end
+end)
