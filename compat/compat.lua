@@ -47,9 +47,12 @@ if has_sethome_mod then
 	dofile(MP.."/compat/sethome.lua")
 end
 
+if has_ropes_mod then
+	dofile(MP.."/compat/ropes.lua")
+end
+
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
-dofile(MP.."/compat/ropes.lua")
 
 if has_pipeworks_mod then
 	dofile(MP.."/compat/teleporttube.lua")
@@ -80,10 +83,6 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 
 	if has_beds_mod then
 		jumpdrive.beds_compat(target_pos1, target_pos2, delta_vector)
-	end
-
-	if has_ropes_mod then
-		jumpdrive.ropes_compat(target_pos1, target_pos2, delta_vector)
 	end
 
 end

@@ -3,7 +3,11 @@ local rope_nodes = { -- Top, middle, bottom
 	{"ropes:ropeladder_falling", "ropes:ropeladder", "ropes:ropeladder_bottom"}, -- Rope ladders
 }
 
-jumpdrive.ropes_compat = function(target_pos1, target_pos2, delta_vector)
+jumpdrive.register_after_jump(function(from_area, to_area)
+	local delta_vector = vector.subtract(to_area.pos1, from_area.pos1)
+	local target_pos1 = to_area.pos1
+	local target_pos2 = to_area.pos2
+
 	if ropes == nil or
 			ropes.destroy_rope == nil then
 		-- Something is wrong. Don't do anything
@@ -83,4 +87,4 @@ jumpdrive.ropes_compat = function(target_pos1, target_pos2, delta_vector)
 			ropes.destroy_rope(pos, rope_type_nodes)
 		end
 	end
-end
+end)
