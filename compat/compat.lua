@@ -43,7 +43,6 @@ if has_areas_mod then
 	dofile(MP.."/compat/areas.lua")
 end
 
-dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
 dofile(MP.."/compat/ropes.lua")
