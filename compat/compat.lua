@@ -31,7 +31,10 @@ if has_drawers_mod then
 	dofile(MP.."/compat/drawers.lua")
 end
 
-dofile(MP.."/compat/signs.lua")
+if has_display_mod then
+	dofile(MP.."/compat/signs.lua")
+end
+
 dofile(MP.."/compat/itemframes.lua")
 dofile(MP.."/compat/telemosaic.lua")
 dofile(MP.."/compat/beds.lua")
@@ -85,10 +88,6 @@ jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1,
 
 	-- async compat functions below here
 	minetest.after(1.0, function()
-
-		if has_display_mod then
-			jumpdrive.signs_compat(target_pos1, target_pos2)
-		end
 
 		if has_textline_mod then
 			jumpdrive.textline_compat(target_pos1, target_pos2)
