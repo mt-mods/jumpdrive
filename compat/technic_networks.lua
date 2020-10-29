@@ -10,12 +10,9 @@
 
 if technic.remove_network and technic.pos2network and technic.machines then
 
-	local poshash = minetest.hash_node_position
-	local pos2network = technic.pos2network
-
 	local function on_movenode(from_pos, to_pos, info)
 		-- Destroy network caches at source location, inside jump area
-		local src_net_id = pos2network(from_pos)
+		local src_net_id = technic.pos2network(from_pos)
 		if src_net_id then
 			technic.remove_network(src_net_id)
 		end
@@ -27,7 +24,7 @@ if technic.remove_network and technic.pos2network and technic.machines then
 				local axis_dir = {x=0,y=0,z=0}
 				axis_dir[axis] = value
 				local edge_pos = vector.add(to_pos, axis_dir)
-				local dst_net_id = pos2network(edge_pos)
+				local dst_net_id = technic.pos2network(edge_pos)
 				if dst_net_id then
 					technic.remove_network(dst_net_id)
 				end
