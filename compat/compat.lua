@@ -21,6 +21,7 @@ end
 
 if has_technic_mod then
 	dofile(MP.."/compat/anchor.lua")
+	dofile(MP.."/compat/technic_networks.lua")
 end
 
 if has_locator_mod then
