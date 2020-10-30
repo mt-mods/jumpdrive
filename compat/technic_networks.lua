@@ -8,6 +8,7 @@
 -- https://github.com/mt-mods/jumpdrive/pull/79
 --
 
+-- Check for technic mod version compatibility
 if technic.remove_network and technic.pos2network and technic.machines then
 
 	local function on_movenode(from_pos, to_pos, info)
@@ -32,6 +33,7 @@ if technic.remove_network and technic.pos2network and technic.machines then
 		end
 	end
 
+	-- Collect groups for registered technic cables
 	local cable_groups = {}
 	for tier,_ in pairs(technic.machines) do
 		cable_groups[("technic_%s_cable"):format(tier:lower())] = 1
@@ -45,6 +47,7 @@ if technic.remove_network and technic.pos2network and technic.machines then
 		return def.groups["technic_machine"]
 	end
 
+	-- Inject on_movenode functionality but only if node does not already implement it
 	for name, def in pairs(minetest.registered_nodes) do
 		if not def.on_movenode and is_network_node(name, def) then
 			minetest.override_item(name, { on_movenode = on_movenode })
