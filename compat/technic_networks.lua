@@ -16,18 +16,18 @@ if technic.remove_network and technic.pos2network and technic.machines then
 		local src_net_id = technic.pos2network(from_pos)
 		if src_net_id then
 			technic.remove_network(src_net_id)
+		end
 
-			-- Destroy network caches at target location, outside jump area
-			local edge = info.edge
-			for axis, value in pairs(edge) do
-				if value ~= 0 then
-					local axis_dir = {x=0,y=0,z=0}
-					axis_dir[axis] = value
-					local edge_pos = vector.add(to_pos, axis_dir)
-					local dst_net_id = technic.pos2network(edge_pos)
-					if dst_net_id then
-						technic.remove_network(dst_net_id)
-					end
+		-- Destroy network caches at target location, outside jump area
+		local edge = info.edge
+		for axis, value in pairs(edge) do
+			if value ~= 0 then
+				local axis_dir = {x=0,y=0,z=0}
+				axis_dir[axis] = value
+				local edge_pos = vector.add(to_pos, axis_dir)
+				local dst_net_id = technic.pos2network(edge_pos)
+				if dst_net_id then
+					technic.remove_network(dst_net_id)
 				end
 			end
 		end
