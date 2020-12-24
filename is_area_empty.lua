@@ -17,6 +17,17 @@ end)
 
 
 jumpdrive.is_area_empty = function(pos1, pos2)
+	
+	minetest.emerge_area({ -- generates or loads the area before checking emptiness
+	x= pos1.x > 0 and pos1.x+16 or pos1.x-16, -- expands area by 16 in each axis to prevent border overlap 
+	y= pos1.y > 0 and pos1.y+16 or pos1.y-16,
+	z= pos1.z > 0 and pos1.z+16 or pos1.z-16
+	}, {
+	x= pos2.x > 0 and pos2.x+16 or pos2.x-16,
+	y= pos2.y > 0 and pos2.y+16 or pos2.y-16,
+	z= pos2.z > 0 and pos2.z+16 or pos2.z-16
+	})
+
 	local manip = minetest.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
@@ -44,4 +55,3 @@ jumpdrive.is_area_empty = function(pos1, pos2)
 	-- only buildable_to nodes found
 	return true, ""
 end
-
