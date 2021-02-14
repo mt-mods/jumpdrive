@@ -35,5 +35,6 @@ read_globals = {
 	"ropes",
 	"sethome",
 	"drawers",
-	"player_monoids"
+	"player_monoids",
+	"mapblock_lib"
 }
