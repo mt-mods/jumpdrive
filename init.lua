@@ -25,10 +25,6 @@ if minetest.get_modpath("technic") then
 	dofile(MP.."/technic_run.lua")
 end
 
-if minetest.get_modpath("pipeworks") then
-	dofile(MP.."/override/teleport_tube.lua")
-end
-
 -- common functions
 dofile(MP.."/fuel.lua")
 dofile(MP.."/upgrade.lua")
