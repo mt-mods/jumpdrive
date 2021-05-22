@@ -41,6 +41,7 @@ dofile(MP.."/is_area_protected.lua")
 dofile(MP.."/move/move_objects.lua")
 dofile(MP.."/move/move_metadata.lua")
 dofile(MP.."/move/move_nodetimers.lua")
+dofile(MP.."/move/move_players.lua")
 dofile(MP.."/move/move.lua")
 
 dofile(MP.."/mapgen.lua")
