@@ -1,5 +1,4 @@
 
-local use_player_monoids = minetest.global_exists("player_monoids")
 local c_air = minetest.get_content_id("air")
 
 
@@ -175,25 +174,7 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	-- step 5: clear source area with voxel manip
 	t0 = minetest.get_us_time()
-	manip = minetest.get_voxel_manip()
-	e1, e2 = manip:read_from_map(source_pos1, source_pos2)
-	source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
-	source_data = manip:get_data()
-
-
-	for z=source_pos1.z, source_pos2.z do
-	for y=source_pos1.y, source_pos2.y do
-	for x=source_pos1.x, source_pos2.x do
-
-		local source_index = source_area:index(x, y, z)
-		source_data[source_index] = c_air
-	end
-	end
-	end
-
-	manip:set_data(source_data)
-	manip:write_to_map()
-	manip:update_map()
+	jumpdrive.clear_area(source_pos1, source_pos2)
 
 	t1 = minetest.get_us_time()
 	minetest.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")

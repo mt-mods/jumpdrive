@@ -1,16 +1,36 @@
 
-jumpdrive.sanitize_coord = function(coord)
+local c_air = minetest.get_content_id("air")
+
+function jumpdrive.clear_area(pos1, pos2)
+	local manip = minetest.get_voxel_manip()
+	local e1, e2 = manip:read_from_map(pos1, pos2)
+	local source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
+	local source_data = manip:get_data()
+
+
+	for z=pos1.z, pos2.z do
+	for y=pos2.y, pos2.y do
+	for x=pos1.x, pos2.x do
+
+		local source_index = source_area:index(x, y, z)
+		source_data[source_index] = c_air
+	end
+	end
+	end
+end
+
+function jumpdrive.sanitize_coord(coord)
 	return math.max( math.min( coord, 31000 ), -31000 )
 end
 
 -- get pos object from pos
-jumpdrive.get_meta_pos = function(pos)
+function jumpdrive.get_meta_pos(pos)
 	local meta = minetest.get_meta(pos);
 	return {x=meta:get_int("x"), y=meta:get_int("y"), z=meta:get_int("z")}
 end
 
 -- set pos object from pos
-jumpdrive.set_meta_pos = function(pos, target)
+function jumpdrive.set_meta_pos(pos, target)
 	local meta = minetest.get_meta(pos);
 	meta:set_int("x", target.x)
 	meta:set_int("y", target.y)
@@ -18,23 +38,23 @@ jumpdrive.set_meta_pos = function(pos, target)
 end
 
 -- get offset from meta
-jumpdrive.get_radius = function(pos)
+function jumpdrive.get_radius(pos)
 	local meta = minetest.get_meta(pos);
 	return math.max(math.min(meta:get_int("radius"), jumpdrive.config.max_radius), 1)
 end
 
 -- calculates the power requirements for a jump
-jumpdrive.calculate_power = function(radius, distance, sourcePos, targetPos)
+function jumpdrive.calculate_power(radius, distance, sourcePos, targetPos)
 	return 10 * distance * radius
 end
 
 
 -- preflight check, for overriding
-jumpdrive.preflight_check = function(source, destination, radius, playername)
+function jumpdrive.preflight_check(source, destination, radius, playername)
 	return { success=true }
 end
 
-jumpdrive.reset_coordinates = function(pos)
+function jumpdrive.reset_coordinates(pos)
 	local meta = minetest.get_meta(pos)
 
 	meta:set_int("x", pos.x)
