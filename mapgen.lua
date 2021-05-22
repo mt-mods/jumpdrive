@@ -33,7 +33,7 @@ minetest.register_globalstep(function(dtime)
 	timer=0
 
 	local time = minetest.get_us_time()
-	local delay_seconds = 20
+	local delay_seconds = 10
 
 	local copied_events = events
 	events = {}
