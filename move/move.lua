@@ -3,6 +3,7 @@ local c_air = minetest.get_content_id("air")
 
 
 -- map of replaced content id's on jump
+-- TODO: expose as api function
 -- <id> = <id>
 local mapped_content_ids = {}
 
