@@ -45,3 +45,9 @@ jumpdrive.teleporttube_compat_commit = function()
 
 	pipeworks.tptube.save_tube_db()
 end
+
+
+-- load tp tube on start, prevents crashes if the db isn't loaded yet
+if pipeworks.tptube and pipeworks.tptube.get_db then
+	pipeworks.tptube.get_db()
+end

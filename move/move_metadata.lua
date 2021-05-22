@@ -6,6 +6,7 @@ jumpdrive.move_metadata = function(source_pos1, source_pos2, delta_vector)
 	local target_pos1 = vector.add(source_pos1, delta_vector)
 	local target_pos2 = vector.add(source_pos2, delta_vector)
 
+	-- check if there is some "stale" metadata in the target area
 	local target_meta_pos_list = minetest.find_nodes_with_meta(target_pos1, target_pos2)
 	for _,target_pos in pairs(target_meta_pos_list) do
 		minetest.log("warning", "[jumpdrive] clearing spurious meta in " .. minetest.pos_to_string(target_pos))

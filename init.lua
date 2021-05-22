@@ -39,6 +39,7 @@ dofile(MP.."/is_area_protected.lua")
 
 -- move logic
 dofile(MP.."/move/move_objects.lua")
+dofile(MP.."/move/move_mapdata.lua")
 dofile(MP.."/move/move_metadata.lua")
 dofile(MP.."/move/move_nodetimers.lua")
 dofile(MP.."/move/move_players.lua")

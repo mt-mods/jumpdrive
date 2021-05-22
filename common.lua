@@ -9,13 +9,23 @@ function jumpdrive.clear_area(pos1, pos2)
 
 
 	for z=pos1.z, pos2.z do
-	for y=pos2.y, pos2.y do
+	for y=pos1.y, pos2.y do
 	for x=pos1.x, pos2.x do
 
 		local source_index = source_area:index(x, y, z)
 		source_data[source_index] = c_air
 	end
 	end
+	end
+
+	manip:set_data(source_data)
+	manip:write_to_map()
+
+	-- remove metadata
+	local target_meta_pos_list = minetest.find_nodes_with_meta(pos1, pos2)
+	for _,target_pos in pairs(target_meta_pos_list) do
+		local target_meta = minetest.get_meta(target_pos)
+		target_meta:from_table(nil)
 	end
 end
 
