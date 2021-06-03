@@ -2,18 +2,22 @@
 -- invoked from move.lua
 jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta_vector)
 
-	local all_objects = minetest.get_objects_inside_radius(source_center, 20);
+	local margin = vector.new(0.5, 0.5, 0.5)
+	local pos1 = vector.subtract(source_pos1, margin)
+	local pos2 = vector.add(source_pos2, margin)
+
+	local radius = math.ceil(vector.distance(source_center, pos2))
+
+	local all_objects = minetest.get_objects_inside_radius(source_center, radius);
 	for _,obj in ipairs(all_objects) do
 
 		local objPos = obj:get_pos()
 
-		local xMatch = objPos.x >= source_pos1.x and objPos.x <= source_pos2.x
-		local yMatch = objPos.y >= source_pos1.y and objPos.y <= source_pos2.y
-		local zMatch = objPos.z >= source_pos1.z and objPos.z <= source_pos2.z
+		local x_match = objPos.x >= pos1.x and objPos.x <= pos2.x
+		local y_match = objPos.y >= pos1.y and objPos.y <= pos2.y
+		local z_match = objPos.z >= pos1.z and objPos.z <= pos2.z
 
-		local isPlayer = obj:is_player()
-
-		if xMatch and yMatch and zMatch and not isPlayer then
+		if x_match and y_match and z_match and not obj:is_player() then
 			minetest.log("action", "[jumpdrive] object:  @ " .. minetest.pos_to_string(objPos))
 
 			-- coords in range
@@ -38,6 +42,4 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 			end
 		end
 	end
-
-
 end
