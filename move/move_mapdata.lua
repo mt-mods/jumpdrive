@@ -10,6 +10,11 @@ if minetest.get_modpath("vacuum") then
 	mapped_content_ids[minetest.get_content_id("vacuum:vacuum")] = c_air
 end
 
+if minetest.get_modpath("planet_mars") then
+	-- alias obsolete planet_mars:airlight to air
+	mapped_content_ids[minetest.get_content_id("planet_mars:airlight")] = c_air
+end
+
 -- map of "on_movenode" aware node id's
 -- content_id = nodedef
 local movenode_aware_nodeids = {}
