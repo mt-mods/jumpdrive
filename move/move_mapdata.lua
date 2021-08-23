@@ -11,7 +11,7 @@ if minetest.get_modpath("vacuum") then
 end
 
 if minetest.get_modpath("planet_mars") then
-	-- alias obsolete planet_mars:airlight to air
+	-- alias planet_mars:airlight to air
 	mapped_content_ids[minetest.get_content_id("planet_mars:airlight")] = c_air
 end
 
