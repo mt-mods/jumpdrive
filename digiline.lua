@@ -57,11 +57,11 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 			end
 			-- backward compatibility with old less flexible set command
 			if msg.key == "x" then
-				meta:set_int("x", value)
+				meta:set_int("x", jumpdrive.sanitize_coord(value))
 			elseif msg.key == "y" then
-				meta:set_int("y", value)
+				meta:set_int("y", jumpdrive.sanitize_coord(value))
 			elseif msg.key == "z" then
-				meta:set_int("z", value)
+				meta:set_int("z", jumpdrive.sanitize_coord(value))
 			elseif msg.key == "radius" then
 				if value >= 1 and value <= jumpdrive.config.max_radius then
 					meta:set_int("radius", value)
@@ -69,9 +69,9 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 			end
 		else
 			-- API requires integers for coord values, noop for everything else
-			if is_int(msg.x) then meta:set_int("x", msg.x) end
-			if is_int(msg.y) then meta:set_int("y", msg.y) end
-			if is_int(msg.z) then meta:set_int("z", msg.z) end
+			if is_int(msg.x) then meta:set_int("x", jumpdrive.sanitize_coord(msg.x)) end
+			if is_int(msg.y) then meta:set_int("y", jumpdrive.sanitize_coord(msg.y)) end
+			if is_int(msg.z) then meta:set_int("z", jumpdrive.sanitize_coord(msg.z)) end
 			if is_int(msg.r) and msg.r <= jumpdrive.config.max_radius then
 				meta:set_int("radius", msg.r)
 			end

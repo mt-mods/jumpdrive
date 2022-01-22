@@ -101,9 +101,9 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		end
 
 		-- update coords
-		meta:set_int("x", x)
-		meta:set_int("y", y)
-		meta:set_int("z", z)
+		meta:set_int("x", jumpdrive.sanitize_coord(x))
+		meta:set_int("y", jumpdrive.sanitize_coord(y))
+		meta:set_int("z", jumpdrive.sanitize_coord(z))
 		jumpdrive.fleet.update_formspec(meta, pos)
 
 		local t0 = minetest.get_us_time()

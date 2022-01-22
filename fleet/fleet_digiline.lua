@@ -251,9 +251,9 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		end
 
 		-- API requires integers for coord values, noop for everything else
-		if is_int(msg.x) then meta:set_int("x", msg.x) end
-		if is_int(msg.y) then meta:set_int("y", msg.y) end
-		if is_int(msg.z) then meta:set_int("z", msg.z) end
+		if is_int(msg.x) then meta:set_int("x", jumpdrive.sanitize_coord(msg.x)) end
+		if is_int(msg.y) then meta:set_int("y", jumpdrive.sanitize_coord(msg.y)) end
+		if is_int(msg.z) then meta:set_int("z", jumpdrive.sanitize_coord(msg.z)) end
 		if msg.formupdate then
 			jumpdrive.fleet.update_formspec(meta, pos)
 		end
