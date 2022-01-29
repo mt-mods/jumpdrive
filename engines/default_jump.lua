@@ -36,7 +36,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	end
 
 	-- load chunk
-	minetest.get_voxel_manip():read_from_map(target_pos1, target_pos2)
+	minetest.load_area(target_pos1, target_pos2)
 
 	if show_marker then
 		jumpdrive.show_marker(targetPos, radius, "red")
