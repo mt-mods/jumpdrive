@@ -223,10 +223,10 @@ minetest.register_node("jumpdrive:engine", {
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if player and player:is_player() and minetest.is_protected(pos, player:get_player_name()) then
-			-- protected
-			return 0
-		end
+		if (not player) -- no player given
+			or (not player:is_player()) -- not a player
+			or minetest.is_protected(pos, player:get_player_name()) -- protected
+		then return 0 end
 
 		return stack:get_count()
 	end,
