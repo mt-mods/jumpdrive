@@ -236,7 +236,7 @@ minetest.register_node("jumpdrive:engine", {
 	end,
 
 	on_metadata_inventory_move = function(pos, from_list, _, to_list)
-		if from_list == "upgarde" or to_list == "upgrade" then
+		if from_list == "upgrade" or to_list == "upgrade" then
 			jumpdrive.upgrade.calculate(pos)
 		end
 	end,
