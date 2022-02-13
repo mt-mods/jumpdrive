@@ -205,27 +205,27 @@ minetest.register_node("jumpdrive:engine", {
 
 	-- inventory protection
 	allow_metadata_inventory_move = function(pos, _, _, _, _, count, player)
-		if (not player) -- no player given
-			or (not player:is_player()) -- not a player
-			or minetest.is_protected(pos, player:get_player_name()) -- protected
+		if (not player)
+			or (not player:is_player())
+			or minetest.is_protected(pos, player:get_player_name())
 		then return 0 end
 
 		return count
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if (not player) -- no player given
-			or (not player:is_player()) -- not a player
-			or minetest.is_protected(pos, player:get_player_name()) -- protected
+		if (not player)
+			or (not player:is_player())
+			or minetest.is_protected(pos, player:get_player_name())
 		then return 0 end
 
 		return stack:get_count()
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if (not player) -- no player given
-			or (not player:is_player()) -- not a player
-			or minetest.is_protected(pos, player:get_player_name()) -- protected
+		if (not player)
+			or (not player:is_player())
+			or minetest.is_protected(pos, player:get_player_name())
 		then return 0 end
 
 		return stack:get_count()
