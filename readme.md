@@ -22,6 +22,11 @@ Take your buildings with you on your journey
 * Click "show" and check the green (source) and red (target) destination markers if everything is in range
 * Click "jump"
 
+Example setup with technic:
+
+![](screenshots/screenshot_20220305_161502.png?raw=true)
+
+
 # Compatibility
 
 Optional dependencies:
