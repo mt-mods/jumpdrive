@@ -224,8 +224,8 @@ minetest.register_node("jumpdrive:fleet_controller", {
 minetest.register_craft({
 	output = 'jumpdrive:fleet_controller',
 	recipe = {
-		{'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'},
-		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
-		{'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'}
+		{'technic:carbon_plate', 'mesecons_luacontroller:luacontroller0000', 'technic:control_logic_unit'},
+		{'jumpdrive:backbone', 'technic:machine_casing', 'jumpdrive:backbone'},
+		{'basic_materials:stainless_steel_wire', 'technic:hv_cable', 'basic_materials:stainless_steel_wire'}
 	}
 })
