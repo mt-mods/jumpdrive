@@ -177,37 +177,13 @@ end)
 * @Panquesito7
 * @OgelGames
 * @S-S-X
+* Jeremy#2233
+* Purple#2916
 
-# History
+# License
+* Code: `MIT`
+* Textures `CC BY-SA 4.0`
 
-## Next
-* optional technic mod
-* upgrade slots
-* "on_movenode" node definition
-* "jumpdrive.register_after_jump" function
-
-## 2.0
-
-* various fixes and optimizations
-* Fleetcontroller
-* Digiline interface
-* mod.conf (minetest >= 5.0)
-* Beds,ropes,missions compatibility
-* calculate_power() override
-* overlap check
-* No fuel consumption if creative
-* Protection checks for source and destination
-* preflight check with custom override
-* Settings in minetest.conf
-* vacuum compatibility (jump into vacuum with air filled vessel)
-
-## 1.1
-
-* improved performance
-* Documentation
-* Removed complicated cascade function
-
-## 1.0
-
-* Initial version
-* Cascade operation (with issues)
+# Attributions
+* `textures/jumpdrive.png`/`textures/jumpdrive_backbone.png`/`textures/jumpdrive_fleet_controller.png`/`textures/jumpdrive_warpdevice.png`
+ * Jeremy#2233 / Purple#2916

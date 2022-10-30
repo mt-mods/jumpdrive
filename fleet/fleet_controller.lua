@@ -220,12 +220,3 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		end
 	end
 })
-
-minetest.register_craft({
-	output = 'jumpdrive:fleet_controller',
-	recipe = {
-		{'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'},
-		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
-		{'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'}
-	}
-})

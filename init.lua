@@ -49,6 +49,7 @@ dofile(MP.."/mapgen.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/digiline.lua")
 dofile(MP.."/backbone.lua")
+dofile(MP.."/warp_device.lua")
 dofile(MP.."/crafts.lua")
 
 -- engines
