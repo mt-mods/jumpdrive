@@ -24,7 +24,7 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 	local t0 = minetest.get_us_time()
 
 	-- load areas (just a precaution)
-	if minetest.settings:get_bool(jumpdrive.allow_jump_to_unloaded_area) then
+	if (tostring(minetest.settings:get_bool(jumpdrive.allow_jump_to_unloaded_area)) or "true") then
 		if minetest.emerge_area and minetest.load_area then
 			minetest.load_area(source_pos1, source_pos2)
 			minetest.emerge_area(target_pos1, target_pos2)
