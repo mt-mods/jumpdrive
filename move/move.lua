@@ -24,9 +24,16 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 	local t0 = minetest.get_us_time()
 
 	-- load areas (just a precaution)
-	if minetest.emerge_area and minetest.load_area then
-		minetest.load_area(source_pos1, source_pos2)
-		minetest.emerge_area(target_pos1, target_pos2)
+	if minetest.settings:get(allow_jump_to_unloaded_area) then
+		if minetest.emerge_area and minetest.load_area then
+			minetest.load_area(source_pos1, source_pos2)
+			minetest.emerge_area(target_pos1, target_pos2)
+		end
+	else
+		if minetest.load_area then
+			minetest.load_area(source_pos1, source_pos2)
+			minetest.load_area(target_pos1, target_pos2)
+		end
 	end
 
 	-- move mapdata (nodeids, param1, param2)
