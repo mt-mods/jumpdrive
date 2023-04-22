@@ -13,13 +13,12 @@ minetest.register_on_mods_loaded(function()
 					local station_name = meta:get_string( "station_name" );
 					local station_network = meta:get_string( "station_network" );
 
-					local travelnets = travelnet.get_travelnets(owner_name)
-					if (travelnets[owner_name]
-						and travelnets[owner_name][station_network]
-						and travelnets[owner_name][station_network][station_name]) then
+					local stations = travelnet.get_travelnets(owner_name)
+					if (stations[station_network]
+						and stations[station_network][station_name]) then
 							-- update station with new position
-							travelnets[owner_name][station_network][station_name].pos = to_pos
-							travelnet.set_travelnets(owner_name, travelnets)
+							stations[station_network][station_name].pos = to_pos
+							travelnet.set_travelnets(owner_name, stations)
 					end
 				end
 			})
