@@ -1,4 +1,6 @@
 
+assert(type(travelnet.get_travelnets) == "function", "old travelnet-api found, please update the travelnet mod")
+
 minetest.register_on_mods_loaded(function()
 	for node, def in pairs(minetest.registered_nodes) do
 		if def.groups and def.groups.travelnet == 1 then
@@ -11,10 +13,12 @@ minetest.register_on_mods_loaded(function()
 					local station_name = meta:get_string( "station_name" );
 					local station_network = meta:get_string( "station_network" );
 
-					if (travelnet.targets[owner_name]
-					and travelnet.targets[owner_name][station_network]
-					and travelnet.targets[owner_name][station_network][station_name]) then
-						travelnet.targets[owner_name][station_network][station_name].pos = to_pos
+					local stations = travelnet.get_travelnets(owner_name)
+					if (stations[station_network]
+						and stations[station_network][station_name]) then
+							-- update station with new position
+							stations[station_network][station_name].pos = to_pos
+							travelnet.set_travelnets(owner_name, stations)
 					end
 				end
 			})
