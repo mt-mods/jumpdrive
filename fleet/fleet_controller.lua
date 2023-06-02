@@ -56,7 +56,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		return inv:is_empty("main") and not minetest.is_protected(pos, name)
 	end,
 
-	on_receive_fields = function(pos, formname, fields, sender)
+	on_receive_fields = function(pos, _, fields, sender)
 
 		local meta = minetest.get_meta(pos);
 
@@ -174,7 +174,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 
 	end,
 
-	on_timer = function(pos, elapsed)
+	on_timer = function(pos)
 		local meta = minetest.get_meta(pos)
 		local jump_index = meta:get_int("jump_index")
 		local jump_list = minetest.deserialize( meta:get_string("jump_list") )

@@ -54,13 +54,15 @@ function jumpdrive.get_radius(pos)
 end
 
 -- calculates the power requirements for a jump
-function jumpdrive.calculate_power(radius, distance, sourcePos, targetPos)
+-- params: radius, distance, sourcePos, targetPos
+function jumpdrive.calculate_power(radius, distance)
 	return 10 * distance * radius
 end
 
 
 -- preflight check, for overriding
-function jumpdrive.preflight_check(source, destination, radius, playername)
+-- params: source, destination, radius, playername
+function jumpdrive.preflight_check()
 	return { success=true }
 end
 

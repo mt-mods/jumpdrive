@@ -1,5 +1,5 @@
 
-jumpdrive.fleet.update_formspec = function(meta, pos)
+jumpdrive.fleet.update_formspec = function(meta)
 
 	local button_line =
 		"button_exit[0,1.5;2,1;jump;Jump]" ..

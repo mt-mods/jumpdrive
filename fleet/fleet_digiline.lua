@@ -134,7 +134,7 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 	minetest.after(1, async_check)
 end
 
-jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, owner, engines)
+jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, _, engines)
 	local t0 = minetest.get_us_time()
 	local meta = minetest.get_meta(pos)
 	local all_success = false

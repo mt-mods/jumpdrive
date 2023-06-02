@@ -79,7 +79,7 @@ jumpdrive.commit_node_compat = function()
 end
 
 
-jumpdrive.target_region_compat = function(source_pos1, source_pos2, target_pos1, target_pos2, delta_vector)
+jumpdrive.target_region_compat = function(_, _, target_pos1, target_pos2, delta_vector)
 	-- sync compat functions
 
 	if has_beds_mod then

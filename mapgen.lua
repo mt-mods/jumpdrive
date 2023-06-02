@@ -16,7 +16,7 @@ jumpdrive.mapgen.reset = function()
 end
 
 -- update last mapgen event time
-minetest.register_on_generated(function(minp, maxp, seed)
+minetest.register_on_generated(function(minp, maxp)
 	table.insert(events, {
 		minp = minp,
 		maxp = maxp,

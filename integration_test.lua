@@ -45,7 +45,7 @@ local function execute_mapgen(callback)
 end
 
 local function execute_test(callback)
-	execute_mapgen(function(blockpos, action, calls_remaining)
+	execute_mapgen(function(blockpos, _, calls_remaining)
 		minetest.log("action", "Emerged: " .. minetest.pos_to_string(blockpos))
 		if calls_remaining > 0 then
 			return

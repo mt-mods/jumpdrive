@@ -5,7 +5,7 @@ minetest.register_on_mods_loaded(function()
 	for node, def in pairs(minetest.registered_nodes) do
 		if def.groups and def.groups.travelnet == 1 then
 			minetest.override_item(node, {
-				on_movenode = function(from_pos, to_pos)
+				on_movenode = function(_, to_pos)
 					local meta = minetest.get_meta(to_pos);
 					minetest.log("action", "[jumpdrive] Restoring travelnet @ " .. to_pos.x .. "/" .. to_pos.y .. "/" .. to_pos.z)
 

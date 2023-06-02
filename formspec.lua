@@ -5,7 +5,7 @@ if has_technic then
 	inv_offset = 1.25
 end
 
-jumpdrive.update_formspec = function(meta, pos)
+jumpdrive.update_formspec = function(meta)
 	local formspec =
 		"size[8," .. 9.3+inv_offset .. ";]" ..
 

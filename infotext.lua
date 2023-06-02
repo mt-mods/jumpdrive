@@ -1,6 +1,6 @@
 local has_technic = minetest.get_modpath("technic")
 
-jumpdrive.update_infotext = function(meta, pos)
+jumpdrive.update_infotext = function(meta)
 	local store = meta:get_int("powerstorage")
 	local max_store = meta:get_int("max_powerstorage")
 

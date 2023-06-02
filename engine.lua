@@ -7,12 +7,12 @@ minetest.register_node("jumpdrive:engine", {
 	tiles = {"jumpdrive.png"},
 
 	tube = {
-		insert_object = function(pos, node, stack, direction)
+		insert_object = function(pos, _, stack)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			return inv:add_item("main", stack)
 		end,
-		can_insert = function(pos, node, stack, direction)
+		can_insert = function(pos, _, stack)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			stack = stack:peek_item(1)
@@ -81,7 +81,7 @@ minetest.register_node("jumpdrive:engine", {
 			not minetest.is_protected(pos, name)
 	end,
 
-	on_timer = function(pos, elapsed)
+	on_timer = function(pos)
 		local meta = minetest.get_meta(pos)
 
 		local store = meta:get_int("powerstorage")
@@ -123,7 +123,7 @@ minetest.register_node("jumpdrive:engine", {
 
 	technic_run = jumpdrive.technic_run,
 
-	on_receive_fields = function(pos, formname, fields, sender)
+	on_receive_fields = function(pos, _, fields, sender)
 
 		local meta = minetest.get_meta(pos);
 		jumpdrive.migrate_engine_meta(pos, meta)
@@ -214,7 +214,7 @@ minetest.register_node("jumpdrive:engine", {
 		return count
 	end,
 
-	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_take = function(pos, _, _, stack, player)
 		if (not player)
 			or (not player:is_player())
 			or minetest.is_protected(pos, player:get_player_name())
@@ -223,7 +223,7 @@ minetest.register_node("jumpdrive:engine", {
 		return stack:get_count()
 	end,
 
-	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_put = function(pos, _, _, stack, player)
 		if (not player)
 			or (not player:is_player())
 			or minetest.is_protected(pos, player:get_player_name())
@@ -251,7 +251,7 @@ minetest.register_node("jumpdrive:engine", {
 		end
 	end,
 
-	on_punch = function(pos, node, player)
+	on_punch = function(pos, _, player)
 		if not has_vizlib then
 			-- no visualization lib
 			return

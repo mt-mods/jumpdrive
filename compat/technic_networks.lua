@@ -39,7 +39,7 @@ if technic.remove_network and technic.pos2network and technic.machines then
 		cable_groups[("technic_%s_cable"):format(tier:lower())] = 1
 	end
 
-	local function is_network_node(name, def)
+	local function is_network_node(_, def)
 		if not def.groups then return end
 		for group,_ in pairs(cable_groups) do
 			if def.groups[group] then return true end
