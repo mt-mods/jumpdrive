@@ -1,4 +1,4 @@
-
+local has_vizlib = minetest.get_modpath("vizlib")
 
 jumpdrive.simulate_jump = function(pos, player, show_marker)
 
@@ -38,9 +38,9 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	-- load chunk
 	minetest.get_voxel_manip():read_from_map(target_pos1, target_pos2)
 
-	if show_marker then
-		jumpdrive.show_marker(targetPos, radius, "red")
-		jumpdrive.show_marker(pos, radius, "green")
+	if show_marker and has_vizlib then
+		vizlib.draw_cube(targetPos, radius + 0.5, { color = "#ff0000" })
+		vizlib.draw_cube(pos, radius + 0.5, { color = "#00ff00" })
 	end
 
 	local msg = nil

@@ -31,7 +31,6 @@ dofile(MP.."/upgrade.lua")
 dofile(MP.."/bookmark.lua")
 dofile(MP.."/infotext.lua")
 dofile(MP.."/migrate.lua")
-dofile(MP.."/marker.lua")
 dofile(MP.."/hooks.lua")
 dofile(MP.."/compat/compat.lua")
 dofile(MP.."/is_area_empty.lua")
@@ -52,18 +51,10 @@ dofile(MP.."/backbone.lua")
 dofile(MP.."/warp_device.lua")
 dofile(MP.."/crafts.lua")
 
--- engines
-dofile(MP.."/engines/default.lua")
-dofile(MP.."/engines/default_formspec.lua")
-dofile(MP.."/engines/default_jump.lua")
-
---[[
--- WIP
-if minetest.get_modpath("areas") then
-	dofile(MP.."/engines/area.lua")
-	dofile(MP.."/engines/area_formspec.lua")
-end
---]]
+-- engine
+dofile(MP.."/engine.lua")
+dofile(MP.."/formspec.lua")
+dofile(MP.."/jump.lua")
 
 -- fleet
 dofile(MP.."/fleet/fleet_functions.lua")

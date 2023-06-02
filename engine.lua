@@ -1,11 +1,10 @@
 local has_technic = minetest.get_modpath("technic")
+local has_vizlib = minetest.get_modpath("vizlib")
 
--- TODO: consolidate/move common functions to own module
+minetest.register_node("jumpdrive:engine", {
+	description = "Jumpdrive",
 
-minetest.register_node("jumpdrive:area_engine", {
-	description = "Jumpdrive (area enabled)",
-
-	tiles = {"jumpdrive_area.png"},
+	tiles = {"jumpdrive.png"},
 
 	tube = {
 		insert_object = function(pos, node, stack, direction)
@@ -59,14 +58,17 @@ minetest.register_node("jumpdrive:area_engine", {
 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_int("area_number", 0)
+		meta:set_int("x", pos.x)
+		meta:set_int("y", pos.y)
+		meta:set_int("z", pos.z)
+		meta:set_int("radius", 5)
 		meta:set_int("powerstorage", 0)
 		jumpdrive.migrate_engine_meta(pos, meta)
 
 		meta:set_int("HV_EU_input", 0)
 		meta:set_int("HV_EU_demand", 0)
 
-		jumpdrive.update_area_formspec(meta, pos)
+		jumpdrive.update_formspec(meta, pos)
 	end,
 
 	can_dig = function(pos,player)
@@ -130,8 +132,6 @@ minetest.register_node("jumpdrive:area_engine", {
 			return
 		end
 
-		local playername = sender:get_player_name()
-
 		if minetest.is_protected(pos, sender:get_player_name()) then
 			-- not allowed
 			return
@@ -139,13 +139,13 @@ minetest.register_node("jumpdrive:area_engine", {
 
 		if fields.read_book then
 			jumpdrive.read_from_book(pos)
-			jumpdrive.update_area_formspec(meta, pos)
+			jumpdrive.update_formspec(meta, pos)
 			return
 		end
 
 		if fields.reset then
 			jumpdrive.reset_coordinates(pos)
-			jumpdrive.update_area_formspec(meta, pos)
+			jumpdrive.update_formspec(meta, pos)
 			return
 		end
 
@@ -156,50 +156,32 @@ minetest.register_node("jumpdrive:area_engine", {
 
 		if fields.set_digiline_channel and fields.digiline_channel then
 			meta:set_string("channel", fields.digiline_channel)
-			jumpdrive.update_area_formspec(meta, pos)
+			jumpdrive.update_formspec(meta, pos)
 			return
 		end
 
-		local area_number = tonumber(fields.area_number);
+		local x = tonumber(fields.x);
+		local y = tonumber(fields.y);
+		local z = tonumber(fields.z);
+		local radius = tonumber(fields.radius);
 
-		if not area_number then
-			minetest.chat_send_player(playername, "Area by that id not found!")
+		if x == nil or y == nil or z == nil or radius == nil or radius < 1 then
 			return
 		end
 
-		local area_obj = areas.areas[area_number]
+		local max_radius = jumpdrive.config.max_radius
 
-		if not area_obj then
-			return
-		end
-
-		if area_obj.owner ~= playername then
-			minetest.chat_send_player(playername, "You are not the owner of that area!")
-			return
-		end
-
-		local max_radius = jumpdrive.config.max_area_radius
-
-		local distance = vector.distance(area_obj.pos1, area_obj.pos2)
-		if distance > (max_radius * 2) then
-			minetest.chat_send_player(playername, "The defined area has a greater diameter than " ..
-				(max_radius * 2) .. " blocks!")
-			return
-		end
-
-		local volume = math.abs(area_obj.pos1.x - area_obj.pos2.x) *
-			math.abs(area_obj.pos1.z - area_obj.pos2.y) *
-			math.abs(area_obj.pos1.z - area_obj.pos2.z)
-
-		if volume > jumpdrive.config.max_area_volume then
-			minetest.chat_send_player(playername, "The area-volume exceeds the max volume of" ..
-				jumpdrive.config.max_area_volume .. " blocks!")
+		if radius > max_radius then
+			minetest.chat_send_player(sender:get_player_name(), "Invalid jump: max-radius=" .. max_radius)
 			return
 		end
 
 		-- update coords
-		meta:set_int("area_number", area_number)
-		jumpdrive.update_area_formspec(meta, pos)
+		meta:set_int("x", jumpdrive.sanitize_coord(x))
+		meta:set_int("y", jumpdrive.sanitize_coord(y))
+		meta:set_int("z", jumpdrive.sanitize_coord(z))
+		meta:set_int("radius", radius)
+		jumpdrive.update_formspec(meta, pos)
 
 		if fields.jump then
 			local success, msg = jumpdrive.execute_jump(pos, sender)
@@ -223,20 +205,29 @@ minetest.register_node("jumpdrive:area_engine", {
 	end,
 
 	-- inventory protection
+	allow_metadata_inventory_move = function(pos, _, _, _, _, count, player)
+		if (not player)
+			or (not player:is_player())
+			or minetest.is_protected(pos, player:get_player_name())
+		then return 0 end
+
+		return count
+	end,
+
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if player and player:is_player() and minetest.is_protected(pos, player:get_player_name()) then
-			-- protected
-			return 0
-		end
+		if (not player)
+			or (not player:is_player())
+			or minetest.is_protected(pos, player:get_player_name())
+		then return 0 end
 
 		return stack:get_count()
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if player and player:is_player() and minetest.is_protected(pos, player:get_player_name()) then
-			-- protected
-			return 0
-		end
+		if (not player)
+			or (not player:is_player())
+			or minetest.is_protected(pos, player:get_player_name())
+		then return 0 end
 
 		return stack:get_count()
 	end,
@@ -254,16 +245,30 @@ minetest.register_node("jumpdrive:area_engine", {
 		end
 	end,
 
-	on_punch = function(pos, node, puncher)
+	on_metadata_inventory_move = function(pos, from_list, _, to_list)
+		if from_list == "upgrade" or to_list == "upgrade" then
+			jumpdrive.upgrade.calculate(pos)
+		end
+	end,
 
-		if minetest.is_protected(pos, puncher:get_player_name()) then
+	on_punch = function(pos, node, player)
+		if not has_vizlib then
+			-- no visualization lib
+			return
+		end
+		if not player or player:get_wielded_item():get_name() ~= "" then
+			-- non-empty hand
+			return
+		end
+		if minetest.is_protected(pos, player:get_player_name()) then
+			-- non-owner
 			return
 		end
 
 		local meta = minetest.get_meta(pos);
 		local radius = meta:get_int("radius")
 
-		jumpdrive.show_marker(pos, radius, "green")
+		vizlib.draw_cube(pos, radius + 0.5, { color = "#00ff00" })
 	end
 })
 
