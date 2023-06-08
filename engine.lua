@@ -251,25 +251,14 @@ minetest.register_node("jumpdrive:engine", {
 		end
 	end,
 
-	on_punch = function(pos, _, player)
-		if not has_vizlib then
-			-- no visualization lib
-			return
-		end
+	on_punch = has_vizlib and function(pos, _, player)
 		if not player or player:get_wielded_item():get_name() ~= "" then
-			-- non-empty hand
+			-- Only show jump area when using an empty hand
 			return
 		end
-		if minetest.is_protected(pos, player:get_player_name()) then
-			-- non-owner
-			return
-		end
-
-		local meta = minetest.get_meta(pos);
-		local radius = meta:get_int("radius")
-
-		vizlib.draw_cube(pos, radius + 0.5, { color = "#00ff00" })
-	end
+		local radius = minetest.get_meta(pos):get_int("radius")
+		vizlib.draw_cube(pos, radius + 0.5, { color = "#00ff00", player = player })
+	end or nil,
 })
 
 if minetest.get_modpath("technic") then
