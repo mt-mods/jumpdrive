@@ -106,7 +106,7 @@ Settings in minetest.conf:
 * **jumpdrive.max_radius** max radius of the jumpdrive (default: *15*)
 * **jumpdrive.max_area_radius** max radius of the area jumpdrive (default: *25*)
 * **jumpdrive.powerstorage** power storage of the drive (default: *1000000*)
-* **jumpdrive.power_requirement** power requirement for chargin (default: *2500*)
+* **jumpdrive.power_requirement** power requirement for charging (default: *2500*)
 
 # Lua api
 
