@@ -19,3 +19,8 @@ if minetest.get_modpath("default") then
   jumpdrive.fuel.register("default:mese_crystal", 900)
   jumpdrive.fuel.register("default:mese", 8100)
 end
+
+if minetest.get_modpath("mcl_core") and minetest.get_modpath("mesecons") and minetest.get_modpath("mesecons_torch") then
+   jumpdrive.fuel.register("mesecons:wire_00000000_off", 900)
+  jumpdrive.fuel.register("mesecons_torch:redstoneblock", 8100)
+end

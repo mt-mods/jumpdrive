@@ -33,10 +33,14 @@ minetest.register_node("jumpdrive:engine", {
 		tubedevice = 1,
 		tubedevice_receiver = 1,
 		technic_machine = 1,
-		technic_hv = 1
+		technic_hv = 1,
+		handy=1,
+		pickaxey=1
 	},
+	_mcl_blast_resistance = 2,
+	_mcl_hardness = 0.9,
 
-	sounds = default.node_sound_glass_defaults(),
+	sounds = jumpdrive.sounds.node_sound_glass_defaults(),
 
 	digiline = {
 		receptor = {
