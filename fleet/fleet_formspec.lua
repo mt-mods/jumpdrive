@@ -37,7 +37,7 @@ jumpdrive.fleet.update_formspec = function(meta)
 		meta:set_string("infotext", "Ready")
 	end
 
-	meta:set_string("formspec", "size["..inv_width..",10;]" ..
+	meta:set_string("formspec", "size["..inv_width..","..inv_height..";]" ..
 		"field[0.3,0.5;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[3.3,0.5;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
 		"field[6.3,0.5;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
