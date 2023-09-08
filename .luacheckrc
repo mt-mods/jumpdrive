@@ -33,5 +33,6 @@ read_globals = {
 	"drawers",
 	"player_monoids",
 	"vizlib",
-	"mcl_sounds"
+	"mcl_sounds",
+	"mcl_formspec"
 }

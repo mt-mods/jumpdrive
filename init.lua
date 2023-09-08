@@ -29,7 +29,6 @@ if minetest.get_modpath("mcl_sounds") then
    jumpdrive.sounds = mcl_sounds
 end
 
-
 local MP = minetest.get_modpath("jumpdrive")
 
 if minetest.get_modpath("technic") then
