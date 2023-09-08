@@ -32,5 +32,6 @@ read_globals = {
 	"sethome",
 	"drawers",
 	"player_monoids",
-	"vizlib"
+	"vizlib",
+	"mcl_sounds"
 }
