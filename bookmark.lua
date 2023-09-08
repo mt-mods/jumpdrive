@@ -1,13 +1,24 @@
 
+local book_item, book_written = ""
+
+if minetest.get_modpath("default") then
+   book_item = "default:book"
+   book_written = "default:book_written"
+end
+
+if minetest.get_modpath("mcl_books") then
+   book_item = "mcl_books:book"
+   book_written = "mcl_books:written_book"
+end
 
 jumpdrive.write_to_book = function(pos, sender)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 
-	if inv:contains_item("main", {name="default:book", count=1}) then
-		local stack = inv:remove_item("main", {name="default:book", count=1})
+	if inv:contains_item("main", {name=book_item, count=1}) then
+		local stack = inv:remove_item("main", {name=book_item, count=1})
 
-		local new_stack = ItemStack("default:book_written")
+		local new_stack = ItemStack(book_written)
 
 		local data = {}
 
@@ -63,7 +74,7 @@ jumpdrive.read_from_book = function(pos)
 	for i = inv_size, 1, -1 do
 		stack = inv:get_stack("main", i)
 		stack_name = stack:get_name()
-		if "default:book_written" == stack_name then
+		if book_written == stack_name then
 			-- remove item from inventory
 			inv:set_stack("main", i, ItemStack())
 			stack_meta = stack:get_meta()
