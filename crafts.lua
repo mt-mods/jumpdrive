@@ -36,6 +36,43 @@ if minetest.get_modpath("technic") then
     }
   })
 
+elseif minetest.get_modpath("mcl_core") then
+  -- mineclone crafts
+  minetest.register_craft({
+    output = 'jumpdrive:engine',
+    recipe = {
+      {'jumpdrive:backbone', 'mcl_core:ironblock', 'jumpdrive:backbone'},
+      {'mcl_core:ironblock', 'mcl_core:ironblock', 'mcl_core:ironblock'},
+      {'jumpdrive:backbone', 'mcl_core:ironblock', 'jumpdrive:backbone'}
+    }
+  })
+
+  minetest.register_craft({
+    output = 'jumpdrive:backbone',
+    recipe = {
+      {'mesecons_torch:redstoneblock', 'mcl_core:ironblock', 'mesecons_torch:redstoneblock'},
+      {'mcl_core:ironblock', 'mcl_core:ironblock', 'mcl_core:ironblock'},
+      {'mesecons_torch:redstoneblock', 'mcl_core:ironblock', 'mesecons_torch:redstoneblock'}
+    }
+  })
+
+  minetest.register_craft({
+    output = 'jumpdrive:warp_device',
+    recipe = {
+      {'mesecons:wire_00000000_off', 'mcl_core:diamond', 'mesecons:wire_00000000_off'},
+      {'mesecons_torch:redstoneblock', 'mcl_core:ironblock', 'mesecons_torch:redstoneblock'},
+      {'mesecons:wire_00000000_off', 'mcl_core:diamond', 'mesecons:wire_00000000_off'}
+    }
+  })
+
+  minetest.register_craft({
+    output = 'jumpdrive:fleet_controller',
+    recipe = {
+      {'jumpdrive:engine', 'mcl_core:ironblock', 'jumpdrive:engine'},
+      {'mcl_core:ironblock', 'mcl_core:ironblock', 'mcl_core:ironblock'},
+      {'jumpdrive:engine', 'mcl_core:ironblock', 'jumpdrive:engine'}
+    }
+  })
 elseif minetest.get_modpath("default") then
   -- minetest_game crafts
   minetest.register_craft({
