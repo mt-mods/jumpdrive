@@ -14,10 +14,10 @@ if minetest.get_modpath("mcl_formspec") then
    inv_width = 9
    mcl_fs = mcl_formspec.get_itemslot_bg(0,3.25,8,1)
    player_inv_fs = ""..
-      "list[current_player;main;0,4.4;9,3;9]"..
-      mcl_formspec.get_itemslot_bg(0,4.4,9,3)..
-      "list[current_player;main;0,7.64;9,1;]"..
-      mcl_formspec.get_itemslot_bg(0,7.64,9,1)
+      "list[current_player;main;0,5.6;9,3;9]"..
+      mcl_formspec.get_itemslot_bg(0,5.6,9,3)..
+      "list[current_player;main;0,8.74;9,1;]"..
+      mcl_formspec.get_itemslot_bg(0,8.74,9,1)
    if has_technic then
       mcl_fs = mcl_fs..
 	 mcl_formspec.get_itemslot_bg(4,4.5,4,1)
