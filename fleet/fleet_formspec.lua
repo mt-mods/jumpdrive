@@ -13,8 +13,8 @@ if minetest.get_modpath("mcl_formspec") then
    player_inv_fs = ""..
       "list[current_player;main;0,4.9;9,3;9]"..
       mcl_formspec.get_itemslot_bg(0,4.9,9,3)..
-      "list[current_player;main;0,8.14;9,1;]"..
-      mcl_formspec.get_itemslot_bg(0,8.14,9,1)
+      "list[current_player;main;0,8.05;9,1;]"..
+      mcl_formspec.get_itemslot_bg(0,8.05,9,1)
    listring_fs = "listring[current_player;main]"
 end
 
