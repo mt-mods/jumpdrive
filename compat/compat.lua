@@ -73,9 +73,7 @@ jumpdrive.node_compat = function(name, source_pos, target_pos, source_pos1, sour
 end
 
 jumpdrive.commit_node_compat = function()
-	if has_pipeworks_mod then
-		jumpdrive.teleporttube_compat_commit()
-	end
+	-- Nothing to do here
 end
 
 

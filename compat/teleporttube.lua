@@ -4,11 +4,13 @@ if not pipeworks.tptube then
 	minetest.log("warning", "[jumpdrive] pipeworks teleport patch not applied, tp-tubes don't work as expected!")
 end
 
+local is_compatible = pipeworks.tptube and pipeworks.tptube.remove_tube
+if not is_compatible then
+	minetest.log("warning", "[jumpdrive] tp-tube api not comptible, consider upgrading the pipeworks mod")
+end
 
--- https://gitlab.com/VanessaE/pipeworks/blob/master/teleport_tube.lua
-jumpdrive.teleporttube_compat = function(from, to)
-	if not pipeworks.tptube then
-		-- only works with the patch from "./patches/pipeworks.patch"
+function jumpdrive.teleporttube_compat(from, to)
+	if not is_compatible then
 		return
 	end
 
@@ -32,22 +34,10 @@ jumpdrive.teleporttube_compat = function(from, to)
 	data.y = to.y
 	data.z = to.z
 
-	db[from_hash] = nil
+	-- remove source-entry
+	pipeworks.tptube.remove_tube(from)
+
+	-- set target entry
 	db[to_hash] = data
-
-end
-
-jumpdrive.teleporttube_compat_commit = function()
-	if not pipeworks.tptube then
-		-- only works with the patch from "./patches/pipeworks.patch"
-		return
-	end
-
-	pipeworks.tptube.save_tube_db()
-end
-
-
--- load tp tube on start, prevents crashes if the db isn't loaded yet
-if pipeworks.tptube and pipeworks.tptube.get_db then
-	pipeworks.tptube.get_db()
+	pipeworks.tptube.save_tube(to_hash)
 end
