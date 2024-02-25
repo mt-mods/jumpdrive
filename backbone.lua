@@ -8,5 +8,6 @@ minetest.register_node("jumpdrive:backbone", {
 	_mcl_blast_resistance = 2,
 	_mcl_hardness = 0.9,
 	sounds = jumpdrive.sounds.node_sound_glass_defaults(),
+	is_ground_content = false,
 	light_source = 13
 })
