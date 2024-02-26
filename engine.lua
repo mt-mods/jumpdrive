@@ -26,6 +26,7 @@ minetest.register_node("jumpdrive:engine", {
 	connects_to = {"group:technic_hv_cable"},
 	connect_sides = {"bottom", "top", "left", "right", "front", "back"},
 
+	is_ground_content = false,
 	light_source = 13,
 	groups = {
 		cracky = 3,
