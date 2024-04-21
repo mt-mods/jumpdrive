@@ -34,5 +34,6 @@ read_globals = {
 	"player_monoids",
 	"vizlib",
 	"mcl_sounds",
-	"mcl_formspec"
+	"mcl_formspec",
+	"mtt"
 }
