@@ -22,11 +22,11 @@ jumpdrive = {
 jumpdrive.sounds = {}
 
 if minetest.get_modpath("default") then
-   jumpdrive.sounds = default
+	jumpdrive.sounds = default
 end
 
 if minetest.get_modpath("mcl_sounds") then
-   jumpdrive.sounds = mcl_sounds
+	jumpdrive.sounds = mcl_sounds
 end
 
 local MP = minetest.get_modpath("jumpdrive")
@@ -81,8 +81,8 @@ if minetest.get_modpath("monitoring") then
 	dofile(MP.."/metrics.lua")
 end
 
-if minetest.settings:get_bool("enable_jumpdrive_integration_test") then
-        dofile(MP.."/integration_test.lua")
+if minetest.get_modpath("mtt") and mtt.enabled then
+	dofile(MP.."/mtt.lua")
 end
 
 print("[OK] Jumpdrive")
