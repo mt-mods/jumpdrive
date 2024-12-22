@@ -40,9 +40,10 @@ jumpdrive.register_after_jump(function(from_area, to_area)
 		local sleep_pos = calc_bed_middle(bed_pos, facedir)
 		-- sleep position in target area
 		local new_sleep_pos = vector.add(sleep_pos, delta_vector)
+		local sleep_pos_floor = vector.floor(sleep_pos)
 
 		for player_name, player_pos in pairs(beds.spawn) do
-			if vector.equals(sleep_pos, player_pos) then
+			if vector.equals(sleep_pos_floor, vector.floor(player_pos)) then
 				-- player sleeps here, move position
 				beds.spawn[player_name] = new_sleep_pos
 				minetest.log("action", "[jumpdrive] Updated bed spawn for player " .. player_name)
