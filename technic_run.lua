@@ -1,5 +1,5 @@
 
-jumpdrive.technic_run = function(pos, node)
+jumpdrive.technic_run = function(pos)
 	local meta = minetest.get_meta(pos)
 	jumpdrive.migrate_engine_meta(pos, meta)
 

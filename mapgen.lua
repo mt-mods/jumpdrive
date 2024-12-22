@@ -16,7 +16,7 @@ jumpdrive.mapgen.reset = function()
 end
 
 -- update last mapgen event time
-minetest.register_on_generated(function(minp, maxp, seed)
+minetest.register_on_generated(function(minp, maxp)
 	table.insert(events, {
 		minp = minp,
 		maxp = maxp,
@@ -33,7 +33,7 @@ minetest.register_globalstep(function(dtime)
 	timer=0
 
 	local time = minetest.get_us_time()
-	local delay_seconds = 20
+	local delay_seconds = 10
 
 	local copied_events = events
 	events = {}

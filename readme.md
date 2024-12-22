@@ -22,6 +22,11 @@ Take your buildings with you on your journey
 * Click "show" and check the green (source) and red (target) destination markers if everything is in range
 * Click "jump"
 
+Example setup with technic:
+
+![](screenshots/screenshot_20220305_161502.png?raw=true)
+
+
 # Compatibility
 
 Optional dependencies:
@@ -101,7 +106,7 @@ Settings in minetest.conf:
 * **jumpdrive.max_radius** max radius of the jumpdrive (default: *15*)
 * **jumpdrive.max_area_radius** max radius of the area jumpdrive (default: *25*)
 * **jumpdrive.powerstorage** power storage of the drive (default: *1000000*)
-* **jumpdrive.power_requirement** power requirement for chargin (default: *2500*)
+* **jumpdrive.power_requirement** power requirement for charging (default: *2500*)
 
 # Lua api
 
@@ -172,37 +177,13 @@ end)
 * @Panquesito7
 * @OgelGames
 * @S-S-X
+* Jeremy#2233
+* Purple#2916
 
-# History
+# License
+* Code: `MIT`
+* Textures `CC BY-SA 4.0`
 
-## Next
-* optional technic mod
-* upgrade slots
-* "on_movenode" node definition
-* "jumpdrive.register_after_jump" function
-
-## 2.0
-
-* various fixes and optimizations
-* Fleetcontroller
-* Digiline interface
-* mod.conf (minetest >= 5.0)
-* Beds,ropes,missions compatibility
-* calculate_power() override
-* overlap check
-* No fuel consumption if creative
-* Protection checks for source and destination
-* preflight check with custom override
-* Settings in minetest.conf
-* vacuum compatibility (jump into vacuum with air filled vessel)
-
-## 1.1
-
-* improved performance
-* Documentation
-* Removed complicated cascade function
-
-## 1.0
-
-* Initial version
-* Cascade operation (with issues)
+# Attributions
+* `textures/jumpdrive.png`/`textures/jumpdrive_backbone.png`/`textures/jumpdrive_fleet_controller.png`/`textures/jumpdrive_warpdevice.png`
+ * Jeremy#2233 / Purple#2916

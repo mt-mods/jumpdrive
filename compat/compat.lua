@@ -21,6 +21,7 @@ end
 
 if has_technic_mod then
 	dofile(MP.."/compat/anchor.lua")
+	dofile(MP.."/compat/technic_networks.lua")
 end
 
 if has_locator_mod then
@@ -75,7 +76,5 @@ jumpdrive.node_compat = function(name, source_pos, target_pos, source_pos1, sour
 end
 
 jumpdrive.commit_node_compat = function()
-	if has_pipeworks_mod then
-		jumpdrive.teleporttube_compat_commit()
-	end
+	-- Nothing to do here
 end

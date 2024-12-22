@@ -3,9 +3,12 @@ minetest.register_node("jumpdrive:fleet_controller", {
 	description = "Jumpdrive Fleet controller",
 
 	tiles = {"jumpdrive_fleet_controller.png"},
-	groups = {cracky=3,oddly_breakable_by_hand=3},
-	sounds = default.node_sound_glass_defaults(),
+	groups = {cracky=3,oddly_breakable_by_hand=3,handy=1,pickaxey=1},
+	_mcl_blast_resistance = 2,
+	_mcl_hardness = 0.9,
+	sounds = jumpdrive.sounds.node_sound_glass_defaults(),
 
+	is_ground_content = false,
 	light_source = 13,
 
 	digiline = {
@@ -56,7 +59,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		return inv:is_empty("main") and not minetest.is_protected(pos, name)
 	end,
 
-	on_receive_fields = function(pos, formname, fields, sender)
+	on_receive_fields = function(pos, _, fields, sender)
 
 		local meta = minetest.get_meta(pos);
 
@@ -101,9 +104,9 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		end
 
 		-- update coords
-		meta:set_int("x", x)
-		meta:set_int("y", y)
-		meta:set_int("z", z)
+		meta:set_int("x", jumpdrive.sanitize_coord(x))
+		meta:set_int("y", jumpdrive.sanitize_coord(y))
+		meta:set_int("z", jumpdrive.sanitize_coord(z))
 		jumpdrive.fleet.update_formspec(meta, pos)
 
 		local t0 = minetest.get_us_time()
@@ -174,7 +177,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 
 	end,
 
-	on_timer = function(pos, elapsed)
+	on_timer = function(pos)
 		local meta = minetest.get_meta(pos)
 		local jump_index = meta:get_int("jump_index")
 		local jump_list = minetest.deserialize( meta:get_string("jump_list") )
@@ -219,13 +222,4 @@ minetest.register_node("jumpdrive:fleet_controller", {
 			jumpdrive.fleet.update_formspec(meta, pos)
 		end
 	end
-})
-
-minetest.register_craft({
-	output = 'jumpdrive:fleet_controller',
-	recipe = {
-		{'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'},
-		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
-		{'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'}
-	}
 })

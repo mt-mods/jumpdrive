@@ -1,4 +1,4 @@
-
+local has_vizlib = minetest.get_modpath("vizlib")
 
 jumpdrive.simulate_jump = function(pos, player, show_marker)
 
@@ -9,6 +9,11 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	end
 
 	local meta = minetest.get_meta(pos)
+
+	if show_marker and has_vizlib and os.time() < meta:get_int("simulation_expiry") then
+		return false, "Error: simulation is still active! please wait before simulating again"
+	end
+
 	local radius = jumpdrive.get_radius(pos)
 	local distance = vector.distance(pos, targetPos)
 
@@ -38,16 +43,19 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	-- load chunk
 	minetest.get_voxel_manip():read_from_map(target_pos1, target_pos2)
 
-	if show_marker then
-		jumpdrive.show_marker(targetPos, radius, "red")
-		jumpdrive.show_marker(pos, radius, "green")
+	if show_marker and has_vizlib then
+		vizlib.draw_cube(targetPos, radius + 0.5, { color = "#ff0000" })
+		vizlib.draw_cube(pos, radius + 0.5, { color = "#00ff00" })
+		local shape = vizlib.draw_point(targetPos, { color = "#0000ff" })
+		meta:set_int("simulation_expiry", shape.expiry)
 	end
 
 	local msg = nil
 	local success = true
 
 	local blacklisted_pos_list = minetest.find_nodes_in_area(source_pos1, source_pos2, jumpdrive.blacklist)
-	for _, nodepos in ipairs(blacklisted_pos_list) do
+	local _, nodepos = next(blacklisted_pos_list)
+	if nodepos then
 		return false, "Can't jump node @ " .. minetest.pos_to_string(nodepos)
 	end
 
