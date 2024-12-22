@@ -22,7 +22,7 @@ local bed_from_positions = {}
 for _, nodename in ipairs(bed_bottoms) do
 	-- override bed definitions
 	minetest.override_item(nodename, {
-		on_movenode = function(from_pos, to_pos)
+		on_movenode = function(from_pos)
 			-- collect bed positions while jumping
 			table.insert(bed_from_positions, from_pos)
 		end
