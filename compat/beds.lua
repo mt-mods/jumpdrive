@@ -1,9 +1,9 @@
 local bed_bottoms = {"beds:bed_bottom", "beds:fancy_bed_bottom"}
 
 -- sanity checks
-assert(beds)
-assert(beds.spawn)
-assert(beds.save_spawns)
+assert(beds, "global `beds` not found")
+assert(beds.spawn, "field `spawn` doesn't exist in `beds`")
+assert(beds.save_spawns, "field `save_spawns` doesn't exist in `beds`")
 
 -- Calculate a bed's middle position (where players would spawn)
 local function calc_bed_middle(bed_pos, facedir)
