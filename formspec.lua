@@ -5,9 +5,28 @@ if has_technic then
 	inv_offset = 1.25
 end
 
-jumpdrive.update_formspec = function(meta, pos)
+local inv_width = 8
+
+local mcl_fs = ""
+local player_inv_fs = "list[current_player;main;0,".. 4.5+inv_offset .. ";8,4;]"
+
+if minetest.get_modpath("mcl_formspec") then
+   inv_width = 9
+   mcl_fs = mcl_formspec.get_itemslot_bg(0,3.25,8,1)
+   player_inv_fs = ""..
+      "list[current_player;main;0,5.6;9,3;9]"..
+      mcl_formspec.get_itemslot_bg(0,5.6,9,3)..
+      "list[current_player;main;0,8.74;9,1;]"..
+      mcl_formspec.get_itemslot_bg(0,8.74,9,1)
+   if has_technic then
+      mcl_fs = mcl_fs..
+	 mcl_formspec.get_itemslot_bg(4,4.5,4,1)
+   end
+end
+
+jumpdrive.update_formspec = function(meta)
 	local formspec =
-		"size[8," .. 9.3+inv_offset .. ";]" ..
+		"size["..inv_width.."," .. 9.3+inv_offset .. ";]" ..
 
 		"field[0.3,0.5;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[2.3,0.5;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
@@ -26,7 +45,7 @@ jumpdrive.update_formspec = function(meta, pos)
 		"list[context;main;0,3.25;8,1;]" ..
 
 		-- player inventory
-		"list[current_player;main;0,".. 4.5+inv_offset .. ";8,4;]" ..
+		player_inv_fs..
 
 		-- digiline channel
 		"field[4.3," .. 9.02+inv_offset ..";3.2,1;digiline_channel;Digiline channel;" ..
@@ -35,7 +54,10 @@ jumpdrive.update_formspec = function(meta, pos)
 
 		-- listring stuff
 		"listring[context;main]" ..
-		"listring[current_player;main]"
+	        "listring[current_player;main]"..
+
+	        -- mcl
+	        mcl_fs
 
 	if has_technic then
 		formspec = formspec ..

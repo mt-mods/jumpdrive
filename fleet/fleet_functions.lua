@@ -10,7 +10,11 @@ jumpdrive.fleet.apply_coordinates = function(controllerPos, targetPos, engine_po
 	for _,node_pos in pairs(engine_pos_list) do
 		local new_pos = vector.add(node_pos, delta_vector)
 		minetest.log("action", "[jumpdrive-fleet] calculated vector: " .. minetest.pos_to_string(new_pos))
+
+		-- set destination position
 		jumpdrive.set_meta_pos(node_pos, new_pos)
+		-- update formspec to reflect new positions
+		jumpdrive.update_formspec(minetest.get_meta(node_pos), node_pos)
 	end
 end
 

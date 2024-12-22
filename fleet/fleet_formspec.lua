@@ -1,5 +1,24 @@
 
-jumpdrive.fleet.update_formspec = function(meta, pos)
+local inv_width = 8
+local inv_height = 10
+
+local player_inv_fs = "list[current_player;main;0,5;8,4;]"
+local listring_fs = "listring[]"
+local mcl_fs = ""
+
+if minetest.get_modpath("mcl_formspec") then
+   inv_width = 9
+   inv_height = 10.5
+   mcl_fs = mcl_formspec.get_itemslot_bg(0,3.75,8,1)
+   player_inv_fs = ""..
+      "list[current_player;main;0,4.9;9,3;9]"..
+      mcl_formspec.get_itemslot_bg(0,4.9,9,3)..
+      "list[current_player;main;0,8.05;9,1;]"..
+      mcl_formspec.get_itemslot_bg(0,8.05,9,1)
+   listring_fs = "listring[current_player;main]"
+end
+
+jumpdrive.fleet.update_formspec = function(meta)
 
 	local button_line =
 		"button_exit[0,1.5;2,1;jump;Jump]" ..
@@ -18,7 +37,7 @@ jumpdrive.fleet.update_formspec = function(meta, pos)
 		meta:set_string("infotext", "Ready")
 	end
 
-	meta:set_string("formspec", "size[8,10;]" ..
+	meta:set_string("formspec", "size["..inv_width..","..inv_height..";]" ..
 		"field[0.3,0.5;2,1;x;X;" .. meta:get_int("x") .. "]" ..
 		"field[3.3,0.5;2,1;y;Y;" .. meta:get_int("y") .. "]" ..
 		"field[6.3,0.5;2,1;z;Z;" .. meta:get_int("z") .. "]" ..
@@ -30,12 +49,15 @@ jumpdrive.fleet.update_formspec = function(meta, pos)
 
 		"list[context;main;0,3.75;8,1;]" ..
 
-		"list[current_player;main;0,5;8,4;]" ..
+		player_inv_fs..
 
 		"field[4.3,9.52;3.2,1;digiline_channel;Digiline channel;" .. (meta:get_string("channel") or "") .. "]" ..
 		"button_exit[7,9.2;1,1;set_digiline_channel;Set]" ..
 
 		-- listring stuff
-		"listring[]")
+		listring_fs..
+
+		-- mcl
+	        mcl_fs)
 end
 

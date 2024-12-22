@@ -1,7 +1,3 @@
-unused_args = false
-allow_defined_top = true
-
-ignore = {"512"}
 
 globals = {
 	"jumpdrive",
@@ -35,5 +31,9 @@ read_globals = {
 	"ropes",
 	"sethome",
 	"drawers",
-	"player_monoids"
+	"player_monoids",
+	"vizlib",
+	"mcl_sounds",
+	"mcl_formspec",
+	"mtt"
 }
