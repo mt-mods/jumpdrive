@@ -52,8 +52,11 @@ if has_ropes_mod then
 	dofile(MP.."/compat/ropes.lua")
 end
 
+if has_beds_mod then
+	dofile(MP.."/compat/beds.lua")
+end
+
 dofile(MP.."/compat/telemosaic.lua")
-dofile(MP.."/compat/beds.lua")
 
 if has_pipeworks_mod then
 	dofile(MP.."/compat/teleporttube.lua")
@@ -74,14 +77,4 @@ end
 
 jumpdrive.commit_node_compat = function()
 	-- Nothing to do here
-end
-
-
-jumpdrive.target_region_compat = function(_, _, target_pos1, target_pos2, delta_vector)
-	-- sync compat functions
-
-	if has_beds_mod then
-		jumpdrive.beds_compat(target_pos1, target_pos2, delta_vector)
-	end
-
 end
