@@ -73,6 +73,9 @@ minetest.register_node("jumpdrive:engine", {
 		meta:set_int("HV_EU_input", 0)
 		meta:set_int("HV_EU_demand", 0)
 
+		-- With [vizlib] when showing radius/simulation
+		--meta:set_int("simulation_expiry", 0)
+
 		jumpdrive.update_formspec(meta, pos)
 	end,
 
@@ -269,3 +272,4 @@ minetest.register_node("jumpdrive:engine", {
 if minetest.get_modpath("technic") then
 	technic.register_machine("HV", "jumpdrive:engine", technic.receiver)
 end
+
