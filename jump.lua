@@ -4,8 +4,9 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 
 	local targetPos = jumpdrive.get_meta_pos(pos)
 
-	if jumpdrive.check_mapgen(pos) then
-		return false, "Error: mapgen was active in this area, please try again later for your own safety!"
+	local mapgen_distance = jumpdrive.check_mapgen(pos)
+	if mapgen_distance then
+		return false, "Error: mapgen was active "..math.floor(mapgen_distance).." / 200 nodes away, please try again later for your own safety!"
 	end
 
 	local meta = minetest.get_meta(pos)
@@ -50,7 +51,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		meta:set_int("simulation_expiry", shape.expiry)
 	end
 
-	local msg = nil
+	local msg = ""
 	local success = true
 
 	local blacklisted_pos_list = minetest.find_nodes_in_area(source_pos1, source_pos2, jumpdrive.blacklist)
@@ -60,12 +61,13 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	end
 
 	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
-		msg = "Warning: Jump-target is in vacuum!"
+		msg = msg .. "\nWarning: Jump-target is in vacuum!"
 	end
 
-	if minetest.find_node_near(targetPos, radius, "ignore", true) then
-		return false, "Warning: Jump-target is in uncharted area"
-	end
+--	-- found to be useless/indescriptive and is superseded by "Jump-target is uncharted"
+--	if minetest.find_node_near(targetPos, radius, "ignore", true) then
+--		return false, "Warning: Jump-target is in uncharted area"
+--	end
 
 	if jumpdrive.is_area_protected(source_pos1, source_pos2, playername) then
 		return false, "Jump-source is protected!"
@@ -78,7 +80,15 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)
 
 	if not is_empty then
-		msg = "Jump-target is obstructed (" .. empty_msg .. ")"
+		if empty_msg == "uncharted" then
+			local callback = function(blockpos, action, calls_remaining, param)
+				if calls_remaining == 0 then
+					core.chat_send_player(playername, "Charting complete!")
+				end
+			end
+			core.emerge_area(target_pos1, target_pos2, callback)
+		end
+		msg = msg .. "\nJump-target is " .. empty_msg
 		success = false
 	end
 
@@ -87,7 +97,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 
 	if not preflight_result.success then
 		-- check failed in customization
-		msg = "Preflight check failed!"
+		msg = msg .. "\nPreflight check failed!"
 		if preflight_result.message then
 			msg = preflight_result.message
 		end
@@ -99,7 +109,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 
 	if powerstorage < power_req then
 		-- not enough power
-		msg = "Not enough power: required=" .. math.floor(power_req) .. ", actual: " .. powerstorage .. " EU"
+		msg = msg .. "\nNot enough power: required=" .. math.floor(power_req) .. ", actual: " .. powerstorage .. " EU"
 		success = false
 	end
 
