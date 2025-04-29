@@ -30,12 +30,12 @@ jumpdrive.is_area_empty = function(pos1, pos2)
 		local id = data[index]
 
 		if id == c_ignore then
-			return false, "Uncharted"
+			return false, "uncharted"
 		end
 
 		if not buildable_to_nodes[id] then
 			-- not buildable_to
-			return false, "Occupied"
+			return false, "occupied"
 		end
 	end
 	end
