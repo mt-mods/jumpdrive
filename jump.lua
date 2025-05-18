@@ -80,8 +80,8 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local is_empty, empty_msg = jumpdrive.is_area_empty(target_pos1, target_pos2)
 
 	if not is_empty then
-		if empty_msg == "uncharted" then
-			local callback = function(_, _, calls_remaining, _)
+		if core.settings:get_bool("allow_jumpdrive_emerge", false) and empty_msg == "uncharted" then
+			local callback = function(blockpos, action, calls_remaining, param)
 				if calls_remaining == 0 then
 					core.chat_send_player(playername, "Charting complete!")
 				end
