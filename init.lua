@@ -15,7 +15,7 @@ jumpdrive = {
 		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
 
 		-- allow emerging area on "uncharted" error
-		emerge_uncharted = core.settings:get_bool("allow_jumpdrive_emerge", false),
+		emerge_uncharted = core.settings:get_bool("jumpdrive.allow_emerge", false),
 	},
 
 	-- blacklisted nodes
