@@ -6,7 +6,8 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 
 	local mapgen_distance = jumpdrive.check_mapgen(pos)
 	if mapgen_distance then
-		return false, "Error: mapgen was active "..math.floor(mapgen_distance).." / 200 nodes away, please try again later for your own safety!"
+		return false, "Error: mapgen was active "..math.floor(mapgen_distance)
+			.. " / 200 nodes away, please try again later for your own safety!"
 	end
 
 	local meta = minetest.get_meta(pos)
