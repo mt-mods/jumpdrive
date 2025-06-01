@@ -54,11 +54,12 @@ minetest.register_globalstep(function(dtime)
 end)
 
 
--- true = mapgen recently active in that area
+-- any number = mapgen recently active in that area
 jumpdrive.check_mapgen = function(pos)
 	for _, event in ipairs(events) do
-		if vector.distance(pos, event.minp) < 200 then
-			return true
+		local mapgen_distance = vector.distance(pos, event.minp)
+		if mapgen_distance < 200 then
+			return mapgen_distance
 		end
 	end
 

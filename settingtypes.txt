@@ -1,0 +1,2 @@
+# Allow jumpdrives to generate ungenerated areas
+jumpdrive.allow_emerge (Chart uncharted jump targets) bool false
