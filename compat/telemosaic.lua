@@ -1,18 +1,20 @@
 
 -- Older versions of [telemosaic] used 'hashed' pos strings.
 local function unhash_pos(hash)
-		local pos = {}
-		local list = string.split(hash, ':')
-		pos.x = tonumber(list[1])
-		pos.y = tonumber(list[2])
-		pos.z = tonumber(list[3])
-		return pos
+	local pos = {}
+	local list = string.split(hash, ':')
+	pos.x = tonumber(list[1])
+	pos.y = tonumber(list[2])
+	pos.z = tonumber(list[3])
+	return pos
 end
 
 local function hash_pos(pos)
-		return math.floor(pos.x + 0.5) .. ':' ..
-				math.floor(pos.y + 0.5) .. ':' ..
-				math.floor(pos.z + 0.5)
+	return math.floor(pos.x + 0.5) .. ':' ..
+		math.floor(pos.y + 0.5) .. ':' ..
+		math.floor(pos.z + 0.5)
+end
+
 -- Newer versions of [telemosaic] use core.pos_to_string().
 -- These functions verify which version is being used and react accordingly.
 local function unpack_pos(hash_or_pos_string)
