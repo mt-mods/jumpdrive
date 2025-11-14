@@ -1,4 +1,8 @@
 
+-- NOTE: This only updates telemosaic pairs where each targets the other.
+--       Currently daisy chains are not updated neither multiple telemosaics
+--       pointing to the jumped one.
+
 -- Older versions of [telemosaic] used 'hashed' pos strings.
 local function unhash_pos(hash)
 	local pos = {}
