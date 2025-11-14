@@ -57,47 +57,45 @@ end
 jumpdrive.telemosaic_compat = function(source_pos, target_pos, source_pos1, source_pos2, delta_vector)
 
 	-- delegate to compat
-	minetest.log("action", "[jumpdrive] Trying to rewire telemosaic at " .. minetest.pos_to_string(target_pos))
+	core.log("action", "[jumpdrive] Trying to rewire telemosaic at " .. core.pos_to_string(target_pos))
 
-	local local_meta = minetest.get_meta(target_pos)
+	local local_meta = core.get_meta(target_pos)
 	local remote_pos = unpack_pos(local_meta:get_string('telemosaic:dest'))
 	if not remote_pos then
 		return
 	end
 
+	core.load_area(remote_pos)
+	local node = core.get_node(remote_pos)
 
-		minetest.load_area(remote_pos)
-		local node = minetest.get_node(remote_pos)
+	if not is_valid_beacon(node.name) then
+		-- no beacon found, check if it was moved
+		local xMatch = remote_pos.x >= source_pos1.x and remote_pos.x <= source_pos2.x
+		local yMatch = remote_pos.y >= source_pos1.y and remote_pos.y <= source_pos2.y
+		local zMatch = remote_pos.z >= source_pos1.z and remote_pos.z <= source_pos2.z
+
+		if not (xMatch and yMatch and zMatch) then
+			return -- outside of moved area
+		end
+
+		remote_pos = vector.add(remote_pos, delta_vector)
+		core.load_area(remote_pos)
+		node = core.get_node(remote_pos)
 
 		if not is_valid_beacon(node.name) then
-			-- no beacon found, check if it was moved
-			local xMatch = remote_pos.x >= source_pos1.x and remote_pos.x <= source_pos2.x
-			local yMatch = remote_pos.y >= source_pos1.y and remote_pos.y <= source_pos2.y
-			local zMatch = remote_pos.z >= source_pos1.z and remote_pos.z <= source_pos2.z
-
-			if not (xMatch and yMatch and zMatch) then
-				return -- outside of moved area
-			end
-
-			remote_pos = vector.add(remote_pos, delta_vector)
-			minetest.load_area(remote_pos)
-			node = minetest.get_node(remote_pos)
-
-			if not is_valid_beacon(node.name) then
-				return -- no beacon anywhere
-			end
+			return -- no beacon anywhere
 		end
 	end
 
-		local remote_meta = minetest.get_meta(remote_pos)
+	local remote_meta = core.get_meta(remote_pos)
 	local remote_dest, uses_hash = unpack_pos(remote_meta:get_string('telemosaic:dest'))
 
-			-- remote beacon points to this beacon, update link
-			minetest.log("action", "[jumpdrive] rewiring telemosaic at " .. minetest.pos_to_string(remote_pos) ..
-					" to " .. minetest.pos_to_string(target_pos))
 	if core.pos_to_string(remote_dest) == core.pos_to_string(source_pos) then
+		-- remote beacon points to this beacon, update link
+		core.log("action", "[jumpdrive] rewiring telemosaic at " ..
+			core.pos_to_string(remote_pos) .. " to " ..
+			core.pos_to_string(target_pos))
 
-		end
 		remote_meta:set_string("telemosaic:dest", pack_pos(target_pos, uses_hash))
 	end
 end
