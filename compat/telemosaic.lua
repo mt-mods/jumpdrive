@@ -58,10 +58,11 @@ jumpdrive.telemosaic_compat = function(source_pos, target_pos, source_pos1, sour
 	minetest.log("action", "[jumpdrive] Trying to rewire telemosaic at " .. minetest.pos_to_string(target_pos))
 
 	local local_meta = minetest.get_meta(target_pos)
-	local remote_hash = local_meta:get_string('telemosaic:dest')
+	local remote_pos = unpack_pos(local_meta:get_string('telemosaic:dest'))
+	if not remote_pos then
+		return
+	end
 
-	if remote_hash ~= nil and remote_hash ~= '' then
-		local remote_pos = unhash_pos(remote_hash)
 
 		minetest.load_area(remote_pos)
 		local node = minetest.get_node(remote_pos)
@@ -84,6 +85,7 @@ jumpdrive.telemosaic_compat = function(source_pos, target_pos, source_pos1, sour
 				return -- no beacon anywhere
 			end
 		end
+	end
 
 		local remote_meta = minetest.get_meta(remote_pos)
 		local remote_dest = remote_meta:get_string('telemosaic:dest')
