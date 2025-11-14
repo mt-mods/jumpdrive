@@ -1,4 +1,5 @@
 
+-- Older versions of [telemosaic] used 'hashed' pos strings.
 local function unhash_pos(hash)
 		local pos = {}
 		local list = string.split(hash, ':')
@@ -12,6 +13,31 @@ local function hash_pos(pos)
 		return math.floor(pos.x + 0.5) .. ':' ..
 				math.floor(pos.y + 0.5) .. ':' ..
 				math.floor(pos.z + 0.5)
+-- Newer versions of [telemosaic] use core.pos_to_string().
+-- These functions verify which version is being used and react accordingly.
+local function unpack_pos(hash_or_pos_string)
+	if type(hash_or_pos_string) ~= 'string' or hash_or_pos_string == '' then
+		return nil, nil
+	end
+
+	local uses_hash = hash_or_pos_string:find(":") and true or false
+	if uses_hash then
+		local pos = unhash_pos(hash_or_pos_string)
+		if pos.x and pos.y and pos.z then
+			return pos, uses_hash
+		end
+		return nil, nil
+	else
+		return core.string_to_pos(hash_or_pos_string), uses_hash
+	end
+end
+
+local function pack_pos(pos, use_hash)
+	if use_hash then
+		return hash_pos(pos)
+	else
+		return core.pos_to_string(pos)
+	end
 end
 
 local function is_valid_beacon(name)
