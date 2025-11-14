@@ -88,14 +88,14 @@ jumpdrive.telemosaic_compat = function(source_pos, target_pos, source_pos1, sour
 	end
 
 		local remote_meta = minetest.get_meta(remote_pos)
-		local remote_dest = remote_meta:get_string('telemosaic:dest')
+	local remote_dest, uses_hash = unpack_pos(remote_meta:get_string('telemosaic:dest'))
 
-		if remote_dest == hash_pos(source_pos) then
 			-- remote beacon points to this beacon, update link
 			minetest.log("action", "[jumpdrive] rewiring telemosaic at " .. minetest.pos_to_string(remote_pos) ..
 					" to " .. minetest.pos_to_string(target_pos))
+	if core.pos_to_string(remote_dest) == core.pos_to_string(source_pos) then
 
-			remote_meta:set_string("telemosaic:dest", hash_pos(target_pos))
 		end
+		remote_meta:set_string("telemosaic:dest", pack_pos(target_pos, uses_hash))
 	end
 end
