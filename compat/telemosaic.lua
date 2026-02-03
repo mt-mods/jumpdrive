@@ -94,6 +94,10 @@ jumpdrive.telemosaic_compat = function(source_pos, target_pos, source_pos1, sour
 	local remote_meta = core.get_meta(remote_pos)
 	local remote_dest, uses_hash = unpack_pos(remote_meta:get_string('telemosaic:dest'))
 
+	if not remote_dest then
+		return -- no destination set
+	end
+	
 	if core.pos_to_string(remote_dest) == core.pos_to_string(source_pos) then
 		-- remote beacon points to this beacon, update link
 		core.log("action", "[jumpdrive] rewiring telemosaic at " ..
