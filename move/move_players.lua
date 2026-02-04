@@ -32,8 +32,9 @@ function jumpdrive.move_players(source_pos1, source_pos2, delta_vector)
 			local new_player_pos = vector.add(playerPos, delta_vector)
 			player:set_pos( new_player_pos );
 
-			-- send moved mapblock to player
+			-- send moved mapblock to player and send source mapblock to prevent ghost images of jump area due to client cache
 			if player.send_mapblock and type(player.send_mapblock) == "function" then
+				player:send_mapblock(jumpdrive.get_mapblock_from_pos(playerPos))
 				player:send_mapblock(jumpdrive.get_mapblock_from_pos(new_player_pos))
 			end
 		end
