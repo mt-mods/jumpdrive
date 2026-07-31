@@ -83,7 +83,7 @@ function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_po
 		if movenode_aware_nodeids[id] then
 
 			-- check if we are on an edge
-			local edge = vector.new(0, 0, 0)
+			local edge = vector.zero()
 
 			-- negative edge
 			if source_pos1.x == x then edge.x = -1 end
