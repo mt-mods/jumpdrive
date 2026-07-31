@@ -85,11 +85,7 @@ jumpdrive.read_from_book = function(pos)
 				inv:set_stack("main", i, stack)
 			else
 
-				target_pos = vector.new(
-					tonumber(data.x),
-					tonumber(data.y),
-					tonumber(data.z)
-				)
+				target_pos = vector.new(tonumber(data.x), tonumber(data.y), tonumber(data.z))
 
 				if has_nil(target_pos) then
 					-- put book back where it was, it may contain other information
