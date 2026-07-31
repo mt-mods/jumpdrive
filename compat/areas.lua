@@ -13,7 +13,7 @@ jumpdrive.register_after_jump(function(from_area, to_area)
 
     if xMatch and yMatch and zMatch then
       dirty = true
-      minetest.log("action", "[jumpdrive] moving area " .. id)
+      core.log("action", "[jumpdrive] moving area " .. id)
 
       areas:move(
         id,

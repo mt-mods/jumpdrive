@@ -1,12 +1,12 @@
 
 
 if not pipeworks.tptube then
-	minetest.log("warning", "[jumpdrive] pipeworks teleport patch not applied, tp-tubes don't work as expected!")
+	core.log("warning", "[jumpdrive] pipeworks teleport patch not applied, tp-tubes don't work as expected!")
 end
 
 local is_compatible = pipeworks.tptube and pipeworks.tptube.remove_tube
 if not is_compatible then
-	minetest.log("warning", "[jumpdrive] tp-tube api not comptible, consider upgrading the pipeworks mod")
+	core.log("warning", "[jumpdrive] tp-tube api not comptible, consider upgrading the pipeworks mod")
 end
 
 function jumpdrive.teleporttube_compat(from, to)
@@ -22,13 +22,13 @@ function jumpdrive.teleporttube_compat(from, to)
 	local data = db[from_hash]
 
 	if not data then
-		minetest.log("warning", "[jumpdrive] no tp-tube data found at hash: " ..
-			from_hash .. " / pos: " .. minetest.pos_to_string(from))
+		core.log("warning", "[jumpdrive] no tp-tube data found at hash: " ..
+			from_hash .. " / pos: " .. core.pos_to_string(from))
 		return
 	end
 
-	minetest.log("action", "[jumpdrive] moving tp-tube data from " ..
-		from_hash .. " to " .. to_hash .. " at pos: " .. minetest.pos_to_string(from))
+	core.log("action", "[jumpdrive] moving tp-tube data from " ..
+		from_hash .. " to " .. to_hash .. " at pos: " .. core.pos_to_string(from))
 
 	data.x = to.x
 	data.y = to.y

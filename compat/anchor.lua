@@ -23,14 +23,14 @@ end
 
 local function currently_forceloaded_positions(meta)
 	local ser = meta:get_string("forceloaded")
-	return ser == "" and {} or minetest.deserialize(ser)
+	return ser == "" and {} or core.deserialize(ser)
 end
 
 local function forceload_off(meta)
 	local flposes = currently_forceloaded_positions(meta)
 	meta:set_string("forceloaded", "")
 	for _, p in ipairs(flposes) do
-		minetest.forceload_free_block(p)
+		core.forceload_free_block(p)
 	end
 end
 
@@ -38,17 +38,17 @@ local function forceload_on(pos, meta)
 	local want_flposes = compute_forceload_positions(pos, meta)
 	local have_flposes = {}
 	for _, p in ipairs(want_flposes) do
-		if minetest.forceload_block(p) then
+		if core.forceload_block(p) then
 			table.insert(have_flposes, p)
 		end
 	end
-	meta:set_string("forceloaded", #have_flposes == 0 and "" or minetest.serialize(have_flposes))
+	meta:set_string("forceloaded", #have_flposes == 0 and "" or core.serialize(have_flposes))
 end
 
-minetest.override_item("technic:admin_anchor", {
+core.override_item("technic:admin_anchor", {
 	on_movenode = function(from_pos, to_pos)
-		local to_meta = minetest.get_meta(to_pos)
-		local from_meta = minetest.get_meta(from_pos)
+		local to_meta = core.get_meta(to_pos)
+		local from_meta = core.get_meta(from_pos)
 
 		if from_meta:get_int("enabled") ~= 0 then
 			-- anchor enabled

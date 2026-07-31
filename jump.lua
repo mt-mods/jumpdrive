@@ -25,7 +25,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		playername = player:get_player_name()
 	end
 
-	local radius_vector = {x=radius, y=radius, z=radius}
+	local radius_vector = vector.new(radius, radius, radius)
 	local source_pos1 = vector.subtract(pos, radius_vector)
 	local source_pos2 = vector.add(pos, radius_vector)
 	local target_pos1 = vector.subtract(targetPos, radius_vector)
@@ -130,7 +130,7 @@ jumpdrive.execute_jump = function(pos, player)
 	local distance = vector.distance(pos, targetPos)
 	local power_req = jumpdrive.calculate_power(radius, distance, pos, targetPos)
 
-	local radius_vector = {x=radius, y=radius, z=radius}
+	local radius_vector = vector.new(radius, radius, radius)
 	local source_pos1 = vector.subtract(pos, radius_vector)
 	local source_pos2 = vector.add(pos, radius_vector)
 	local target_pos1 = vector.subtract(targetPos, radius_vector)
@@ -167,10 +167,10 @@ jumpdrive.execute_jump = function(pos, player)
 		time = 2,
 		minpos = source_pos1,
 		maxpos = source_pos2,
-		minvel = {x = -2, y = -2, z = -2},
-		maxvel = {x = 2, y = 2, z = 2},
-		minacc = {x = -3, y = -3, z = -3},
-		maxacc = {x = 3, y = 3, z = 3},
+		minvel = vector.new(-2, -2, -2),
+		maxvel = vector.new(2, 2, 2),
+		minacc = vector.new(-3, -3, -3),
+		maxacc = vector.new(3, 3, 3),
 		minexptime = 0.1,
 		maxexptime = 5,
 		minsize = 1,
@@ -186,10 +186,10 @@ jumpdrive.execute_jump = function(pos, player)
 		time = 2,
 		minpos = target_pos1,
 		maxpos = target_pos2,
-		minvel = {x = -2, y = -2, z = -2},
-		maxvel = {x = 2, y = 2, z = 2},
-		minacc = {x = -3, y = -3, z = -3},
-		maxacc = {x = 3, y = 3, z = 3},
+		minvel = vector.new(-2, -2, -2),
+		maxvel = vector.new(2, 2, 2),
+		minacc = vector.new(-3, -3, -3),
+		maxacc = vector.new(3, 3, 3),
 		minexptime = 0.1,
 		maxexptime = 5,
 		minsize = 1,

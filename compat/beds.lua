@@ -8,11 +8,11 @@ assert(beds.save_spawns, "field `save_spawns` doesn't exist in `beds`")
 -- Calculate a bed's middle position (where players would spawn)
 local function calc_bed_middle(bed_pos, facedir)
 	local dir = core.facedir_to_dir(facedir)
-	local bed_middle = {
-		x = bed_pos.x + dir.x / 2,
-		y = bed_pos.y,
-		z = bed_pos.z + dir.z / 2
-	}
+	local bed_middle = vector.offset(bed_pos,
+		dir.x / 2,
+		0,
+		dir.z / 2
+	)
 	return bed_middle
 end
 

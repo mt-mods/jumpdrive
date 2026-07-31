@@ -115,7 +115,7 @@ minetest.register_node("jumpdrive:fleet_controller", {
 		minetest.log("action", "[jumpdrive-fleet] backbone traversing took " ..
 			(t1 - t0) .. " us @ " .. minetest.pos_to_string(pos))
 
-		local targetPos = {x=meta:get_int("x"),y=meta:get_int("y"),z=meta:get_int("z")}
+		local targetPos = vector.new(meta:get_int("x"), meta:get_int("y"), meta:get_int("z"))
 
 		-- sort by distance, farthes first
 		jumpdrive.fleet.sort_engines(pos, engines_pos_list)

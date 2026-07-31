@@ -22,7 +22,7 @@ if technic.remove_network and technic.pos2network and technic.machines then
 		local edge = info.edge
 		for axis, value in pairs(edge) do
 			if value ~= 0 then
-				local axis_dir = {x=0,y=0,z=0}
+				local axis_dir = vector.zero()
 				axis_dir[axis] = value
 				local edge_pos = vector.add(to_pos, axis_dir)
 				local dst_net_id = technic.pos2network(edge_pos)
@@ -48,9 +48,9 @@ if technic.remove_network and technic.pos2network and technic.machines then
 	end
 
 	-- Inject on_movenode functionality but only if node does not already implement it
-	for name, def in pairs(minetest.registered_nodes) do
+	for name, def in pairs(core.registered_nodes) do
 		if not def.on_movenode and is_network_node(name, def) then
-			minetest.override_item(name, { on_movenode = on_movenode })
+			core.override_item(name, { on_movenode = on_movenode })
 		end
 	end
 

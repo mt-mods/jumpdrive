@@ -1,21 +1,21 @@
-local MP = minetest.get_modpath("jumpdrive")
+local MP = core.get_modpath("jumpdrive")
 
-local has_technic_mod = minetest.get_modpath("technic")
-local has_locator_mod = minetest.get_modpath("locator")
-local has_display_mod = minetest.get_modpath("display_api")
-local has_pipeworks_mod = minetest.get_modpath("pipeworks")
-local has_beds_mod = minetest.get_modpath("beds")
-local has_ropes_mod = minetest.get_modpath("ropes")
-local has_sethome_mod = minetest.get_modpath("sethome")
-local has_areas_mod = minetest.get_modpath("areas")
-local has_drawers_mod = minetest.get_modpath("drawers")
-local has_textline_mod = minetest.get_modpath("textline")
+local has_technic_mod = core.get_modpath("technic")
+local has_locator_mod = core.get_modpath("locator")
+local has_display_mod = core.get_modpath("display_api")
+local has_pipeworks_mod = core.get_modpath("pipeworks")
+local has_beds_mod = core.get_modpath("beds")
+local has_ropes_mod = core.get_modpath("ropes")
+local has_sethome_mod = core.get_modpath("sethome")
+local has_areas_mod = core.get_modpath("areas")
+local has_drawers_mod = core.get_modpath("drawers")
+local has_textline_mod = core.get_modpath("textline")
 
-if minetest.get_modpath("travelnet") then
+if core.get_modpath("travelnet") then
 	dofile(MP.."/compat/travelnet.lua")
 end
 
-if minetest.get_modpath("elevator") then
+if core.get_modpath("elevator") then
 	dofile(MP.."/compat/elevator.lua")
 end
 
