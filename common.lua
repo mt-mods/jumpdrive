@@ -81,12 +81,12 @@ end
 
 jumpdrive.digiline_rules = {
 	-- digilines.rules.default
-	vector.new( 1, 0, 0 ), vector.new(-1, 0, 0 ), -- along x beside
-	vector.new( 0, 0, 1 ), vector.new( 0, 0,-1 ), -- along z beside
-	vector.new( 1, 1, 0 ), vector.new(-1, 1, 0 ), -- 1 node above along x diagonal
-	vector.new( 0, 1, 1 ), vector.new( 0, 1,-1 ), -- 1 node above along z diagonal
-	vector.new( 1,-1, 0 ), vector.new(-1,-1, 0 ), -- 1 node below along x diagonal
-	vector.new( 0,-1, 1 ), vector.new( 0,-1,-1 ), -- 1 node below along z diagonal
+	vector.new(1, 0, 0), vector.new(-1, 0, 0), -- along x beside
+	vector.new(0, 0, 1), vector.new( 0, 0,-1), -- along z beside
+	vector.new(1, 1, 0), vector.new(-1, 1, 0), -- 1 node above along x diagonal
+	vector.new(0, 1, 1), vector.new( 0, 1,-1), -- 1 node above along z diagonal
+	vector.new(1,-1, 0), vector.new(-1,-1, 0), -- 1 node below along x diagonal
+	vector.new(0,-1, 1), vector.new( 0,-1,-1), -- 1 node below along z diagonal
 	-- added rules for digi cable
 	vector.new(0, 1, 0),vector.new(0, -1, 0), -- along y above and below
 }
