@@ -1,13 +1,13 @@
 
 assert(type(travelnet.get_travelnets) == "function", "old travelnet-api found, please update the travelnet mod")
 
-minetest.register_on_mods_loaded(function()
-	for node, def in pairs(minetest.registered_nodes) do
+core.register_on_mods_loaded(function()
+	for node, def in pairs(core.registered_nodes) do
 		if def.groups and def.groups.travelnet == 1 then
-			minetest.override_item(node, {
+			core.override_item(node, {
 				on_movenode = function(_, to_pos)
-					local meta = minetest.get_meta(to_pos);
-					minetest.log("action", "[jumpdrive] Restoring travelnet @ " .. to_pos.x .. "/" .. to_pos.y .. "/" .. to_pos.z)
+					local meta = core.get_meta(to_pos);
+					core.log("action", "[jumpdrive] Restoring travelnet @ " .. to_pos.x .. "/" .. to_pos.y .. "/" .. to_pos.z)
 
 					local owner_name = meta:get_string( "owner" );
 					local station_name = meta:get_string( "station_name" );

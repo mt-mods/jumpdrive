@@ -9,8 +9,8 @@ A simple [Jumpdrive](https://en.wikipedia.org/wiki/Jump_drive) for minetest
 
 Take your buildings with you on your journey
 
-* Github: [https://github.com/thomasrudin-mt/jumpdrive](https://github.com/thomasrudin-mt/jumpdrive)
-* Forum topic: [https://forum.minetest.net/viewtopic.php?f=9&t=20073](https://forum.minetest.net/viewtopic.php?f=9&t=20073)
+* Github: [https://github.com/mt-mods/jumpdrive](https://github.com/mt-mods/jumpdrive) (formerly [https://github.com/thomasrudin-mt/jumpdrive](https://github.com/thomasrudin-mt/jumpdrive))
+* Forum topic: [https://forum.luanti.org/viewtopic.php?f=9&t=20073](https://forum.minetest.net/viewtopic.php?f=9&t=20073)
 
 # Operation
 

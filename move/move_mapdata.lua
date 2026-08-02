@@ -64,7 +64,7 @@ function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_po
 	for y=source_pos1.y, source_pos2.y do
 	for x=source_pos1.x, source_pos2.x do
 
-		local from_pos = { x=x, y=y, z=z }
+		local from_pos = vector.new(x, y, z)
 		local to_pos = vector.add(from_pos, delta_vector)
 
 		local source_index = source_area:indexp(from_pos)
@@ -83,7 +83,7 @@ function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_po
 		if movenode_aware_nodeids[id] then
 
 			-- check if we are on an edge
-			local edge = { x=0, y=0, z=0 }
+			local edge = vector.zero()
 
 			-- negative edge
 			if source_pos1.x == x then edge.x = -1 end

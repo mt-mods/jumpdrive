@@ -36,7 +36,7 @@ end
 -- get pos object from pos
 function jumpdrive.get_meta_pos(pos)
 	local meta = minetest.get_meta(pos);
-	return {x=meta:get_int("x"), y=meta:get_int("y"), z=meta:get_int("z")}
+	return vector.new(meta:get_int("x"), meta:get_int("y"), meta:get_int("z"))
 end
 
 -- set pos object from pos
@@ -76,21 +76,17 @@ function jumpdrive.reset_coordinates(pos)
 end
 
 function jumpdrive.get_mapblock_from_pos(pos)
-	return {
-		x = math.floor(pos.x / 16),
-		y = math.floor(pos.y / 16),
-		z = math.floor(pos.z / 16)
-	}
+	return vector.divide(pos, 16):floor()
 end
 
 jumpdrive.digiline_rules = {
 	-- digilines.rules.default
-	{x= 1,y= 0,z= 0},{x=-1,y= 0,z= 0}, -- along x beside
-	{x= 0,y= 0,z= 1},{x= 0,y= 0,z=-1}, -- along z beside
-	{x= 1,y= 1,z= 0},{x=-1,y= 1,z= 0}, -- 1 node above along x diagonal
-	{x= 0,y= 1,z= 1},{x= 0,y= 1,z=-1}, -- 1 node above along z diagonal
-	{x= 1,y=-1,z= 0},{x=-1,y=-1,z= 0}, -- 1 node below along x diagonal
-	{x= 0,y=-1,z= 1},{x= 0,y=-1,z=-1}, -- 1 node below along z diagonal
+	vector.new(1, 0, 0), vector.new(-1, 0, 0), -- along x beside
+	vector.new(0, 0, 1), vector.new( 0, 0,-1), -- along z beside
+	vector.new(1, 1, 0), vector.new(-1, 1, 0), -- 1 node above along x diagonal
+	vector.new(0, 1, 1), vector.new( 0, 1,-1), -- 1 node above along z diagonal
+	vector.new(1,-1, 0), vector.new(-1,-1, 0), -- 1 node below along x diagonal
+	vector.new(0,-1, 1), vector.new( 0,-1,-1), -- 1 node below along z diagonal
 	-- added rules for digi cable
-	{x= 0,y= 1,z= 0},{x= 0,y=-1,z= 0}, -- along y above and below
+	vector.new(0, 1, 0),vector.new(0, -1, 0), -- along y above and below
 }

@@ -1,13 +1,13 @@
-local pos1 = { x=-50, y=-10, z=-50 }
-local pos2 = { x=50, y=50, z=50 }
+local pos1 = vector.new(-50, -10, -50)
+local pos2 = vector.new(50, 50, 50)
 
 mtt.emerge_area(pos1, pos2)
 
 mtt.register("basic move-test", function(callback)
-	local source_pos1 = { x=0, y=0, z=0 }
-	local source_pos2 = { x=5, y=5, z=5 }
-	local target_pos1 = { x=10, y=10, z=10 }
-	local target_pos2 = { x=15, y=15, z=15 }
+	local source_pos1 = vector.new(0, 0, 0)
+	local source_pos2 = vector.new(5, 5, 5)
+	local target_pos1 = vector.new(10, 10, 10)
+	local target_pos2 = vector.new(15, 15, 15)
 
 	minetest.get_voxel_manip(source_pos1, source_pos1)
 	local src_node = minetest.get_node(source_pos1)
