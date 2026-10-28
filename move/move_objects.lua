@@ -8,7 +8,7 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 
 	local radius = math.ceil(vector.distance(source_center, pos2))
 
-	local all_objects = minetest.get_objects_inside_radius(source_center, radius);
+	local all_objects = core.get_objects_inside_radius(source_center, radius);
 	for _,obj in ipairs(all_objects) do
 
 		local objPos = obj:get_pos()
@@ -18,25 +18,25 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 		local z_match = objPos.z >= pos1.z and objPos.z <= pos2.z
 
 		if x_match and y_match and z_match and not obj:is_player() then
-			minetest.log("action", "[jumpdrive] object:  @ " .. minetest.pos_to_string(objPos))
+			core.log("action", "[jumpdrive] object:  @ " .. core.pos_to_string(objPos))
 
 			-- coords in range
 			local entity = obj:get_luaentity()
 
 			if not entity then
-				minetest.log("action", "[jumpdrive] moving object")
+				core.log("action", "[jumpdrive] moving object")
 				obj:set_pos( vector.add(objPos, delta_vector) )
 
 			elseif entity.name:find("^mobs_animal:") then
-				minetest.log("action", "[jumpdrive] moving animal")
+				core.log("action", "[jumpdrive] moving animal")
 				obj:set_pos( vector.add(objPos, delta_vector) )
 
 			elseif entity.name == "__builtin:item" then
-				minetest.log("action", "[jumpdrive] moving dropped item")
+				core.log("action", "[jumpdrive] moving dropped item")
 				obj:set_pos( vector.add(objPos, delta_vector) )
 
 			else
-				minetest.log("action", "[jumpdrive] removing entity: " .. entity.name)
+				core.log("action", "[jumpdrive] removing entity: " .. entity.name)
 				obj:remove()
 
 			end

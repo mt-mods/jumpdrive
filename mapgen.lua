@@ -1,7 +1,7 @@
 local metric_mapgen_events_count
 
 
-if minetest.get_modpath("monitoring") then
+if core.get_modpath("monitoring") then
 	metric_mapgen_events_count = monitoring.gauge(
 		"jumpdrive_mapgen_events_count",
 		"number of events in the mapgen cache"
@@ -16,23 +16,23 @@ jumpdrive.mapgen.reset = function()
 end
 
 -- update last mapgen event time
-minetest.register_on_generated(function(minp, maxp)
+core.register_on_generated(function(minp, maxp)
 	table.insert(events, {
 		minp = minp,
 		maxp = maxp,
-		time = minetest.get_us_time()
+		time = core.get_us_time()
 	})
 end)
 
 
 -- cleanup
 local timer = 0
-minetest.register_globalstep(function(dtime)
+core.register_globalstep(function(dtime)
 	timer = timer + dtime
 	if timer < 5 then return end
 	timer=0
 
-	local time = minetest.get_us_time()
+	local time = core.get_us_time()
 	local delay_seconds = 10
 
 	local copied_events = events

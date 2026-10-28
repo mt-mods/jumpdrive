@@ -1,7 +1,7 @@
-local has_areas_mod = minetest.get_modpath("areas")
-local has_protector_mod = minetest.get_modpath("protector")
+local has_areas_mod = core.get_modpath("areas")
+local has_protector_mod = core.get_modpath("protector")
 
-local protector_radius = (tonumber(minetest.settings:get("protector_radius")) or 5)
+local protector_radius = (tonumber(core.settings:get("protector_radius")) or 5)
 
 jumpdrive.is_area_protected = function(pos1, pos2, playername)
 
@@ -10,17 +10,17 @@ jumpdrive.is_area_protected = function(pos1, pos2, playername)
 	local check_pos2 = vector.add(pos2, radius_vector)
 
 	-- preload area with voxel manip
-	minetest.get_voxel_manip(check_pos1, check_pos2)
+	core.get_voxel_manip(check_pos1, check_pos2)
 
-	if minetest.is_area_protected then
+	if core.is_area_protected then
 		-- use area protection check
-		if minetest.is_area_protected(pos1, pos2, playername, 8) then
+		if core.is_area_protected(pos1, pos2, playername, 8) then
 			return true
 		end
 
 	elseif has_protector_mod then
 		-- use improvised find_nodes check
-		local protectors = minetest.find_nodes_in_area(
+		local protectors = core.find_nodes_in_area(
 			check_pos1, check_pos2, {
 				"protector:protect",
 				"protector:protect2",
@@ -31,7 +31,7 @@ jumpdrive.is_area_protected = function(pos1, pos2, playername)
 
 		if protectors then
 			for _,pos in pairs(protectors) do
-				if minetest.is_protected(pos, playername) then
+				if core.is_protected(pos, playername) then
 					return true
 				end
 			end

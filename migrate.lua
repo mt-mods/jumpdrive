@@ -14,7 +14,7 @@ jumpdrive.migrate_engine_meta = function(pos, meta)
   end
 
   -- start nodetimer if not started
-  local timer = minetest.get_node_timer(pos)
+  local timer = core.get_node_timer(pos)
   if not timer:is_started() then
     timer:start(2)
   end

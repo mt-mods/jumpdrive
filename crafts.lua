@@ -1,7 +1,7 @@
 
-if minetest.get_modpath("technic") then
+if core.get_modpath("technic") then
   -- technic enabled crafts
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:engine',
     recipe = {
       {'jumpdrive:backbone', 'technic:blue_energy_crystal', 'jumpdrive:backbone'},
@@ -10,7 +10,7 @@ if minetest.get_modpath("technic") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:backbone',
     recipe = {
       {'default:mese', 'default:steelblock', 'default:mese'},
@@ -19,7 +19,7 @@ if minetest.get_modpath("technic") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:warp_device',
     recipe = {
       {'technic:composite_plate', 'technic:wrought_iron_dust', 'technic:composite_plate'},
@@ -27,7 +27,7 @@ if minetest.get_modpath("technic") then
       {'technic:copper_coil', 'technic:hv_cable', 'technic:copper_coil'}
     }
   })
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:fleet_controller',
     recipe = {
       {'technic:carbon_plate', 'mesecons_luacontroller:luacontroller0000', 'technic:control_logic_unit'},
@@ -36,9 +36,9 @@ if minetest.get_modpath("technic") then
     }
   })
 
-elseif minetest.get_modpath("mcl_core") then
+elseif core.get_modpath("mcl_core") then
   -- mineclone crafts
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:engine',
     recipe = {
       {'jumpdrive:backbone', 'mcl_core:ironblock', 'jumpdrive:backbone'},
@@ -47,7 +47,7 @@ elseif minetest.get_modpath("mcl_core") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:backbone',
     recipe = {
       {'mesecons_torch:redstoneblock', 'mcl_core:ironblock', 'mesecons_torch:redstoneblock'},
@@ -56,7 +56,7 @@ elseif minetest.get_modpath("mcl_core") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:warp_device',
     recipe = {
       {'mesecons:wire_00000000_off', 'mcl_core:diamond', 'mesecons:wire_00000000_off'},
@@ -65,7 +65,7 @@ elseif minetest.get_modpath("mcl_core") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:fleet_controller',
     recipe = {
       {'jumpdrive:engine', 'mcl_core:ironblock', 'jumpdrive:engine'},
@@ -73,9 +73,9 @@ elseif minetest.get_modpath("mcl_core") then
       {'jumpdrive:engine', 'mcl_core:ironblock', 'jumpdrive:engine'}
     }
   })
-elseif minetest.get_modpath("default") then
+elseif core.get_modpath("default") then
   -- minetest_game crafts
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:engine',
     recipe = {
       {'jumpdrive:backbone', 'default:steelblock', 'jumpdrive:backbone'},
@@ -84,7 +84,7 @@ elseif minetest.get_modpath("default") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:backbone',
     recipe = {
       {'default:mese', 'default:steelblock', 'default:mese'},
@@ -93,7 +93,7 @@ elseif minetest.get_modpath("default") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:warp_device',
     recipe = {
       {'default:mese_crystal', 'default:diamond', 'default:mese_crystal'},
@@ -102,7 +102,7 @@ elseif minetest.get_modpath("default") then
     }
   })
 
-  minetest.register_craft({
+  core.register_craft({
     output = 'jumpdrive:fleet_controller',
     recipe = {
       {'jumpdrive:engine', 'default:steelblock', 'jumpdrive:engine'},

@@ -8,7 +8,7 @@ jumpdrive.upgrade.register = function(item_name, def)
 end
 
 jumpdrive.upgrade.calculate = function(pos)
-  local meta = minetest.get_meta(pos)
+  local meta = core.get_meta(pos)
   local inv = meta:get_inventory()
   local size = inv:get_size("upgrade")
 
@@ -28,7 +28,7 @@ jumpdrive.upgrade.calculate = function(pos)
 
 end
 
-if minetest.get_modpath("technic") then
+if core.get_modpath("technic") then
   jumpdrive.upgrade.register("technic:red_energy_crystal", function(meta)
     meta:set_int("max_powerstorage", meta:get_int("max_powerstorage") + jumpdrive.config.powerstorage*0.1)
   end)

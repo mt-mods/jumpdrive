@@ -1,6 +1,6 @@
 
 jumpdrive.technic_run = function(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	jumpdrive.migrate_engine_meta(pos, meta)
 
 	local eu_input = meta:get_int("HV_EU_input")

@@ -1,6 +1,6 @@
 
 
-minetest.register_node("jumpdrive:backbone", {
+core.register_node("jumpdrive:backbone", {
 	description = "Jumpdrive Backbone",
 
 	tiles = {"jumpdrive_backbone.png"},

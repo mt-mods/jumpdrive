@@ -1,23 +1,23 @@
-local c_ignore = minetest.get_content_id("ignore")
+local c_ignore = core.get_content_id("ignore")
 
 local buildable_to_nodes = {}
 
-minetest.after(4, function()
+core.after(4, function()
 	local count = 0
-	for name, node in pairs(minetest.registered_nodes) do
+	for name, node in pairs(core.registered_nodes) do
 		if node.buildable_to then
 			count = count + 1
-			local id = minetest.get_content_id(name)
+			local id = core.get_content_id(name)
 			buildable_to_nodes[id] = true
 		end
 	end
-	minetest.log("action", "[jumpdrive] collected " .. count .. " nodes that are buildable_to")
+	core.log("action", "[jumpdrive] collected " .. count .. " nodes that are buildable_to")
 end)
 
 
 
 jumpdrive.is_area_empty = function(pos1, pos2)
-	local manip = minetest.get_voxel_manip()
+	local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	local data = manip:get_data()

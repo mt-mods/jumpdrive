@@ -1,8 +1,8 @@
 
-local c_air = minetest.get_content_id("air")
+local c_air = core.get_content_id("air")
 
 function jumpdrive.clear_area(pos1, pos2)
-	local manip = minetest.get_voxel_manip()
+	local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	local source_data = manip:get_data()
@@ -22,9 +22,9 @@ function jumpdrive.clear_area(pos1, pos2)
 	manip:write_to_map()
 
 	-- remove metadata
-	local target_meta_pos_list = minetest.find_nodes_with_meta(pos1, pos2)
+	local target_meta_pos_list = core.find_nodes_with_meta(pos1, pos2)
 	for _,target_pos in pairs(target_meta_pos_list) do
-		local target_meta = minetest.get_meta(target_pos)
+		local target_meta = core.get_meta(target_pos)
 		target_meta:from_table(nil)
 	end
 end
@@ -35,13 +35,13 @@ end
 
 -- get pos object from pos
 function jumpdrive.get_meta_pos(pos)
-	local meta = minetest.get_meta(pos);
+	local meta = core.get_meta(pos);
 	return vector.new(meta:get_int("x"), meta:get_int("y"), meta:get_int("z"))
 end
 
 -- set pos object from pos
 function jumpdrive.set_meta_pos(pos, target)
-	local meta = minetest.get_meta(pos);
+	local meta = core.get_meta(pos);
 	meta:set_int("x", target.x)
 	meta:set_int("y", target.y)
 	meta:set_int("z", target.z)
@@ -49,7 +49,7 @@ end
 
 -- get offset from meta
 function jumpdrive.get_radius(pos)
-	local meta = minetest.get_meta(pos);
+	local meta = core.get_meta(pos);
 	return math.max(math.min(meta:get_int("radius"), jumpdrive.config.max_radius), 1)
 end
 
@@ -67,7 +67,7 @@ function jumpdrive.preflight_check()
 end
 
 function jumpdrive.reset_coordinates(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 
 	meta:set_int("x", pos.x)
 	meta:set_int("y", pos.y)

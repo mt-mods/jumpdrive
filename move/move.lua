@@ -7,9 +7,9 @@
 -- no protection- or overlap checking is done here
 function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
-	minetest.log("action", "[jumpdrive] initiating jump (" ..
-		minetest.pos_to_string(source_pos1) .. "-" .. minetest.pos_to_string(source_pos2) ..
-		") (" .. minetest.pos_to_string(target_pos1) .. "-" .. minetest.pos_to_string(target_pos2) .. ")")
+	core.log("action", "[jumpdrive] initiating jump (" ..
+		core.pos_to_string(source_pos1) .. "-" .. core.pos_to_string(source_pos2) ..
+		") (" .. core.pos_to_string(target_pos1) .. "-" .. core.pos_to_string(target_pos2) .. ")")
 
 	-- step 1: copy via voxel manip
 	-- https://dev.minetest.net/VoxelManip#Examples
@@ -19,24 +19,24 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
 	-- center of source
 	local source_center = vector.add(source_pos1, vector.divide(vector.subtract(source_pos2, source_pos1), 2))
-	minetest.log("action", "[jumpdrive] source-center: " .. minetest.pos_to_string(source_center))
+	core.log("action", "[jumpdrive] source-center: " .. core.pos_to_string(source_center))
 
-	local t0 = minetest.get_us_time()
+	local t0 = core.get_us_time()
 
 	-- load areas (just a precaution)
-	if minetest.load_area then
-		minetest.load_area(source_pos1, source_pos2)
-		minetest.load_area(target_pos1, target_pos2)
+	if core.load_area then
+		core.load_area(source_pos1, source_pos2)
+		core.load_area(target_pos1, target_pos2)
 	end
 
 	-- move mapdata (nodeids, param1, param2)
 	local movenode_list = jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_pos2)
 
-	local t1 = minetest.get_us_time()
-	minetest.log("action", "[jumpdrive] step I took " .. (t1 - t0) .. " us")
+	local t1 = core.get_us_time()
+	core.log("action", "[jumpdrive] step I took " .. (t1 - t0) .. " us")
 
 	-- step 2: check meta/timers and copy if needed
-	t0 = minetest.get_us_time()
+	t0 = core.get_us_time()
 	jumpdrive.move_metadata(source_pos1, source_pos2, delta_vector)
 	jumpdrive.move_nodetimers(source_pos1, source_pos2, delta_vector)
 
@@ -48,27 +48,27 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 	end
 
 	-- print stats
-	t1 = minetest.get_us_time()
-	minetest.log("action", "[jumpdrive] step II took " .. (t1 - t0) .. " us")
+	t1 = core.get_us_time()
+	core.log("action", "[jumpdrive] step II took " .. (t1 - t0) .. " us")
 
 
 	-- step 4: move objects
-	t0 = minetest.get_us_time()
+	t0 = core.get_us_time()
 	jumpdrive.move_objects(source_center, source_pos1, source_pos2, delta_vector)
 
 	-- move players
 	jumpdrive.move_players(source_pos1, source_pos2, delta_vector)
 
-	t1 = minetest.get_us_time()
-	minetest.log("action", "[jumpdrive] step IV took " .. (t1 - t0) .. " us")
+	t1 = core.get_us_time()
+	core.log("action", "[jumpdrive] step IV took " .. (t1 - t0) .. " us")
 
 
 	-- step 5: clear source area with voxel manip
-	t0 = minetest.get_us_time()
+	t0 = core.get_us_time()
 	jumpdrive.clear_area(source_pos1, source_pos2)
 
-	t1 = minetest.get_us_time()
-	minetest.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")
+	t1 = core.get_us_time()
+	core.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")
 
 	-- call after_jump callbacks
 	jumpdrive.fire_after_jump({

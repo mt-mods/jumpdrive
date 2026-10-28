@@ -9,25 +9,25 @@ mtt.register("basic move-test", function(callback)
 	local target_pos1 = vector.new(10, 10, 10)
 	local target_pos2 = vector.new(15, 15, 15)
 
-	minetest.get_voxel_manip(source_pos1, source_pos1)
-	local src_node = minetest.get_node(source_pos1)
+	core.get_voxel_manip(source_pos1, source_pos1)
+	local src_node = core.get_node(source_pos1)
 
 	areas:add("dummy", "landscape", source_pos1, source_pos2)
 	areas:save()
 
-	assert(not minetest.is_protected(source_pos1, "dummy"))
-	assert(minetest.is_protected(source_pos1, "dummy2"))
+	assert(not core.is_protected(source_pos1, "dummy"))
+	assert(core.is_protected(source_pos1, "dummy2"))
 
 	jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
-	assert(not minetest.is_protected(source_pos1, "dummy"))
-	assert(not minetest.is_protected(source_pos1, "dummy2"))
+	assert(not core.is_protected(source_pos1, "dummy"))
+	assert(not core.is_protected(source_pos1, "dummy2"))
 
-	assert(not minetest.is_protected(target_pos1, "dummy"))
-	assert(minetest.is_protected(target_pos1, "dummy2"))
+	assert(not core.is_protected(target_pos1, "dummy"))
+	assert(core.is_protected(target_pos1, "dummy2"))
 
-	minetest.get_voxel_manip(target_pos1, target_pos1)
-	local target_node = minetest.get_node(target_pos1)
+	core.get_voxel_manip(target_pos1, target_pos1)
+	local target_node = core.get_node(target_pos1)
 
 	if target_node.name ~= src_node.name then
 		error("moved node name does not match")

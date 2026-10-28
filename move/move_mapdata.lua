@@ -1,18 +1,18 @@
-local c_air = minetest.get_content_id("air")
+local c_air = core.get_content_id("air")
 
 -- map of replaced content id's on jump
 -- TODO: expose as api function
 -- <id> = <id>
 local mapped_content_ids = {}
 
-if minetest.get_modpath("vacuum") then
+if core.get_modpath("vacuum") then
 	-- don't jump vacuum
-	mapped_content_ids[minetest.get_content_id("vacuum:vacuum")] = c_air
+	mapped_content_ids[core.get_content_id("vacuum:vacuum")] = c_air
 end
 
-if minetest.get_modpath("planet_mars") then
+if core.get_modpath("planet_mars") then
 	-- alias planet_mars:airlight to air
-	mapped_content_ids[minetest.get_content_id("planet_mars:airlight")] = c_air
+	mapped_content_ids[core.get_content_id("planet_mars:airlight")] = c_air
 end
 
 -- map of "on_movenode" aware node id's
@@ -20,16 +20,16 @@ end
 local movenode_aware_nodeids = {}
 
 -- collect movenode aware node id's
-minetest.register_on_mods_loaded(function()
+core.register_on_mods_loaded(function()
 	local count = 0
-	for nodename, nodedef in pairs(minetest.registered_nodes) do
+	for nodename, nodedef in pairs(core.registered_nodes) do
 		if type(nodedef.on_movenode) == "function" then
 			count = count + 1
-			local id = minetest.get_content_id(nodename)
+			local id = core.get_content_id(nodename)
 			movenode_aware_nodeids[id] = nodedef
 		end
 	end
-	minetest.log("action", "[jumpdrive] collected " .. count .. " 'on_movenode' aware nodes")
+	core.log("action", "[jumpdrive] collected " .. count .. " 'on_movenode' aware nodes")
 end)
 
 function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_pos2)
@@ -38,17 +38,17 @@ function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_po
 	local delta_vector = vector.subtract(target_pos1, source_pos1)
 
 	-- read source
-	local manip = minetest.get_voxel_manip()
+	local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(source_pos1, source_pos2)
 	local source_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	local source_data = manip:get_data()
 	local source_param1 = manip:get_light_data()
 	local source_param2 = manip:get_param2_data()
 
-	minetest.log("action", "[jumpdrive] read source-data")
+	core.log("action", "[jumpdrive] read source-data")
 
 	-- write target
-	manip = minetest.get_voxel_manip()
+	manip = core.get_voxel_manip()
 	e1, e2 = manip:read_from_map(target_pos1, target_pos2)
 	local target_area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 	local target_data = manip:get_data()
@@ -58,7 +58,7 @@ function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_po
 	-- list of { from_pos, to_pos, }
 	local movenode_list = {}
 
-	minetest.log("action", "[jumpdrive] read target-data");
+	core.log("action", "[jumpdrive] read target-data");
 
 	for z=source_pos1.z, source_pos2.z do
 	for y=source_pos1.y, source_pos2.y do

@@ -6,7 +6,7 @@ local player_inv_fs = "list[current_player;main;0,5;8,4;]"
 local listring_fs = "listring[]"
 local mcl_fs = ""
 
-if minetest.get_modpath("mcl_formspec") then
+if core.get_modpath("mcl_formspec") then
    inv_width = 9
    inv_height = 10.5
    mcl_fs = mcl_formspec.get_itemslot_bg(0,3.75,8,1)
@@ -28,7 +28,7 @@ jumpdrive.fleet.update_formspec = function(meta)
 
 	if meta:get_int("active") == 1 then
 		local jump_index = meta:get_int("jump_index")
-		local jump_list = minetest.deserialize( meta:get_string("jump_list") )
+		local jump_list = core.deserialize( meta:get_string("jump_list") )
 
 		meta:set_string("infotext", "Controller active: " .. jump_index .. "/" .. #jump_list)
 

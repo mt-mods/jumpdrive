@@ -2,17 +2,17 @@
 jumpdrive = {
 	config = {
 		-- allowed radius
-		max_radius = tonumber(minetest.settings:get("jumpdrive.max_radius")) or 15,
-		max_area_radius = tonumber(minetest.settings:get("jumpdrive.max_area_radius")) or 25,
+		max_radius = tonumber(core.settings:get("jumpdrive.max_radius")) or 15,
+		max_area_radius = tonumber(core.settings:get("jumpdrive.max_area_radius")) or 25,
 
 		-- max volume in nodes ( ((radius*2) + 1) ^ 3 )
-		max_area_volume = tonumber(minetest.settings:get("jumpdrive.max_area_volume")) or 29791,
+		max_area_volume = tonumber(core.settings:get("jumpdrive.max_area_volume")) or 29791,
 
 		-- base storage value
-		powerstorage = tonumber(minetest.settings:get("jumpdrive.powerstorage")) or 1000000,
+		powerstorage = tonumber(core.settings:get("jumpdrive.powerstorage")) or 1000000,
 
 		-- base technic power requirement
-		powerrequirement = tonumber(minetest.settings:get("jumpdrive.power_requirement")) or 2500,
+		powerrequirement = tonumber(core.settings:get("jumpdrive.power_requirement")) or 2500,
 
 		-- allow emerging area on "uncharted" error
 		emerge_uncharted = core.settings:get_bool("jumpdrive.allow_emerge", false),
@@ -24,17 +24,17 @@ jumpdrive = {
 
 jumpdrive.sounds = {}
 
-if minetest.get_modpath("default") then
+if core.get_modpath("default") then
 	jumpdrive.sounds = default
 end
 
-if minetest.get_modpath("mcl_sounds") then
+if core.get_modpath("mcl_sounds") then
 	jumpdrive.sounds = mcl_sounds
 end
 
-local MP = minetest.get_modpath("jumpdrive")
+local MP = core.get_modpath("jumpdrive")
 
-if minetest.get_modpath("technic") then
+if core.get_modpath("technic") then
 	dofile(MP.."/technic_run.lua")
 end
 
@@ -79,12 +79,12 @@ dofile(MP.."/fleet/fleet_formspec.lua")
 dofile(MP.."/blacklist.lua")
 
 
-if minetest.get_modpath("monitoring") then
+if core.get_modpath("monitoring") then
 	-- enable metrics
 	dofile(MP.."/metrics.lua")
 end
 
-if minetest.get_modpath("mtt") and mtt.enabled then
+if core.get_modpath("mtt") and mtt.enabled then
 	dofile(MP.."/mtt.lua")
 end
 

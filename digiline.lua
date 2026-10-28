@@ -12,7 +12,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		return
 	end
 
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 
 	local set_channel = meta:get_string("channel")
 	if set_channel == "" then
@@ -94,7 +94,7 @@ jumpdrive.digiline_effector = function(pos, _, channel, msg)
 		if success then
 			-- send new message in target pos
 			-- defer sending to allow the environment to "settle" first
-			minetest.after(0.5, function()
+			core.after(0.5, function()
 				digilines.receptor_send(targetPos, jumpdrive.digiline_rules, set_channel, {
 					success = success,
 					time = timeormsg

@@ -4,12 +4,12 @@ local is_int = function(value)
 end
 
 jumpdrive.fleet.is_active = function(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	return meta:get_int("active") > 0
 end
 
 jumpdrive.fleet.get_fleet_data = function(pos, target_pos, engines_pos_list)
-	local t0 = minetest.get_us_time()
+	local t0 = core.get_us_time()
 
 -- get some more or less useful data from fleet
 	local engines = {}
@@ -26,7 +26,7 @@ jumpdrive.fleet.get_fleet_data = function(pos, target_pos, engines_pos_list)
 
 	if not active then
 		for _,engine_pos in ipairs(engines_pos_list) do
-			local engine_meta = minetest.get_meta(engine_pos)
+			local engine_meta = core.get_meta(engine_pos)
 			local powerstorage = engine_meta:get_int("powerstorage")
 			local radius = jumpdrive.get_radius(engine_pos)
 			local engine_target_pos = nil
@@ -52,9 +52,9 @@ jumpdrive.fleet.get_fleet_data = function(pos, target_pos, engines_pos_list)
 		end
 	end
 
-	local t1 = minetest.get_us_time()
-	minetest.log("action", "[jumpdrive-fleet] fleet data collection took " ..
-		(t1 - t0) .. " us @ " .. minetest.pos_to_string(pos))
+	local t1 = core.get_us_time()
+	core.log("action", "[jumpdrive-fleet] fleet data collection took " ..
+		(t1 - t0) .. " us @ " .. core.pos_to_string(pos))
 
 	return {
 		active = active,
@@ -68,11 +68,11 @@ jumpdrive.fleet.get_fleet_data = function(pos, target_pos, engines_pos_list)
 end
 
 jumpdrive.fleet.get_engines_sorted = function(pos)
-	local t0 = minetest.get_us_time()
+	local t0 = core.get_us_time()
 	local engines_pos_list = jumpdrive.fleet.find_engines(pos)
-	local t1 = minetest.get_us_time()
-	minetest.log("action", "[jumpdrive-fleet] backbone traversing took " ..
-		(t1 - t0) .. " us @ " .. minetest.pos_to_string(pos))
+	local t1 = core.get_us_time()
+	core.log("action", "[jumpdrive-fleet] backbone traversing took " ..
+		(t1 - t0) .. " us @ " .. core.pos_to_string(pos))
 
 	-- sort by distance, farthes first
 	jumpdrive.fleet.sort_engines(pos, engines_pos_list)
@@ -82,7 +82,7 @@ end
 
 jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 	local index = 1
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local msglist = {}
 	local async_check
 	async_check = function()
@@ -115,7 +115,7 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 		if index < #engines then
 			-- more drives to check
 			index = index + 1
-			minetest.after(1, async_check)
+			core.after(1, async_check)
 
 		elseif index >= #engines then
 			-- done
@@ -128,15 +128,15 @@ jumpdrive.fleet.digiline_async_simulate = function(pos, channel, owner, engines)
 			jumpdrive.fleet.update_formspec(meta, pos)
 		end
 	end
-	meta:set_string("jump_list", minetest.serialize(engines))
+	meta:set_string("jump_list", core.serialize(engines))
 	meta:set_int("active", 1)
 	jumpdrive.fleet.update_formspec(meta, pos)
-	minetest.after(1, async_check)
+	core.after(1, async_check)
 end
 
 jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, _, engines)
-	local t0 = minetest.get_us_time()
-	local meta = minetest.get_meta(pos)
+	local t0 = core.get_us_time()
+	local meta = core.get_meta(pos)
 	local all_success = false
 	local msglist = {}
 	local index = 1
@@ -169,7 +169,7 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, _, engi
 				end
 				-- execute for each engine and once after last engine jumped
 				index = index + 1
-				minetest.after(1, async_jump)
+				core.after(1, async_jump)
 			else
 				digilines.receptor_send(pos, jumpdrive.digiline_rules, channel, {
 					success = false,
@@ -181,8 +181,8 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, _, engi
 				jumpdrive.fleet.update_formspec(meta, pos)
 			end
 		else
-			local targetmeta = minetest.get_meta(target_pos)
-			local t1 = minetest.get_us_time()
+			local targetmeta = core.get_meta(target_pos)
+			local t1 = core.get_us_time()
 			digilines.receptor_send(target_pos, jumpdrive.digiline_rules, channel, {
 				success = all_success, -- in case someone calls with zero engines should it be success or not?
 				count = index,
@@ -193,10 +193,10 @@ jumpdrive.fleet.digiline_async_jump = function(pos, target_pos, channel, _, engi
 			jumpdrive.fleet.update_formspec(targetmeta, target_pos)
 		end
 	end
-	meta:set_string("jump_list", minetest.serialize(engines))
+	meta:set_string("jump_list", core.serialize(engines))
 	meta:set_int("active", 1)
 	jumpdrive.fleet.update_formspec(meta, pos)
-	minetest.after(1, async_jump)
+	core.after(1, async_jump)
 end
 
 jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
@@ -205,7 +205,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		return
 	end
 
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 
 	local set_channel = meta:get_string("channel")
 	if channel ~= set_channel then
@@ -277,7 +277,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		-- apply new coordinates
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
-		local owner = minetest.get_player_by_name(playername)
+		local owner = core.get_player_by_name(playername)
 		jumpdrive.fleet.digiline_async_simulate(pos, channel, owner, engines_pos_list)
 
 	elseif msg.command == "jump" then
@@ -299,7 +299,7 @@ jumpdrive.fleet.digiline_effector = function(pos, _, channel, msg)
 		-- apply new coordinates
 		jumpdrive.fleet.apply_coordinates(pos, targetPos, engines_pos_list)
 
-		local owner = minetest.get_player_by_name(playername)
+		local owner = core.get_player_by_name(playername)
 		jumpdrive.fleet.digiline_async_jump(pos, targetPos, channel, owner, engines_pos_list)
 
 	end

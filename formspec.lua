@@ -1,4 +1,4 @@
-local has_technic = minetest.get_modpath("technic")
+local has_technic = core.get_modpath("technic")
 
 local inv_offset = 0
 if has_technic then
@@ -10,7 +10,7 @@ local inv_width = 8
 local mcl_fs = ""
 local player_inv_fs = "list[current_player;main;0,".. 4.5+inv_offset .. ";8,4;]"
 
-if minetest.get_modpath("mcl_formspec") then
+if core.get_modpath("mcl_formspec") then
    inv_width = 9
    mcl_fs = mcl_formspec.get_itemslot_bg(0,3.25,8,1)
    player_inv_fs = ""..

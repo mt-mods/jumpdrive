@@ -1,4 +1,4 @@
-local has_vizlib = minetest.get_modpath("vizlib")
+local has_vizlib = core.get_modpath("vizlib")
 
 jumpdrive.simulate_jump = function(pos, player, show_marker)
 
@@ -10,7 +10,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 			.. " / 200 nodes away, please try again later for your own safety!"
 	end
 
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 
 	if show_marker and has_vizlib and os.time() < meta:get_int("simulation_expiry") then
 		return false, "Error: simulation is still active! please wait before simulating again"
@@ -43,7 +43,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	end
 
 	-- load chunk
-	minetest.get_voxel_manip():read_from_map(target_pos1, target_pos2)
+	core.get_voxel_manip():read_from_map(target_pos1, target_pos2)
 
 	if show_marker and has_vizlib then
 		vizlib.draw_cube(targetPos, radius + 0.5, { color = "#ff0000" })
@@ -55,18 +55,18 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local msg = ""
 	local success = true
 
-	local blacklisted_pos_list = minetest.find_nodes_in_area(source_pos1, source_pos2, jumpdrive.blacklist)
+	local blacklisted_pos_list = core.find_nodes_in_area(source_pos1, source_pos2, jumpdrive.blacklist)
 	local _, nodepos = next(blacklisted_pos_list)
 	if nodepos then
-		return false, "Can't jump node @ " .. minetest.pos_to_string(nodepos)
+		return false, "Can't jump node @ " .. core.pos_to_string(nodepos)
 	end
 
-	if minetest.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
+	if core.find_node_near(targetPos, radius, "vacuum:vacuum", true) then
 		msg = msg .. "\nWarning: Jump-target is in vacuum!"
 	end
 
 --	-- found to be useless/indescriptive and is superseded by "Jump-target is uncharted"
---	if minetest.find_node_near(targetPos, radius, "ignore", true) then
+--	if core.find_node_near(targetPos, radius, "ignore", true) then
 --		return false, "Warning: Jump-target is in uncharted area"
 --	end
 
@@ -122,7 +122,7 @@ end
 -- execute jump
 jumpdrive.execute_jump = function(pos, player)
 
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 
 	local radius = jumpdrive.get_radius(pos)
 	local targetPos = jumpdrive.get_meta_pos(pos)
@@ -145,9 +145,9 @@ jumpdrive.execute_jump = function(pos, player)
 	local powerstorage = meta:get_int("powerstorage")
 	meta:set_int("powerstorage", powerstorage - power_req)
 
-	local t0 = minetest.get_us_time()
+	local t0 = core.get_us_time()
 
-	minetest.sound_play("jumpdrive_engine", {
+	core.sound_play("jumpdrive_engine", {
 		pos = pos,
 		max_hear_distance = 50,
 		gain = 0.7,
@@ -156,13 +156,13 @@ jumpdrive.execute_jump = function(pos, player)
 	-- actual move
 	jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 
-	local t1 = minetest.get_us_time()
+	local t1 = core.get_us_time()
 	local time_micros = t1 - t0
 
-	minetest.log("action", "[jumpdrive] jump took " .. time_micros .. " us")
+	core.log("action", "[jumpdrive] jump took " .. time_micros .. " us")
 
 	-- show animation in source
-	minetest.add_particlespawner({
+	core.add_particlespawner({
 		amount = 200,
 		time = 2,
 		minpos = source_pos1,
@@ -181,7 +181,7 @@ jumpdrive.execute_jump = function(pos, player)
 
 
 	-- show animation in target
-	minetest.add_particlespawner({
+	core.add_particlespawner({
 		amount = 200,
 		time = 2,
 		minpos = target_pos1,

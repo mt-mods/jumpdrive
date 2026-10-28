@@ -1,4 +1,4 @@
-local has_technic = minetest.get_modpath("technic")
+local has_technic = core.get_modpath("technic")
 
 jumpdrive.update_infotext = function(meta)
 	local store = meta:get_int("powerstorage")
