@@ -90,7 +90,7 @@ function jumpdrive.move_mapdata(source_pos1, source_pos2, target_pos1, target_po
 			if source_pos1.y == y then edge.y = -1 end
 			if source_pos1.z == z then edge.z = -1 end
 			-- positive edge
-			if source_pos2.z == x then edge.x = 1 end
+			if source_pos2.x == x then edge.x = 1 end
 			if source_pos2.y == y then edge.y = 1 end
 			if source_pos2.z == z then edge.z = 1 end
 
