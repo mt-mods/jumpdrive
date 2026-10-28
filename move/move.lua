@@ -52,7 +52,7 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 	core.log("action", "[jumpdrive] step II took " .. (t1 - t0) .. " us")
 
 
-	-- step 4: move objects
+	-- step 3: move objects
 	t0 = core.get_us_time()
 	jumpdrive.move_objects(source_center, source_pos1, source_pos2, delta_vector)
 
@@ -60,15 +60,15 @@ function jumpdrive.move(source_pos1, source_pos2, target_pos1, target_pos2)
 	jumpdrive.move_players(source_pos1, source_pos2, delta_vector)
 
 	t1 = core.get_us_time()
-	core.log("action", "[jumpdrive] step IV took " .. (t1 - t0) .. " us")
+	core.log("action", "[jumpdrive] step III took " .. (t1 - t0) .. " us")
 
 
-	-- step 5: clear source area with voxel manip
+	-- step 4: clear source area with voxel manip
 	t0 = core.get_us_time()
 	jumpdrive.clear_area(source_pos1, source_pos2)
 
 	t1 = core.get_us_time()
-	core.log("action", "[jumpdrive] step V took " .. (t1 - t0) .. " us")
+	core.log("action", "[jumpdrive] step IV took " .. (t1 - t0) .. " us")
 
 	-- call after_jump callbacks
 	jumpdrive.fire_after_jump({

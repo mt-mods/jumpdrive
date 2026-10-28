@@ -180,7 +180,7 @@ core.register_node("jumpdrive:engine", {
 		local max_radius = jumpdrive.config.max_radius
 
 		if radius > max_radius then
-			core.chat_send_player(sender:get_player_name(), "Invalid jump: max-radius=" .. max_radius)
+			core.chat_send_player(sender:get_player_name(), "Invalid jump: maximum radius is " .. max_radius)
 			return
 		end
 

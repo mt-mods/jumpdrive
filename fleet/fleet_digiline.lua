@@ -74,7 +74,7 @@ jumpdrive.fleet.get_engines_sorted = function(pos)
 	core.log("action", "[jumpdrive-fleet] backbone traversing took " ..
 		(t1 - t0) .. " us @ " .. core.pos_to_string(pos))
 
-	-- sort by distance, farthes first
+	-- sort by distance, farthest first
 	jumpdrive.fleet.sort_engines(pos, engines_pos_list)
 
 	return engines_pos_list

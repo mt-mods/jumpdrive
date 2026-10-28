@@ -225,7 +225,7 @@ if event.type == "digiline" and event.channel == "fleetcontroller" then
     msg = "simulation aborted"
   }
 
-  -- sent if an error occured
+  -- sent if an error occurred
   event.msg = {
     success = false,
     pos = { x=0, y=0, z=0 },
@@ -270,7 +270,7 @@ if event.type == "digiline" and event.channel == "fleetcontroller" then
     msg = "jump aborted"
   }
 
-  -- sent if an error occured
+  -- sent if an error occurred
   event.msg = {
     success = false,
     count = 1,

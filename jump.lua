@@ -13,7 +13,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 	local meta = core.get_meta(pos)
 
 	if show_marker and has_vizlib and os.time() < meta:get_int("simulation_expiry") then
-		return false, "Error: simulation is still active! please wait before simulating again"
+		return false, "Error: simulation is still active, please wait before simulating again"
 	end
 
 	local radius = jumpdrive.get_radius(pos)
@@ -39,7 +39,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 		(target_pos2.z <= source_pos2.z and target_pos2.z >= source_pos1.z)
 
 	if x_overlap and y_overlap and z_overlap then
-		return false, "Error: jump into itself! extend your jump target"
+		return false, "Error: jump target overlaps the jump source, please extend your jump target"
 	end
 
 	-- load chunk
@@ -110,7 +110,7 @@ jumpdrive.simulate_jump = function(pos, player, show_marker)
 
 	if powerstorage < power_req then
 		-- not enough power
-		msg = msg .. "\nNot enough power: required=" .. math.floor(power_req) .. ", actual: " .. powerstorage .. " EU"
+		msg = msg .. "\nNot enough power: required=" .. math.floor(power_req) .. ", available: " .. powerstorage .. " EU"
 		success = false
 	end
 

@@ -18,7 +18,7 @@ jumpdrive.move_objects = function(source_center, source_pos1, source_pos2, delta
 		local z_match = objPos.z >= pos1.z and objPos.z <= pos2.z
 
 		if x_match and y_match and z_match and not obj:is_player() then
-			core.log("action", "[jumpdrive] object:  @ " .. core.pos_to_string(objPos))
+			core.log("action", "[jumpdrive] object @ " .. core.pos_to_string(objPos))
 
 			-- coords in range
 			local entity = obj:get_luaentity()

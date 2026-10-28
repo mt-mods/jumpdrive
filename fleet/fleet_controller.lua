@@ -117,7 +117,7 @@ core.register_node("jumpdrive:fleet_controller", {
 
 		local targetPos = vector.new(meta:get_int("x"), meta:get_int("y"), meta:get_int("z"))
 
-		-- sort by distance, farthes first
+		-- sort by distance, farthest first
 		jumpdrive.fleet.sort_engines(pos, engines_pos_list)
 
 		-- apply new coordinates
