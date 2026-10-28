@@ -186,13 +186,19 @@ core.register_node("jumpdrive:fleet_controller", {
 
 			local is_last = #jump_list == jump_index
 			local node_pos = jump_list[jump_index]
-			local success, msg = jumpdrive.execute_jump(node_pos)
 
+			-- read the owner before jumping, the metadata is gone afterwards if the controller moves with the last engine
 			local playername = meta:get_string("owner")
-			if not playername then
+			if playername == "" then
 				local node_meta = core.get_meta(node_pos)
 				playername = node_meta:get_string("owner")
 			end
+
+			if playername == "" then
+				playername = nil
+			end
+
+			local success, msg = jumpdrive.execute_jump(node_pos)
 
 			if success then
 				-- at this point if it is the last engine the metadata does not exist anymore in the current location
